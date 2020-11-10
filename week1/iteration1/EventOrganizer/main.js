@@ -1,50 +1,96 @@
-// 1. Когато се създаде нова инстанция на този клас да се пушва в масив
-// 2. Листва всички събития и цялата информация за тях
-// 3. Изтрива събитие по ID и извежда съобщение
-// 4. Създава ново събитие
-// 5. Ъпдейтва събитие по ID
-// 6. Добавяне на клиент към събитие
-// 7. Листва висчки клиенти за дадено събитие (възможност за филтър по пол)
-// 8. Премахване на клиент от дадено събитие
+// Всеки event има уникално ID, който получава при създаването си
+// Всички събития се съхраняват в eventStorage[]
+// Листва всички събития
+// Изтрива събитие по уникален идентификатор и извежда съобщение за успешна операция
+    // (за handle на exception-ите не съм убеден че това е правилния начин)
+// Добавяне на клиент към вече съществуващо събитие
+// Актуализиране на евент по ID
+// Листване на клиенти за дадено събитие
+// Премахване на присъстващ клиент от събитие
+
 
 let eventStorage = [];
+
+// #### Boilerplate testing objects
+const deluxParty = CreateParty('Asenovgrad Delux 2020');
+const escapeParty = CreateParty('Plovdiv Escape 2021', false);
+
+const ivan = CreateClient('Ivan', 'Dimitrov', 'male', 26);
+const vanesa = CreateClient('Vanesa', 'Ivanova', 'male', 26);
+const mihaela = CreateClient('Mihaela', 'Atanasova', 'female', 22);
+const qnica = CreateClient('Qnica', 'Zelenkova', 'female', 19);
+const doktora = CreateClient('Profesor', 'Mutavchiivski', 'female', 17);
+// #### Boilerplate testing objects
 
 // ######## ---PARTY--- ########
 function CreateParty(eventName, areAdultsAllowed = true) {
 
-    if (!CreateParty.prototype.isValidString(eventName)) {
+    if (!isValidString(eventName)) {
         throw new TypeError('Please enter a valid event name!');
     }
 
-    if (!CreateParty.prototype.isValidBool(areAdultsAllowed)) {
+    if (!isValidBool(areAdultsAllowed)) {
         throw new TypeError('Please enter a valid boolean value');
     }
 
     const event = {
-        eventName: `${eventName}`,
+        eventName: eventName,
         areAdultsAllowed: areAdultsAllowed,
-        id: `${CreateParty.prototype.generateID()}`,
-        clients: []
+        id: generateID(),
+        getInfo: function() {
+            console.log(`Name: ${this.eventName}, age restriction: ${!this.areAdultsAllowed}, ID: ${this.id}`);
+        },
+        clients: [],
+        // !BUG: Два пъти може да адне един и същи клиент
+        addClient: function(obj) {
+            if (areAdultsAllowed && obj.age < 18) {
+                throw new Error('Sorry, you are too young for this party! Come back next year :)');
+            } else {
+                this.clients.push(obj);
+                console.log(`Client successfully added to this event.`);
+            }
+        },
+        getClients: function() {
+            if (this.clients.length > 0) {
+                console.log(this.clients.map(client => `${client.fullName}, age: ${client.age}`));
+            } else {
+                console.log('There are no clients for this event yet')
+            }
+        },
+        filterClientsByGender: function(sex) {
+            if (this.clients.length > 0) {
+                console.log(this.clients.filter(client => (client.sex === sex)));
+            } else {
+                console.log('There are no clients for this event yet')
+            }
+        },
+        deleteClient: function(name) {
+            if (this.clients.length > 0) {
+                this.clients = this.clients.filter((client) => client.name !== client);
+            } else {
+                console.log('There are no clients for this event yet')
+            }
+        }
     }
 
-    eventStorage.push(event)
+    eventStorage.push(event);
 
     return event;
 }
 
 // CreateParty Validators
-CreateParty.prototype.isValidString = function(str) {
+function isValidString(str) {
     return str !== null && 
     typeof str === "string" && 
     str.length > 0;
 }
 
-CreateParty.prototype.isValidBool = function(bool) {
+function isValidBool(bool) {
     return typeof bool === 'boolean';
 }
 
 // ID Generator
-CreateParty.prototype.generateID = function() {
+function generateID() {
     const hex = function(value) {
         return Math.floor(value).toString(16)
     }
@@ -57,25 +103,24 @@ CreateParty.prototype.generateID = function() {
 // ######## ---CLIENT--- ########
 function CreateClient(firstName, lastName, sex, age) {
 
-    if (!CreateClient.prototype.isNameValid(firstName)) {
+    if (!isNameValid(firstName)) {
         throw new TypeError('Please enter a valid first name!');
     }
 
-    if (!CreateClient.prototype.isNameValid(lastName)) {
+    if (!isNameValid(lastName)) {
         throw new TypeError('Please enter a valid last name!');
     }
 
-    if (!CreateClient.prototype.isSexValid(sex)) {
+    if (!isSexValid(sex)) {
         throw new TypeError('Please enter a valid gender!');
     }
 
-    if (!CreateClient.prototype.isAgeValidInt(age)) {
-        throw new TypeError('Please enter a valid age!')
+    if (!isAgeValidInt(age)) {
+        throw new TypeError('Please enter a valid age!');
     }
 
     const client = {
-        // TODO: Capitalize the first letter!
-        fullName: `${firstName} ${lastName}`,
+        fullName: `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`,
         sex: `${sex}`,
         age: age
     }
@@ -84,13 +129,13 @@ function CreateClient(firstName, lastName, sex, age) {
 }
 
 // CreateClient Validators
-CreateClient.prototype.isNameValid = function(name) {
+function isNameValid(name) {
     return name !== null && 
     typeof name === "string" && 
     name.length > 2;
 }
 
-CreateClient.prototype.isSexValid = function(sex) {
+function isSexValid(sex) {
     if (sex && typeof sex === "string") {
         sex = sex.toLowerCase();
 
@@ -106,8 +151,7 @@ CreateClient.prototype.isSexValid = function(sex) {
     }
 }
 
-CreateClient.prototype.isAgeValidInt = function(value) {
-
+function isAgeValidInt(value) {
     function isInt(value) {
         if (isNaN(value)) {
             return false;
@@ -122,4 +166,65 @@ CreateClient.prototype.isAgeValidInt = function(value) {
     } else {
         return false;
     }
+}
+
+// User Interface Functions
+function getAllEvents() {
+    if (eventStorage.length > 0) {
+        for (let i = 0; i < eventStorage.length; i++) {
+            let age = '(+18)';
+    
+            if (eventStorage[i].areAdultsAllowed !== true) {
+                age = '(minors allowed)';
+            }
+    
+            console.log(`Party: ${eventStorage[i].eventName}, ${age}`);
+        }
+    } else {
+        console.log('There are no ongoing events right now :((')
+    }
+}
+
+function getAllEventsByID() {
+    if (eventStorage.length > 0) {
+        for (let i = 0; i < eventStorage.length; i++) {
+            console.log(`${eventStorage[i].eventName}: ${eventStorage[i].id}`);
+        }
+    } else {
+        console.log('There are no ongoing events right now :((')
+    }
+}
+
+function deleteEventById(eventId) {
+    const eventIndex = eventStorage.indexOf(eventId);
+    const result = eventStorage.splice(eventIndex, 1);
+
+    if (result) {
+        console.log(`Event was completely removed!`);
+    } else {
+        console.warn('Something went wrong!');
+    }
+}
+
+function updateEventById(eventId, updatedName, updateAdultFlag) {
+    let storageEventIndex = eventStorage.findIndex(storageEventIndex => storageEventIndex.id === eventId);
+
+    if (!isValidString(updatedName)) {
+        throw new TypeError('Please enter a valid event name!');
+    } else {
+        eventStorage[storageEventIndex].eventName = updatedName;
+    }
+
+    if (!isValidBool(updateAdultFlag)) {
+        throw new TypeError('Please enter a valid boolean value');
+    } else {
+        eventStorage[storageEventIndex].areAdultsAllowed = updateAdultFlag;
+    }
+
+    getAllEvents();
+}
+
+// Helpers
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
