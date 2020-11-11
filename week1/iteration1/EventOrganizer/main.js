@@ -1,25 +1,15 @@
-// Всеки event има уникално ID, който получава при създаването си
-// Всички събития се съхраняват в eventStorage[]
-// Листва всички събития
-// Изтрива събитие по уникален идентификатор и извежда съобщение за успешна операция
-    // (за handle на exception-ите не съм убеден че това е правилния начин)
-// Добавяне на клиент към вече съществуващо събитие
-// Актуализиране на евент по ID
-// Листване на клиенти за дадено събитие
-// Премахване на присъстващ клиент от събитие
-
-
-let eventStorage = [];
+// Main storage :D 
+let eventStorageCollection = [];
 
 // #### Boilerplate testing objects
-const deluxParty = CreateParty('Asenovgrad Delux 2020');
+const deluxParty  = CreateParty('Asenovgrad Delux 2020');
 const escapeParty = CreateParty('Plovdiv Escape 2021', false);
 
-const ivan = CreateClient('Ivan', 'Dimitrov', 'male', 26);
-const vanesa = CreateClient('Vanesa', 'Ivanova', 'male', 26);
-const mihaela = CreateClient('Mihaela', 'Atanasova', 'female', 22);
-const qnica = CreateClient('Qnica', 'Zelenkova', 'female', 19);
-const doktora = CreateClient('Profesor', 'Mutavchiivski', 'female', 17);
+const ivan        = CreateClient('Ivan', 'Dimitrov', 'male', 26);
+const vanesa      = CreateClient('Vanesa', 'Ivanova', 'male', 26);
+const mihaela     = CreateClient('Mihaela', 'Atanasova', 'female', 22);
+const qnica       = CreateClient('Qnica', 'Zelenkova', 'female', 19);
+const doktora     = CreateClient('Profesor', 'Mutavchiivski', 'female', 17);
 // #### Boilerplate testing objects
 
 // ######## ---PARTY--- ########
@@ -33,54 +23,75 @@ function CreateParty(eventName, areAdultsAllowed = true) {
         throw new TypeError('Please enter a valid boolean value');
     }
 
+    // Avoid usage of magic numbers!
+    const ADULT_AGE = 18;
+
     const event = {
-        eventName: eventName,
-        areAdultsAllowed: areAdultsAllowed,
+
+        eventName,
+        areAdultsAllowed,
         id: generateID(),
+        clients: [],
+
         getInfo: function() {
             console.log(`Name: ${this.eventName}, age restriction: ${!this.areAdultsAllowed}, ID: ${this.id}`);
         },
-        clients: [],
-        // !BUG: Два пъти може да адне един и същи клиент
+
         addClient: function(obj) {
-            if (areAdultsAllowed && obj.age < 18) {
+
+            if (areAdultsAllowed && obj.age < ADULT_AGE) {
                 throw new Error('Sorry, you are too young for this party! Come back next year :)');
+
+            } else if (this.clients.find(client => client.id === obj.id)) {
+                throw new Error('You cannot add same client to the event!');
+
             } else {
                 this.clients.push(obj);
                 console.log(`Client successfully added to this event.`);
             }
         },
         getClients: function() {
+
             if (this.clients.length > 0) {
-                console.log(this.clients.map(client => `${client.fullName}, age: ${client.age}`));
+                console.log(this.clients
+                    .map(client => `${client.fullName}, age: ${client.age}, ID: ${client.id}`));
             } else {
-                console.log('There are no clients for this event yet')
+                console.log('There are no clients for this event yet');
             }
         },
         filterClientsByGender: function(sex) {
+
             if (this.clients.length > 0) {
-                console.log(this.clients.filter(client => (client.sex === sex)));
+                console.log(this.clients
+                    .filter(client => (client.sex === sex)));
             } else {
-                console.log('There are no clients for this event yet')
+                console.log('There are no clients for this event yet');
             }
         },
-        deleteClient: function(name) {
+        deleteClient: function(id) {
+
             if (this.clients.length > 0) {
-                this.clients = this.clients.filter((client) => client.name !== client);
+
+                this.clients = this.clients.filter((item) => {
+                    return item.id != id;
+                });
+
+                console.log(`Client deleted successfully.`);
             } else {
-                console.log('There are no clients for this event yet')
+                console.log('There are no clients for this event yet');
             }
         }
     }
 
-    eventStorage.push(event);
+    eventStorageCollection.push(event);
 
     return event;
 }
 
 // CreateParty Validators
 function isValidString(str) {
-    return str !== null && 
+
+    return str !== null     && 
     typeof str === "string" && 
     str.length > 0;
 }
@@ -91,6 +102,7 @@ function isValidBool(bool) {
 
 // ID Generator
 function generateID() {
+
     const hex = function(value) {
         return Math.floor(value).toString(16)
     }
@@ -122,7 +134,14 @@ function CreateClient(firstName, lastName, sex, age) {
     const client = {
         fullName: `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`,
         sex: `${sex}`,
-        age: age
+        age: age,
+        id: generateClientID(),
+        getClientInfo: function() {
+            console.log(`Client: ${this.fullName}, Age: ${this.age}, Gender: ${this.sex}`);
+        },
+        getClientID: function() {
+            console.log(`Client: ${this.fullName}, ID: ${this.id}`);
+        }
     }
 
     return client;
@@ -130,12 +149,14 @@ function CreateClient(firstName, lastName, sex, age) {
 
 // CreateClient Validators
 function isNameValid(name) {
-    return name !== null && 
-    typeof name === "string" && 
+
+    return name !== null     && 
+    typeof name === "string" &&
     name.length > 2;
 }
 
 function isSexValid(sex) {
+
     if (sex && typeof sex === "string") {
         sex = sex.toLowerCase();
 
@@ -152,15 +173,19 @@ function isSexValid(sex) {
 }
 
 function isAgeValidInt(value) {
+
     function isInt(value) {
+
         if (isNaN(value)) {
             return false;
         }
+
         let num = parseFloat(value);
             return (num | 0) === num;
     }
 
     const MIN_AGE_TO_PARTY = 16;
+
     if (isInt(value) && value >= MIN_AGE_TO_PARTY) {
         return true;
     } else {
@@ -168,17 +193,45 @@ function isAgeValidInt(value) {
     }
 }
 
+// ClientID Generator
+function generateClientID() {
+
+    const length = 8;
+    const timestamp = +new Date();
+    
+    const getRandomInt = function( min, max ) {
+       return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+    }
+    
+    function generate() {
+
+    let ts = timestamp.toString();
+    let parts = ts.split( "" ).reverse();
+    let id = "";
+    
+    for(let i = 0; i < length; ++i ) {
+        let index = getRandomInt( 0, parts.length - 1 );
+        id += parts[index];	 
+    }
+
+    return id;
+    }
+
+    return generate();
+}
+
 // User Interface Functions
 function getAllEvents() {
-    if (eventStorage.length > 0) {
-        for (let i = 0; i < eventStorage.length; i++) {
+
+    if (eventStorageCollection.length > 0) {
+        for (let i = 0; i < eventStorageCollection.length; i++) {
             let age = '(+18)';
     
-            if (eventStorage[i].areAdultsAllowed !== true) {
+            if (eventStorageCollection[i].areAdultsAllowed !== true) {
                 age = '(minors allowed)';
             }
     
-            console.log(`Party: ${eventStorage[i].eventName}, ${age}`);
+            console.log(`Party: ${eventStorageCollection[i].eventName}, ${age}`);
         }
     } else {
         console.log('There are no ongoing events right now :((')
@@ -186,9 +239,11 @@ function getAllEvents() {
 }
 
 function getAllEventsByID() {
-    if (eventStorage.length > 0) {
-        for (let i = 0; i < eventStorage.length; i++) {
-            console.log(`${eventStorage[i].eventName}: ${eventStorage[i].id}`);
+
+    if (eventStorageCollection.length > 0) {
+
+        for (let i = 0; i < eventStorageCollection.length; i++) {
+            console.log(`${eventStorageCollection[i].eventName}: ${eventStorageCollection[i].id}`);
         }
     } else {
         console.log('There are no ongoing events right now :((')
@@ -196,8 +251,10 @@ function getAllEventsByID() {
 }
 
 function deleteEventById(eventId) {
-    const eventIndex = eventStorage.indexOf(eventId);
-    const result = eventStorage.splice(eventIndex, 1);
+
+    const eventIndex = eventStorageCollection.indexOf(eventId);
+
+    const result = eventStorageCollection.splice(eventIndex, 1);
 
     if (result) {
         console.log(`Event was completely removed!`);
@@ -207,18 +264,20 @@ function deleteEventById(eventId) {
 }
 
 function updateEventById(eventId, updatedName, updateAdultFlag) {
-    let storageEventIndex = eventStorage.findIndex(storageEventIndex => storageEventIndex.id === eventId);
+
+    let storageEventIndex = eventStorageCollection
+        .findIndex(storageEventIndex => storageEventIndex.id === eventId);
 
     if (!isValidString(updatedName)) {
         throw new TypeError('Please enter a valid event name!');
     } else {
-        eventStorage[storageEventIndex].eventName = updatedName;
+        eventStorageCollection[storageEventIndex].eventName = updatedName;
     }
 
     if (!isValidBool(updateAdultFlag)) {
         throw new TypeError('Please enter a valid boolean value');
     } else {
-        eventStorage[storageEventIndex].areAdultsAllowed = updateAdultFlag;
+        eventStorageCollection[storageEventIndex].areAdultsAllowed = updateAdultFlag;
     }
 
     getAllEvents();
@@ -228,3 +287,14 @@ function updateEventById(eventId, updatedName, updateAdultFlag) {
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Разяснения:
+// Всеки event има уникално ID, който получава при създаването си
+// Всички събития се съхраняват в eventStorageCollection[]
+// Листва всички събития
+// Изтрива събитие по уникален идентификатор и извежда съобщение за успешна операция
+    // (за handle на exception-ите не съм убеден че това е правилния начин)
+// Добавяне на клиент към вече съществуващо събитие
+// Актуализиране на евент по ID
+// Листване на клиенти за дадено събитие
+// Премахване на присъстващ клиент от събитие по ID
