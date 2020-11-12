@@ -134,6 +134,7 @@ function Party(partyName, isSuitableForMinors = false) {
 }
 
 Party.prototype.toggleReservations = function() {
+    
     if (!this.isOpenForReservations) {
         this.isOpenForReservations = true;
 
@@ -210,7 +211,10 @@ const verifyClientCreation = function(firstName, lastName, gender, age) {
     if( !(isNameValid(firstName) &&
         isNameValid(lastName)    &&
         isGenderValid(gender)    &&
-        isAgeValid(age))) throw new TypeError('Please enter correct values!');
+        isAgeValid(age))) {
+
+            throw new TypeError('Please enter correct values!');
+        }
 
     return true;
 }
@@ -255,10 +259,10 @@ function Client(firstName, lastName, gender, age) {
 
     let client = Object.create(Client.prototype);
 
-    client.ID = generateClientID();
+    client.ID       = generateClientID();
     client.fullName = `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`;
-    client.gender = gender;
-    client.age = age;
+    client.gender   = gender;
+    client.age      = age;
     
     return client;
 
