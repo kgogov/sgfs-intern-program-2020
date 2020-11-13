@@ -1,9 +1,17 @@
 // #Configuration
 let PARTIES_COLLECTION = [];
 
-function Party(partyName, isSuitableForMinors = false) {
+// noob solution
+let isPartyCreationAllowed = true;
+let isClientCreationAllowed = true;
 
-    verifyPartyCreation(partyName, isSuitableForMinors);
+function Party(partyName, date, isSuitableForMinors = true, entranceFee = '') {
+
+    if (!isPartyCreationAllowed) {
+        console.warn('Object instantiation disabled!'); return;
+    }
+
+    verifyPartyCreation(partyName, date, isSuitableForMinors);
 
     let party = Object.create(Party.prototype);
 
@@ -12,14 +20,28 @@ function Party(partyName, isSuitableForMinors = false) {
     party.isSuitableForMinors   = isSuitableForMinors;
     party.isOpenForReservations = true;
     party.clientsCollection     = [];
+    party.date                  = new Date(date);
+    party.entranceFee           = entranceFee;
+    party.isFree                = entranceFee ? false : true;
 
-    // party.isCreationAllowed = true; --- да попитам как да направя тази задача (варианта е да си създам глобални променливи както бях направил преди, но мисля, че това е прекалено лесен начин)
     PARTIES_COLLECTION.push(party);
 
     return party;
 }
 
-// Идея за датата: подава се стринг: ден/месец/година като стринга се обработва и се създава нова дата със setDate() методите
+const togglePartyCreation = () => {
+
+    if (isPartyCreationAllowed) {
+        isPartyCreationAllowed = false;
+
+        console.warn('Object instantiation disabled!');
+    } else {
+        isPartyCreationAllowed = true;
+
+        console.log('%cObject instantiation enabled!', 
+            'background-color: green');
+    }
+}
 
 Party.prototype.toggleReservations = function() {
     
@@ -36,8 +58,20 @@ Party.prototype.toggleReservations = function() {
     }
 }
 
+Party.prototype.getID = function() {
+    console.log(this.ID);
+}
+
 Party.prototype.getFullEventInfo = function() {
-    console.table(this);
+
+    console.log(
+    `Event name: ${this.partyName}, `                                    +
+    `Date: ${this.date.getMonth() + 1}/`                                 + 
+     `${this.date.getDate()}/`                                           + 
+     `${this.date.getFullYear()}, `                                      + 
+    `Is suitable for minors: ${this.isSuitableForMinors ? `Yes` : `No`}` +
+    `, Clients: ${this.clientsCollection.length}`
+    );
 }
 
 Party.prototype.listClients = function(gender = '') {
@@ -45,18 +79,17 @@ Party.prototype.listClients = function(gender = '') {
     if (!isGenderValid(gender)) {
 
         this.clientsCollection.forEach(client => {
-            console.log(`Client: ${client.fullName}, ` +
-                        `Age ${client.age}, `         +
-                        `Gender: ${client.gender}`);
-        })
-
+            console.log(`Client: ${client.fullName}, `   +
+                        `Age ${client.age}, `            +
+                        `Gender: ${client.gender}, `     +
+                        `ID: ${client.ID}`);
+        });
     } else {
         let filteredArr = this.clientsCollection
             .filter(client => client.gender === gender);
 
         return filteredArr
             .forEach(client => console.log(`${client.fullName}`));
-        
     }
 }
 
@@ -76,6 +109,7 @@ Party.prototype.addClient = function(client) {
 
     const ADULT_AGE = 18;
 
+    // Really interesting function i have made :D
     const checkIfClientIsEligible = (client) => {
 
         if (client.age < ADULT_AGE && this.isSuitableForMinors === false) {
@@ -87,7 +121,6 @@ Party.prototype.addClient = function(client) {
                 'background-color: green;')
         }
     }
-
     checkIfClientIsEligible(client);
 }
 
@@ -104,9 +137,13 @@ Party.prototype.removeClient = function(ID) {
     }
 }
 
-function Client(firstName, lastName, gender, age) {
+function Client(firstName, lastName, gender, age, wallet) {
 
-    verifyClientCreation(firstName, lastName, gender, age);
+    if (!isClientCreationAllowed) {
+        console.warn('Object instantiation disabled!');
+        return;
+    }
+    verifyClientCreation(firstName, lastName, gender, age, wallet);
 
     let client = Object.create(Client.prototype);
 
@@ -114,8 +151,23 @@ function Client(firstName, lastName, gender, age) {
     client.fullName = `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`;
     client.gender   = gender;
     client.age      = age;
+    client.wallet   = wallet;
     
     return client;
+}
+
+const toggleClientCreation = () => {
+    
+    if (isClientCreationAllowed) {
+        isClientCreationAllowed = false;
+
+        console.warn('Object instantiation disabled!');
+    } else {
+        isClientCreationAllowed = true;
+
+        console.log('%cObject instantiation enabled!', 
+            'background-color: green');
+    }
 }
 
 Client.prototype.getFullClientInfo = function() {
@@ -123,28 +175,33 @@ Client.prototype.getFullClientInfo = function() {
 }
 
 // #Helpers
-const verifyPartyCreation = function(name, boolean) {
+const verifyPartyCreation = function(name, date, boolean) {
 
-    if (!(isNameValid(name) && isBoolValid(boolean))) {
-        throw new TypeError('Please enter correct fields!');
+    if ( !(isNameValid(name) &&
+           isDateValid(date) &&
+           isBoolValid(boolean))) {
+        throw new TypeError('Please enter correct arguments!');
     }
+
     return true;
 }
 
-const verifyClientCreation = function(firstName, lastName, gender, age) {
+const verifyClientCreation = (firstName, lastName, gender, age, wallet) => {
 
     if( !(isNameValid(firstName) &&
         isNameValid(lastName)    &&
         isGenderValid(gender)    &&
-        isAgeValid(age))) {
+        isAgeValid(age)          &&
+        isWalletValid(wallet))) {
             throw new TypeError('Please enter correct values!');
         }
+
     return true;
 }
 
 // #ID Generators
-const generateEventID = function() {
-    const hex = function(value) {
+const generateEventID = () => {
+    const hex = (value) => {
         return Math.floor(value).toString(16)
     }
 
@@ -153,14 +210,15 @@ const generateEventID = function() {
 }
 
 const generateClientID = function() {
+
     const length = 8;
     const timestamp = +new Date();
     
-    const getRandomInt = function( min, max ) {
+    const getRandomInt = ( min, max ) => {
        return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
     }
     
-    const generateID = function() {
+    const generateID = () => {
         let ts = timestamp.toString();
         let parts = ts.split( "" ).reverse();
         let id = "";
@@ -176,56 +234,118 @@ const generateClientID = function() {
 }
 
 // #Utilities
-const capitalizeFirstLetter = function(string) {
+const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const listAllParties = () => {
-    if (PARTIES_COLLECTION.length > 0) {
+const getPartyInfoReadableFormat = (party) => {
+    for (const prop in party) {
 
-        PARTIES_COLLECTION.forEach((party) => {
-            console.log(
-                `Event name: ${party.partyName};` +
-                ` Is suitable for minors: %c${party.isSuitableForMinors}`,
-                'background-color: #fff; font-size: 1rem; color: #000;'
-            );
-        });
-    } else {
-        console.warn('There are no events!');
+        if (party.hasOwnProperty(prop)) {
+            console.log(`party.${prop} = ${party[prop]}`);
+        }
     }
 }
+
+// It could be refactored
+const listAllPartiesWIthPrefix = () => {
+    if (!(PARTIES_COLLECTION.length > 0)) {
+        console.warn('There are no events!'); return;
+    }
+
+    let arrForUnderAged = PARTIES_COLLECTION
+        .filter(party => {
+            if (party.isSuitableForMinors) {
+                return true;
+            } else {
+                return false;
+            }
+        }).forEach(party => {
+            console.log(`Party suitable for minors: #${party.partyName}`);
+        });
+
+    let arrForAdults = PARTIES_COLLECTION
+        .filter(party => {
+            if (!party.isSuitableForMinors) {
+                return true;
+            } else {
+                return false;
+            }
+        }).forEach(party => {
+            console.log(`Party suitable for adults: *${party.partyName}`);
+        });
+}
+
+const listAllParties = () => {
+    if (!(PARTIES_COLLECTION.length > 0)) {
+        console.warn('There are no events!'); return;
+    }
+
+    PARTIES_COLLECTION.forEach((party) => {
+        console.log(
+            `Event name: ${party.isFree ? '!': '$' }${party.partyName}; `           +
+            `Date: ${party.date.getMonth() + 1}/`                                   + 
+            `${party.date.getDate()}/`                                              + 
+            `${party.date.getFullYear()}, `                                         +
+            `Is suitable for minors: %c${party.isSuitableForMinors ? 'Yes' : 'No'}`,
+            'background-color: #fff; font-size: 1rem; color: #000;'
+        );
+    });
+} 
 
 const listAllUnderAgedEvents = () => {
-    if (PARTIES_COLLECTION.length > 0) {
+    if (!(PARTIES_COLLECTION.length > 0)) {
+        console.warn('There are no events!'); return;
+    }
 
-        let filtered = PARTIES_COLLECTION
-            .filter(party => party.isSuitableForMinors);
+    let filtered = PARTIES_COLLECTION
+        .filter(party => party.isSuitableForMinors);
 
-        filtered.forEach(party => {
-            console.log(`Suitable parties: ${party.partyName}`);
-        });
+    filtered.forEach(party => {
+        console.log(`Suitable parties: ${party.partyName}`);
+    });
+}
 
-    } else {
-        console.warn('There are no events!');
+const listEventsWithClients = () => {
+    return PARTIES_COLLECTION
+        .map(party => 
+            `Event name: ${party.partyName}, Clients: ${party.clientsCollection.length}`)
+            .forEach(str => console.log(str));
+}
+
+const getClientInfoReadableFormat = (client) => {
+    for (const prop in client) {
+
+        if (client.hasOwnProperty(prop)) {
+            console.log(`client.${prop} = ${client[prop]}`);
+        }
     }
 }
 
-// Не съм я довършил!
-const listEventWithTheMostClients = () => {
-    let test = PARTIES_COLLECTION
-        .map(party => party.clientsCollection);
+const getMaxClients = () => {
 
-    let result = 0;
-    let maxCollectionLength = -1;
+    let partyCollection = PARTIES_COLLECTION
+        .filter(party => party.clientsCollection.length > 0);
 
-    for (let i = 0; i < test.length; i++) {
-        console.log(test[i].length);
+    if (partyCollection.length === 0) {
+        console.warn('There are no clients at any party right now!');
+        return;
     }
 
-    // console.log(test);
+    let clients = partyCollection.map(obj => obj.clientsCollection.length);
+
+    clients = Array.from(partyCollection, obj => obj.clientsCollection.length);
+
+    let partyWithMostClients = Math.max(...clients);
+
+    let filteredCollection = partyCollection
+        .filter(obj => obj.clientsCollection.length === partyWithMostClients)
+        .map(obj => obj.partyName);
+
+    console.log(`Event: ${filteredCollection.toString()}, Clients: ${partyWithMostClients}`);
 }
 
-const checkIfIDExists = function(collection, id) {
+const checkIfIDExists = (collection, id) => {
     return collection.find((item) => item.ID == id);
 }
 
@@ -241,10 +361,10 @@ const deletePartyByID = (ID) => {
     }
 }
 
-const updatePartyByID = (ID, updateName, isSuitableForMinors = false) => {
+const updatePartyByID = (ID, updateName, date, isSuitableForMinors = true) => {
     if (checkIfIDExists(PARTIES_COLLECTION, ID)) {
 
-        verifyPartyCreation(updateName, isSuitableForMinors);
+        verifyPartyCreation(updateName, date, isSuitableForMinors);
 
         let partyIndex = PARTIES_COLLECTION
             .findIndex(party => party.ID == ID);
@@ -253,6 +373,7 @@ const updatePartyByID = (ID, updateName, isSuitableForMinors = false) => {
 
         PARTIES_COLLECTION[partyIndex].partyName = updateName;
         PARTIES_COLLECTION[partyIndex].isSuitableForMinors = isSuitableForMinors;
+        PARTIES_COLLECTION[partyIndex].date = new Date(date);
 
         console.log('After update: ', PARTIES_COLLECTION[partyIndex]);
 
@@ -263,17 +384,23 @@ const updatePartyByID = (ID, updateName, isSuitableForMinors = false) => {
 
 
 // #Validator helper functions
-const isNameValid = function(str) {
+const isWalletValid = (money) => {
+    const MIN_CASH = 10; // bgn
+
+    return isInt(money) && money >= MIN_CASH;
+}
+
+const isNameValid = (str) => {
     return str !== null     && 
     typeof str === "string" && 
     str.length > 0;
 }
 
-const isBoolValid = function(bool) {
+const isBoolValid = (bool) => {
     return typeof bool === 'boolean';
 }
 
-const isGenderValid = function(sex) {
+const isGenderValid = (sex) => {
     if (sex && typeof sex === "string") {
         sex = sex.toLowerCase();
 
@@ -286,7 +413,7 @@ const isGenderValid = function(sex) {
     return false;
 }
 
-const isInt = function(value) {
+const isInt = (value) => {
     if (isNaN(value)) {
         return false;
     }
@@ -295,32 +422,38 @@ const isInt = function(value) {
         return (num | 0) === num;
 }
 
-const isAgeValid = function(value) {
+const isAgeValid = (value) => {
 
     const MIN_AGE_TO_PARTY = 12;
 
     return (isInt(value) && value >= MIN_AGE_TO_PARTY) ? true : false;
 }
 
+const isDateValid = function(date) {
+    // mm/dd/yyyy
+    const pattern = /^(((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))[-/]?[0-9]{4}|02[-/]?29[-/]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))$/;
+
+    if (!pattern.test(date)) {
+        throw new TypeError('Please insert date in format: DD-MM-YYYY');
+    }
+    return true;
+}
 
 // #Testing entities
-const escapeParty = Party('Hells Angels New Year Party');
-escapeParty.getFullEventInfo();
-
-const konstantin = Client('konstantin', 'gogov', 'male', 18);
-konstantin.getFullClientInfo();
+const escapeParty = Party('Hells Angels New Year Party', '12/31/2020');
+const testParty = Party('Wrong name', '12/08/2020', false, '10BGN');
 
 listAllParties();
 
-const kremena = Client('Kremena', 'Ivanova', 'female', 19);
-const underAged = Client('Vasil', 'Peshev', 'male', 17);
+const konstantin = Client('konstantin', 'gogov', 'male', 18, 11);
+const underAged4 = Client('Vasil', 'Peshev', 'male', 18, 200);
+const kremena = Client('Kremena', 'Ivanova', 'female', 19, 200);
+const kremena2 = Client('Kremena', 'Ivanova', 'female', 19, 200);
+const kremena3 = Client('Kremena', 'Ivanova', 'female', 19, 200);
 
-escapeParty.addClient(konstantin);
-escapeParty.addClient(kremena);
-escapeParty.addClient(underAged);
+// escapeParty.addClient(konstantin);
+// escapeParty.addClient(kremena);
 
-escapeParty.listClients();
-
-const testParty = Party('Wrong name', true);
-// testParty.getFullEventInfo();
-// testParty.updatePartyByID(); --> Please look at the console for the current ID!
+// testParty.addClient(underAged4);
+// testParty.addClient(kremena2);
+// testParty.addClient(kremena3);
