@@ -168,8 +168,17 @@ document.getElementById('party-list').addEventListener('click', function(e) {
     if (e.target.className === 'delete') {
 
         // DOM MAGIC (DO NOT ASK :D) THIS IS JUST A PROTOTYPE!
-        const ID = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
-        // Remove from LS
+        const ID = e.target
+            .parentElement
+            .previousElementSibling
+            .previousElementSibling
+            .previousElementSibling
+            .previousElementSibling
+            .previousElementSibling
+            .previousElementSibling
+                .textContent;
+
+        // Remove from LocalStorage
         Store.removeParty(ID);
 
         ui.deleteParty(e.target);
