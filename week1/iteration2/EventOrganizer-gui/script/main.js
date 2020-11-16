@@ -82,53 +82,60 @@ UI.prototype.clearFields = function() {
     document.getElementById('entranceFee').value    = '';
 }
 
-class Store {
-    static getParties() {
-        let parties;
-
-        if(localStorage.getItem('parties') === null) {
-            parties = [];
-        } else {
-            parties = JSON.parse(localStorage.getItem('parties'));
-        }
-
-        return parties;
-    }
-
-    static displayParties() {
-        const parties = Store.getParties();
-
-        parties.forEach(function(party) {
-            const ui = new UI();
-
-            // Add party to UI
-            ui.addPartyToList(party);
-        });
-    }
-
-    static addParty(party) {
-        const parties = Store.getParties();
-
-        parties.push(party);
-
-        localStorage.setItem('parties', JSON.stringify(parties));
-    }
-
-    static removeParty(ID) {
-        const parties = Store.getParties();
-
-        parties.forEach(function(party, index) {
-            if(party.ID === ID) {
-                parties.splice(index, 1);
-            }
-        });
-
-        localStorage.setItem('parties', JSON.stringify(parties));
+UI.prototype.updateParty = function(target) {
+    if (target.className === 'update') {
+        console.log('hello');
     }
 }
 
+function Store() {}
+
+Store.prototype.getParties = function() {
+    let parties;
+
+    if(localStorage.getItem('parties') === null) {
+        parties = [];
+    } else {
+        parties = JSON.parse(localStorage.getItem('parties'));
+    }
+
+    return parties;
+}
+
+Store.prototype.displayParties = function() {
+    const parties = Store.prototype.getParties();
+
+    parties.forEach(function(party) {
+        const ui = new UI();
+
+        // Add party to UI
+        ui.addPartyToList(party);
+    });
+}
+
+Store.prototype.addParty = function(party) {
+    const parties = Store.prototype.getParties();
+
+    parties.push(party);
+
+    localStorage.setItem('parties', JSON.stringify(parties));
+}
+
+Store.prototype.removeParty = function(ID) {
+    const parties = Store.prototype.getParties();
+
+    parties.forEach(function(party, index) {
+        if (party.ID === ID) {
+            parties.splice(index, 1);
+        }
+    });
+
+    localStorage.setItem('parties', JSON.stringify(parties));
+}
+
+
 // DOM Load Event
-document.addEventListener('DOMContentLoaded', Store.displayParties);
+document.addEventListener('DOMContentLoaded', Store.prototype.displayParties);
 
 // Event listener for add party
 document.getElementById('party-form').addEventListener('submit', function(e) {
@@ -151,7 +158,7 @@ document.getElementById('party-form').addEventListener('submit', function(e) {
         // Add to UI
         ui.addPartyToList(party);
         // Add to localStorage
-        Store.addParty(party);
+        Store.prototype.addParty(party);
 
         ui.showAlert('Party added!', 'success');
         ui.clearFields();
@@ -179,7 +186,7 @@ document.getElementById('party-list').addEventListener('click', function(e) {
                 .textContent;
 
         // Remove from LocalStorage
-        Store.removeParty(ID);
+        Store.prototype.removeParty(ID);
 
         ui.deleteParty(e.target);
         ui.showAlert('Party removed!', 'success');
@@ -187,6 +194,42 @@ document.getElementById('party-list').addEventListener('click', function(e) {
 
     e.preventDefault();
 });
+
+// Event listener for update
+// document.getElementById('party-list').addEventListener('click', function(e) {
+
+//     const ui = new UI();
+
+//     if (e.target.className === 'update') {
+
+//         // Do not touch
+//         const ID = e.target
+//             .parentElement
+//             .previousElementSibling
+//             .previousElementSibling
+//             .previousElementSibling
+//             .previousElementSibling
+//             .previousElementSibling
+//                 .textContent;
+
+//         const fee = e.target.parentElement.previousElementSibling;
+//         const underAged = e.target.parentElement.previousElementSibling.previousElementSibling;
+//         const date = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling;
+//         const name = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling;
+
+//         let updatedElement = [fee, underAged, date, name];
+        
+//         updatedElement.forEach(el => {
+//             el.setAttribute('contenteditable', 'true');
+//         })
+
+//         console.log(fee, underAged, date, name);
+
+//         // Store.updateParty(ID);
+//     }
+
+//     e.preventDefault();
+// });
 
 
 // Helpers
