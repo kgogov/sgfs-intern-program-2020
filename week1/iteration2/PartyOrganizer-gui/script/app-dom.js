@@ -8,6 +8,8 @@ let partyDatePicker = document.querySelector('input[name="input--party-date"]');
 let partyIsOpen = document.querySelector('select[name="select--party-isOpenForClients"]');
 let partyFormSubmit = document.getElementById('action--submit-party');
 
+let partyUpdateButton = document.getElementById('action--update-party');
+
 const renderPartyList = () => {
 
     const partyCollection = PartyManager.getPartyCollection();
@@ -84,6 +86,29 @@ const addNewParty = () => {
     renderPartyList();
 }
 
+const updateData = event => {
+    const partyIndex = event.target.getAttribute('data-update');
+
+    const name = partyNameInput.value;
+    const isUnderAged = partyIsUnderAged.value;
+    const isOpen = partyIsOpen.value;
+    const entranceFee = partyEntranceFee.value;
+
+    const parties = PartyManager.getPartyCollection();
+
+    let party = PartyManager.getParty(partyIndex);
+    // console.log(party);
+
+    // тука мога да изпозлвам CreateParty
+    party = { name, isUnderAged, isOpen, entranceFee };
+
+    // Delete and update at the current index
+    parties.splice(partyIndex, 1, party);
+
+    renderPartyList();
+
+}
+
 
 // Create Add party event listener
 partyFormSubmit.addEventListener('click', (event) => {
@@ -123,17 +148,28 @@ document.getElementById('party-list--layout').addEventListener('click', (e) => {
         partyNameInput.value = name;
         partyIsUnderAged.value = isUnderAged;
         partyIsOpen.value = isOpen;
-        // Проблем с датите
+
+        //! Проблем с датите ТРЯБВА ДА ГИ ОПРАВЯ!
         // partyDatePicker.value = date;
         // console.log(date);
         partyEntranceFee.value = entranceFee;
 
         // console.log(party); //* тест
 
+        // Send data to hidden button
+        partyUpdateButton.setAttribute('data-update', partyIndex);
+        partyUpdateButton.style.display = "inline-block";
+
+        // Disable other button
+        // partyFormSubmit;
+        partyFormSubmit.style.display = "none";
+
         //* Трябва да има и валидация!!
 
     }
 });
 
+// Event listener to update
+document.getElementById('action--update-party').addEventListener('click', updateData);
 
 renderPartyList(); // initial rendering of the data
