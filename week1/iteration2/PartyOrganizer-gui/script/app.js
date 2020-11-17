@@ -1,12 +1,12 @@
-// Mock data
 const PartyManager = {
+    // Mock data
     partyCollection : [
         {
             ID: "5fb3e8e9afc1cfd2a349231b",
             clientCollection: [],
             date: "2020-11-19",
-            entranceFee: "0",
-            isFree: true,
+            entranceFee: 0,
+            isFree: "yes",
             isOpen: "yes",
             isUnderAged: "yes",
             name: "Asenovgrad"
@@ -15,8 +15,8 @@ const PartyManager = {
             ID: "5fb3e8e9afc1cfd2a345231a",
             clientCollection: [],
             date: "2020-12-19",
-            entranceFee: "0",
-            isFree: true,
+            entranceFee: 0,
+            isFree: "yes",
             isOpen: "yes",
             isUnderAged: "yes",
             name: "Plovdiv"
@@ -36,28 +36,8 @@ const PartyManager = {
     }
 };
 
-//* Update не работи както трябва защото не минава през CreateParty
-//* Да помисля върху горния коментар 
-const createParty = (partyObject) => {
-    // Тук може да се валидира partyObject
-    // Тук е логиката по това как се създава едно парти
-
-    //! Тук мога да сетвам даден стейт
-
-    return {
-        ID                  : generateEventID(),
-        name                : partyObject.name,
-        isUnderAged         : partyObject.isUnderAged,
-        isOpen              : partyObject.isOpen,
-        date                : partyObject.date,
-        entranceFee         : partyObject.entranceFee,
-        isFree              : partyObject.entranceFee == '0' ? true : false,
-        clientCollection    : []
-    };
-};
-
-
 const ClientManager = {
+    // Mock data
     mainClientCollection : [
         {
             ID: "45525665",
@@ -66,7 +46,7 @@ const ClientManager = {
             gender: "male",
             isVIP: false,
             partyCounter: 0,
-            wallet: "1000"
+            wallet: 1000
         },
         {
             ID: "45525265",
@@ -75,7 +55,7 @@ const ClientManager = {
             gender: "male",
             isVIP: false,
             partyCounter: 0,
-            wallet: "1000"
+            wallet: 1000
         }
     ],
 
@@ -97,8 +77,26 @@ const ClientManager = {
 }
 
 
+const createParty = (partyObject) => {
+
+    //! Тук сетвам даден стейт спрамо стойността на пропъртито
+
+    return {
+        ID                  : generateEventID(),
+        name                : partyObject.name,
+        isUnderAged         : partyObject.isUnderAged,
+        isOpen              : partyObject.isOpen,
+        date                : partyObject.date,
+        entranceFee         : partyObject.entranceFee,
+        isFree              : partyObject.entranceFee === 0 ? 'yes' : 'no',
+        clientCollection    : []
+    };
+};
+
 const createClient = (clientObject) => {
-    // Валидация
+
+    //! Тук сетвам даден стейт спрамо стойността на клиента
+
     return {
         ID              : generateClientID(),
         fullName        : clientObject.fullName,
@@ -111,10 +109,6 @@ const createClient = (clientObject) => {
 }
 
 
-// #Utilities
-const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-};
 
 // ID Generators
 function generateEventID() {
@@ -151,7 +145,12 @@ function generateClientID() {
     return generateClientID();
 }
 
-// More helpers
+// Utility
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+// Utility
 const checkIfIDExists = (collection, id) => {
     return collection.find(item => item.ID == id);
 };

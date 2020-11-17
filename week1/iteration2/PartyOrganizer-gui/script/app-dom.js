@@ -1,27 +1,49 @@
+//* Въпрос: да правя ли function wrapper за всички тези input-и
+//* Идея: custom side slider menu with different options and modal forms for sorting etc.
 // Party DOM Selectors
-let partyTableList      = document.getElementById('party-list--layout');
-let partyForm           = document.getElementById('party-form');
-let partyNameInput      = document.querySelector('input[name="input--party-name"]');
-let partyEntranceFee    = document.querySelector('input[name="input--entranceFee"]');
-let partyIsUnderAged    = document.querySelector('select[name="select--party-isForUnderAged"]');
-let partyDatePicker     = document.querySelector('input[name="input--party-date"]');
-let partyIsOpen         = document.querySelector('select[name="select--party-isOpenForClients"]');
-let partyFormSubmit     = document.getElementById('action--submit-party');
-let partyUpdateButton   = document.getElementById('action--update-party');
+let partyTableList           = document.getElementById('party-list--layout');
+let partyForm                = document.getElementById('party-form');
+let partyInputName           = document.querySelector('input[name="input--party-name"]');
+let partyInputEntranceFee    = document.querySelector('input[name="input--entranceFee"]');
+let partyInputIsUnderAged    = document.querySelector('select[name="select--party-isForUnderAged"]');
+let partyInputDate           = document.querySelector('input[name="input--party-date"]');
+let partyInputIsOpen         = document.querySelector('select[name="select--party-isOpenForClients"]');
+let partyFormSubmit          = document.getElementById('action--submit-party');
+let partyUpdateButton        = document.getElementById('action--update-party');
+
+// Client DOM Selectors
+let clientTableList          = document.getElementById('client-list--layout');
+let clientForm               = document.getElementById('client-form');
+let clientInputFirstName     = document.querySelector('input[name="input--client-firstName"]');
+let clientInputLastName      = document.querySelector('input[name="input--client-lastName"]');
+let clientGenderSelect       = document.querySelector('select[name="select--client-gender"]')
+let clientInputAge           = document.querySelector('input[name="input--client-age"]');
+let clientInputWallet        = document.querySelector('input[name="input--client-wallet"]');
+let clientFormSubmit         = document.getElementById('action--submit-client');
+let clientUpdateButton       = document.getElementById('action--update-client');
 
 
-// PARTY PART!
+
+//! ### Event ####
 const renderPartyList = () => {
-
+    // Get current parties
     const partyCollection = PartyManager.getPartyCollection();
-
     // Empty the table list of any existing data
     partyTableList.innerHTML = "";
     // Rendering the current DOM
     partyCollection.forEach((party, index) => {
 
-        // Тук мищо прави масив като StringBuilder и след това го join-ва
+        //* Performance upgrade: 
+        //* имплементация на StringBuilder: масив --> .push() --> .join() || toString()
+        // Според типа на бутона можем да извикаме функция за Update или Delete
+        // Друго хубаво упрaжнение: друг файл script-console
+
+        // Различни функции за рендериране
+        // Различни функции за манипулация
+        // Различни функции за връщане на данни
+
         const rowTemplate = document.createElement('tr');
+
         rowTemplate.innerHTML = `
             <td>${party.name}</td>
             <td>${party.isUnderAged}</td>
@@ -48,121 +70,112 @@ const renderPartyList = () => {
             </td>`;
         
         partyTableList.appendChild(rowTemplate);
-
-        // Според типа на бутона можем да извикаме функция за Update или Delete
-        // Друго хубаво упржнение: друг файл script-console
-
-        // Различни функции за рендериране
-        // Различни функции за манипулация
-        // Различни функции за връщане на данни
     });
 };
+
+
+// Utility
+const emptyEventFormFields = () => {
+
+    partyInputName.value            = '';
+    partyInputIsUnderAged.value     = 'yes';
+    partyInputIsOpen.value          = 'yes';
+    partyInputDate.value            = '';
+    partyInputEntranceFee.value     = 0;
+}
+
+const emptyClientFormFields = () => {
+
+}
+
+const validateParty = (name, entrance, date) => {
+    if (!name     ||
+        !date     ||
+        !entrance ||
+        entrance < 0) {
+        return false;
+    }
+    return true;
+}
 
 // ACTION
 const addNewParty = () => {
 
-    const partyName                = partyNameInput.value;
-    const partyisUnderAged         = partyIsUnderAged.value;
-    const partyisOpen              = partyIsOpen.value;
-    const partyDate                = partyDatePicker.value;
-    const partyEntrance            = partyEntranceFee.value;
+    const partyName             = partyInputName.value;
+    const partyIsUnderAged      = partyInputIsUnderAged.value;
+    const partyIsOpen           = partyInputIsOpen.value;
+    const partyDate             = partyInputDate.value;
+    const partyEntrance         = partyInputEntranceFee.value;
 
-    //* Задължително валидация!
-
-    //! Тук мога да правя валидация!
-
-    if (!partyName || !partyEntrance || !partyDate || partyEntrance < 0) {
-        // Show alert
-        showAlert('Please fill in all fields', 'error', partyForm);
-        return;
+    if(!validateParty(partyName, partyEntrance, partyDate)) {
+        showAlert('Please fill in all fields', 'error', partyForm); return;
     }
 
-    PartyManager.storeParty(createParty({
-        name            : partyName,
-        isUnderAged     : partyisUnderAged,
-        isOpen          : partyisOpen,
-        date            : partyDate,
-        entranceFee     : partyEntrance
-    }));
+    PartyManager.storeParty(createParty(
+        {
+            name            : partyName,
+            isUnderAged     : partyIsUnderAged,
+            isOpen          : partyIsOpen,
+            date            : partyDate,
+            entranceFee     : partyEntrance
+        }
+    ));
 
-    // Show green alert
     showAlert('Party added successfully', 'success', partyForm);
-
-    //* Нулиране на инпутите след създаване на ново събитие
-    partyNameInput.value = '';
-    partyIsUnderAged.value = 'yes';
-    partyIsOpen.value = 'yes';
-    partyDatePicker.value = '';
-    partyEntranceFee.value = 0;
-
+    emptyEventFormFields();
     renderPartyList();
 }
 
 // ACTION
 const updateParty = event => {
+    // Receive date from hidden input
     const partyIndex = event.target.getAttribute('data-update');
-
-    //* Трябва да има и валидация!!
-
-    if (!partyNameInput.value || 
-        !partyEntranceFee.value || 
-        partyEntranceFee.value < 0 || 
-        !partyDatePicker.value) {
-            showAlert('Please enter correct fields!', 'error');
-
-            // Тук отново трябва да се върнат полетата на default стойностите
-
-            partyUpdateButton.style.display = "none";
-            partyFormSubmit.style.display = "inline-block";
-
-            return;
-        }
-
-    // Get global data
+    // Get all parties
     const parties = PartyManager.getPartyCollection();
+    // Get party index from data button input
     const party = PartyManager.getParty(partyIndex);
 
     // Create new object
-    const name = partyNameInput.value;
-    const isUnderAged = partyIsUnderAged.value;
-    const isOpen = partyIsOpen.value;
-    const entranceFee = partyEntranceFee.value;
-    const date = partyDatePicker.value;
-    
+    const name          = partyInputName.value;
+    const isUnderAged   = partyInputIsUnderAged.value;
+    const isOpen        = partyInputIsOpen.value;
+    const entranceFee   = partyInputEntranceFee.value;
+    const date          = partyInputDate.value;
+
+    if(!validateParty(partyInputName.value, partyInputEntranceFee.value, partyInputDate.value)) {
+        showAlert('Please enter correct fields!', 'error');
+
+        partyUpdateButton.style.display = "none";
+        partyFormSubmit.style.display = "inline-block";
+        return;
+    }
     // Update new object
-    party.name = name;
-    party.isUnderAged = isUnderAged;
-    party.isOpen = isOpen;
-    party.date = date;
-    party.entranceFee = entranceFee;
-    party.isFree = entranceFee ? false : true;
+    party.name          = name;
+    party.isUnderAged   = isUnderAged;
+    party.isOpen        = isOpen;
+    party.date          = date;
+    party.entranceFee   = entranceFee;
+    party.isFree        = entranceFee === 0 ? 'yes' : 'no';
 
     // Delete and update at the current index at PartyCollection
     parties.splice(partyIndex, 1, party);
-
-    // Show Success
-    showAlert('Party updated successfully!', 'success', partyForm);
-
-    //* Нулиране на инпутите след създаване на ново събитие
-    partyNameInput.value = '';
-    partyIsUnderAged.value = 'yes';
-    partyIsOpen.value = 'yes';
-    partyDatePicker.value = '';
-    partyEntranceFee.value = 0;
-
+    //* Get default styling - може да се изнесат в отделните функция като toggle
     partyUpdateButton.style.display = "none";
     partyFormSubmit.style.display = "inline-block";
 
+    showAlert('Party updated successfully!', 'success', partyForm);
+    emptyEventFormFields();
     renderPartyList();
-
 }
 
-// Create Add party event listener
+// updateParty() button listener
 partyFormSubmit.addEventListener('click', event => {
     event.preventDefault();
     
     addNewParty();
 });
+
+//! до тук съм с рефакторинга
 
 
 // Event listener for update filling form data
@@ -177,11 +190,11 @@ partyTableList.addEventListener('click', e => {
 
         // Fill party form values with the current object values
         // Може и в отделна функция да се изнесят: clean code
-        partyNameInput.value = name;
-        partyIsUnderAged.value = isUnderAged;
-        partyIsOpen.value = isOpen;
-        partyDatePicker.value = date;
-        partyEntranceFee.value = entranceFee;
+        partyInputName.value = name;
+        partyInputIsUnderAged.value = isUnderAged;
+        partyInputIsOpen.value = isOpen;
+        partyInputDate.value = date;
+        partyInputEntranceFee.value = entranceFee;
 
         showAlert('Please enter the new fields here!', 'warning', partyForm)
 
@@ -235,16 +248,7 @@ function showAlert(message, className, position) {
 }
 
 
-// CLIENT PART!
-let clientTableList      = document.getElementById('client-list--layout');
-let clientForm           = document.getElementById('client-form');
-let clientInputFirstName = document.querySelector('input[name="input--client-firstName"]');
-let clientInputLastName  = document.querySelector('input[name="input--client-lastName"]');
-let clientGenderSelect   = document.querySelector('select[name="select--client-gender"]')
-let clientInputAge       = document.querySelector('input[name="input--client-age"]');
-let clientInputWallet    = document.querySelector('input[name="input--client-wallet"]');
-let clientFormSubmit     = document.getElementById('action--submit-client');
-let clientUpdateButton   = document.getElementById('action--update-client');
+
 
 
 const renderClientList = () => {
@@ -269,7 +273,7 @@ const renderClientList = () => {
                     href="#" 
                     class="action--choose-party"
                     data-position="${index}">
-                    Join event
+                    Event menu
                 </a>
             </td>
             <td>
@@ -491,6 +495,15 @@ clientTableList.addEventListener('click', e => {
                         data-position="${index}">
                         Join
                     </a>
+                </td>
+                <td>
+                    <span class="icon-minus"></span>
+                    <a 
+                        href="#" 
+                        class="action--party-leave"
+                        data-position="${index}">
+                        Leave
+                    </a>
                 </td>`;
 
             partyTableList.appendChild(rowTemplate);
@@ -535,3 +548,45 @@ clientTableList.addEventListener('click', e => {
 // Initial rendering
 renderClientList();
 renderPartyList();
+
+/*
+
+1. Ако възрастта на клиента
+не му позволява да присъства на събитието, известете с помощта на
+необходимото съобщение.
+
+1. Ако партито е затворено не можеш да добавящ клиенти!
+
+2. Премахнете присъстващ потребител от събитието.
+
+3. Създайте функционалност който да спира добавянето на събития или
+добавянето на клиенти на централно ниво. Когато бъде активирана при
+опит да се добави събитие или клиент потребителя получава съобщение
+че операцията не може да бъде извършена, защото системата е
+затворена.
+
+4. Добавете, свойство цена към всяко събитие което организирате. Цената не е
+задължително свойство, всяко събитие което е регистрирано без цена, става
+автоматично безплатно.
+Всички събития които са платени трябва да визуализират заглавията си със
+знака $ пред имената си безплатни събития трябва да визуализират имената си
+със знак “!”
+Всеки регистриран клиент, в системата трябва да разполага с портфейл.
+Портфейла съдържа пари които се намаляват при регистрация за ново събитие.
+Ако потребителя няма пари в портфейла си, системата не го регистрира.
+Фирмата добавя понятие VIP клиент. VIP е всеки който е добавен като клиент
+на поне 5 събития. VIP клиентите не заплащат такса при посещението си на
+следващото събитие. При регистрация за шестото си събитие статуса им се
+нулира и те отново се превръщат в обикновени клиенти.
+Създайте функционалност VIP клиент. VIP е всеки който е добавен като клиент
+на поне 5 събития. VIP клиентите не заплащат такса при посещението си
+събития
+
+5. Да се създаде графичен потребителски интерфейс, който да визуализира
+списък с всички клиенти на дадено парти. Интегрирайте създадената от вас
+логика за работа с клиенти, в рамките на графичния интерфейс. Не забравяйте
+VIP клиенти-те. Необходимо е да запазите описаната функционална интеракция
+между списъка със събития и списъка с клиенти. Това включва добавяне на
+клиент към списъка със събития.
+
+*/

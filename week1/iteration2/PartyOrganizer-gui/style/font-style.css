@@ -34,6 +34,9 @@
 .icon-plus:before {
   content: "\ea0a";
 }
+.icon-minus:before {
+  content: "\ea0b";
+}
 .icon-cancel-circle:before {
   content: "\ea0d";
 }

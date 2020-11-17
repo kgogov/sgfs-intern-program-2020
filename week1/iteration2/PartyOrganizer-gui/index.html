@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Party Organizer</title>
+    <title>Event Organizer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" integrity="sha512-EZLkOqwILORob+p0BXZc+Vm3RgJBOe1Iq/0fiI7r/wJgzOFZMlsqTa29UEl6v6U6gsV4uIpsNZoV32YZqrCRCQ==" crossorigin="anonymous" />
     <link rel="stylesheet" href="./style/font-style.css">
     <link rel="stylesheet" href="./style/main.css">
@@ -18,32 +18,32 @@
         <div class="row">
             <!-- Party -->
             <div class="six columns">
-                <h3>Add party</h3>
+                <h3>Add event</h3>
                 <hr>
                 <form id="party-form">
                     <div class="form-group">
-                        <label for="input--party-name">Party name:</label>
-                        <input type="text" name="input--party-name" id="input--party-name" class="u-full-width">
+                        <label for="input--party-name">Event name:</label>
+                        <input type="text" name="input--party-name" id="input--party-name" class="u-full-width" placeholder="[Ibiza] Carl Cox 2021">
                     </div>
                     <div class="form-group relative">
                         <label for="input--entranceFee">Entrance fee:</label>
-                        <!-- Яка валидация трябва на всеки инпут! -->
                         <input type="number" name="input--entranceFee" id="input--entranceFee" value="0" min="0">
                         <!-- Positioned -->
                         <div class="absolute">
-                            <label for="select--party-isForUnderAged">Are under-aged allowed</label>
+                            <label for="select--party-isForUnderAged">Are under-aged allowed?</label>
                             <select name="select--party-isForUnderAged" id="select--party-isForUnderAged" class="u-full-width">
-                                <option value="yes" selected>Yes</option>
+                                <option selected disabled>Choose event type</option>
+                                <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group relative">
-                        <label for="input--party-date">Party date:</label>
+                        <label for="input--party-date">Event date:</label>
                         <input type="date" name="input--party-date" id="input--party-date">
 
                         <div class="absolute">
-                            <label for="select--party-isOpenForClients">Is Open for Clients?</label>
+                            <label for="select--party-isOpenForClients">Is Open for reservations?</label>
                             <select name="select--party-isOpenForClients" id="select--party-isOpenForClients" class="u-full-width">
                                 <option value="yes" selected>Yes</option>
                                 <option value="no">No</option>
@@ -74,7 +74,7 @@
                             <option disabled selected>Choose gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                            <option value="prefer not to say">Prefer not to say</option>
+                            <option value="preferNotToSay">Prefer not to say</option>
                         </select>
                         <!-- Positioned -->
                         <div class="absolute">
@@ -83,16 +83,16 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="input--client-wallet">Wallet:</label>
+                        <label for="input--client-wallet">Cash in:</label>
                         <input type="number" name="input--client-wallet" id="input--client-wallet" min="10" step="5">
                     </div>
                     <input class="button-primary" id="action--submit-client" type="submit" value="Submit">
                     <input type="button" value="Update" style="display: none;" id="action--update-client">
                 </form>
             </div>
-        </div> <!-- FORM ROW END -->
+        </div>
 
-        <h3>Party visualizer</h3>
+        <h3>Event visualizer</h3>
         <table class="u-full-width">
             <thead>
                 <tr>
@@ -130,7 +130,7 @@
     <!-- MODAL FORM SET PARTY -->
     <div class="modal-layout">
         <div class="modal-content">
-            <h4>Choose party
+            <h4>Event menu
                 <span class="icon-glass2"></span>
             </h4>
             <table class="u-full-width">
@@ -141,6 +141,7 @@
                         <th>Date</th>
                         <th>Entrance Fee</th>
                         <th>Is Open</th>
+                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
