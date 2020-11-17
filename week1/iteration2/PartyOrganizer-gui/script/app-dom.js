@@ -1,15 +1,16 @@
 // Party DOM Selectors
-let partyTableList = document.getElementById('party-list--layout');
-let partyForm = document.getElementById('party-form');
-let partyNameInput = document.querySelector('input[name="input--party-name"]');
-let partyEntranceFee = document.querySelector('input[name="input--entranceFee"]');
-let partyIsUnderAged = document.querySelector('select[name="select--party-isForUnderAged"]');
-let partyDatePicker = document.querySelector('input[name="input--party-date"]');
-let partyIsOpen = document.querySelector('select[name="select--party-isOpenForClients"]');
-let partyFormSubmit = document.getElementById('action--submit-party');
+let partyTableList      = document.getElementById('party-list--layout');
+let partyForm           = document.getElementById('party-form');
+let partyNameInput      = document.querySelector('input[name="input--party-name"]');
+let partyEntranceFee    = document.querySelector('input[name="input--entranceFee"]');
+let partyIsUnderAged    = document.querySelector('select[name="select--party-isForUnderAged"]');
+let partyDatePicker     = document.querySelector('input[name="input--party-date"]');
+let partyIsOpen         = document.querySelector('select[name="select--party-isOpenForClients"]');
+let partyFormSubmit     = document.getElementById('action--submit-party');
+let partyUpdateButton   = document.getElementById('action--update-party');
 
-let partyUpdateButton = document.getElementById('action--update-party');
 
+// PARTY PART!
 const renderPartyList = () => {
 
     const partyCollection = PartyManager.getPartyCollection();
@@ -67,9 +68,12 @@ const addNewParty = () => {
     const partyEntrance            = partyEntranceFee.value;
 
     //* Задължително валидация!
+
+    //! Тук мога да правя валидация!
+
     if (!partyName || !partyEntrance || !partyDate || partyEntrance < 0) {
         // Show alert
-        showAlert('Please fill in all fields', 'error');
+        showAlert('Please fill in all fields', 'error', partyForm);
         return;
     }
 
@@ -82,7 +86,7 @@ const addNewParty = () => {
     }));
 
     // Show green alert
-    showAlert('Party added successfully', 'success');
+    showAlert('Party added successfully', 'success', partyForm);
 
     //* Нулиране на инпутите след създаване на ново събитие
     partyNameInput.value = '';
@@ -106,11 +110,17 @@ const updateData = event => {
         !partyDatePicker.value) {
             showAlert('Please enter correct fields!', 'error');
 
+            // Тук отново трябва да се върнат полетата на default стойностите
+
             partyUpdateButton.style.display = "none";
             partyFormSubmit.style.display = "inline-block";
 
             return;
         }
+
+    // Get global data
+    const parties = PartyManager.getPartyCollection();
+    const party = PartyManager.getParty(partyIndex);
 
     // Create new object
     const name = partyNameInput.value;
@@ -118,19 +128,20 @@ const updateData = event => {
     const isOpen = partyIsOpen.value;
     const entranceFee = partyEntranceFee.value;
     const date = partyDatePicker.value;
+    
+    // Update new object
+    party.name = name;
+    party.isUnderAged = isUnderAged;
+    party.isOpen = isOpen;
+    party.date = date;
+    party.entranceFee = entranceFee;
+    party.isFree = entranceFee ? false : true;
 
-    const parties = PartyManager.getPartyCollection();
-
-    let party = PartyManager.getParty(partyIndex);
-
-    // тука мога да изпозлвам CreateParty
-    party = { name, isUnderAged, isOpen, entranceFee, date };
-
-    // Delete and update at the current index
+    // Delete and update at the current index at PartyCollection
     parties.splice(partyIndex, 1, party);
 
     // Show Success
-    showAlert('Party updated successfully!', 'success');
+    showAlert('Party updated successfully!', 'success', partyForm);
 
     partyUpdateButton.style.display = "none";
     partyFormSubmit.style.display = "inline-block";
@@ -141,10 +152,9 @@ const updateData = event => {
 
 // Create Add party event listener
 partyFormSubmit.addEventListener('click', (event) => {
+    event.preventDefault();
     
     addNewParty();
-    
-    event.preventDefault();
 });
 
 
@@ -166,7 +176,7 @@ document.getElementById('party-list--layout').addEventListener('click', (e) => {
         partyDatePicker.value = date;
         partyEntranceFee.value = entranceFee;
 
-        showAlert('Please enter the new fields here!', 'warning')
+        showAlert('Please enter the new fields here!', 'warning', partyForm)
 
         // Send data to hidden button
         partyUpdateButton.setAttribute('data-update', partyIndex);
@@ -196,25 +206,120 @@ document.getElementById('party-list--layout').addEventListener('click', (e) => {
 document.getElementById('action--update-party').addEventListener('click', updateData);
 
 
-
-
 renderPartyList(); // initial rendering of the data
 
 
-
-
-
 // Alert
-function showAlert(message, className) {
+function showAlert(message, className, position) {
+
     const div = document.createElement('div');
     div.className = `alert ${className}`;
     // Create text node
     div.appendChild(document.createTextNode(message));
     // Insert into DOM
-    partyForm.insertAdjacentElement('beforebegin', div);
+    position.insertAdjacentElement('beforebegin', div);
 
     // Disappear after 3 seconds
     setTimeout(() => {
         document.querySelector('.alert').remove();
     }, 3000);
 }
+
+
+// CLIENT PART!
+let clientTableList      = document.getElementById('client-list--layout');
+let clientForm           = document.getElementById('client-form');
+let clientInputFirstName = document.querySelector('input[name="input--client-firstName"]');
+let clientInputLastName  = document.querySelector('input[name="input--client-lastName"]');
+let clientGenderSelect   = document.querySelector('select[name="select--client-gender"]')
+let clientInputAge       = document.querySelector('input[name="input--client-age"]');
+let clientInputWallet    = document.querySelector('input[name="input--client-wallet"]');
+let clientFormSubmit     = document.getElementById('action--submit-client');
+
+
+const renderClientList = () => {
+
+    const clientCollection = ClientManager.getMainClientCollection();
+
+    clientTableList.innerHTML = "";
+
+    clientCollection.forEach((client, index) => {
+
+        const rowTemplate = document.createElement('tr');
+        rowTemplate.innerHTML = `
+            <td>${client.fullName}</td>
+            <td>${client.gender}</td>
+            <td>${client.age}</td>
+            <td>${client.wallet}</td>
+            <td>${client.partyCounter}</td>
+            <td>${client.isVIP}</td>
+            <td>
+                <span class="icon-loop2"></span>
+                <a 
+                    href="#" 
+                    class="action--client-update"
+                    data-position="${index}">
+                    Update
+                </a>
+            </td>
+            <td>
+                <span class="icon-bin"></span>
+                <a 
+                    href="#" 
+                    class="action--client-delete"
+                    data-position="${index}">
+                    Delete
+                </a>
+            </td>`;
+
+        clientTableList.appendChild(rowTemplate);
+    });
+}
+
+// ACTION
+const addNewClient = () => {
+
+    const clientFirstName       = clientInputFirstName.value;
+    const clientLastName        = clientInputLastName.value;
+    const clientGender          = clientGenderSelect.value;
+    const clientAge             = clientInputAge.value;
+    const clientWallet          = clientInputWallet.value;
+
+    if ( 
+        !clientFirstName             ||
+        !clientLastName              ||
+        !clientGender                ||
+        !clientAge || clientAge < 16 ||
+        !clientWallet || clientWallet < 0) {
+            showAlert('Please fill in all fields', 'error', clientForm);
+            return;
+        }
+
+    let clientFullName = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
+
+    ClientManager.storeClient(createClient({
+        fullName : clientFullName,
+        gender   : clientGender,
+        age      : clientAge,
+        wallet   : clientWallet
+    }));
+
+    showAlert('Client added successfully', 'success', clientForm);
+
+    clientInputFirstName.value = '';
+    clientInputLastName.value  = '';
+    clientGenderSelect.value   = '';
+    clientInputAge.value       = '';
+    clientInputWallet.value    = '';
+
+    renderClientList();
+}
+
+clientFormSubmit.addEventListener('click', (event) => {
+    event.preventDefault();
+    
+    addNewClient();
+    
+});
+
+renderClientList(); // initial rendering

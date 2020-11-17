@@ -19,7 +19,7 @@
             <div class="six columns">
                 <h3>Add party</h3>
                 <hr>
-                <form id="party-form" method="POST">
+                <form id="party-form">
                     <div class="form-group">
                         <label for="input--party-name">Party name:</label>
                         <input type="text" name="input--party-name" id="input--party-name" class="u-full-width">
@@ -57,7 +57,7 @@
             <div class="six columns">
                 <h3>Add client</h3>
                 <hr>
-                <form id="client-form" method="POST">
+                <form id="client-form">
                     <div class="form-group relative">
                         <label for="input--client-firstName">First name:</label>
                         <input type="text" name="input--client-firstName" id="input--client-firstName">
@@ -83,7 +83,7 @@
                     </div>
                     <div class="form-group">
                         <label for="input--client-wallet">Wallet:</label>
-                        <input type="number" name="input--client-wallet" id="input--client-wallet" min="10">
+                        <input type="number" name="input--client-wallet" id="input--client-wallet" min="10" step="5">
                     </div>
                     <input class="button-primary" id="action--submit-client" type="submit" value="Submit">
                 </form>
@@ -106,20 +106,24 @@
             <tbody id="party-list--layout"></tbody>
         </table>
 
-        <!-- <h3>Client visualizer</h3>
+        <h3>Client visualizer</h3>
         <table class="u-full-width">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Under-aged</th>
-                    <th>Entrance Fee</th>
+                    <th>Full name</th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                    <th>Wallet</th>
+                    <th>Attendance</th>
+                    <th>VIP</th>
+                    <!-- <th>Choose Party</th> -->
+                    <!-- Или в отделна форма или pop-up ще видим -->
                     <th></th>
                     <th></th>
                 </tr>
             </thead>
-            <tbody id="party-list"></tbody>
-        </table> -->
+            <tbody id="client-list--layout"></tbody>
+        </table>
     </div> <!-- GRID CONTAINER END-->
 </body>
 </html>

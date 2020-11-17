@@ -1,3 +1,8 @@
+body {
+    background-color: #4f5a7b;
+    color: #f4f4f4;
+}
+
 .relative {
     position: relative;
 }
@@ -33,6 +38,7 @@ a {
     color: #f4f4f4;
     padding: 5px;
     margin: 5px 0 15px 0;
+    border-radius: 4px;
 }
 
 .success {
