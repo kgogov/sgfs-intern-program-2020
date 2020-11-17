@@ -1,23 +1,6 @@
 // Mock data
 const PartyManager = {
-    partyCollection : [
-        {
-            name: 'Asenovgrad',
-            isUnderAged: 'yes',
-            isOpen: 'yes',
-            date: new Date(),
-            entranceFee: 0,
-            isFree: 'yes'
-        },
-        {
-            name: 'Plovdiv',
-            isUnderAged: 'no',
-            isOpen: 'yes',
-            date: new Date(),
-            entranceFee: 15,
-            isFree: 'no'
-        }
-    ],
+    partyCollection : [],
 
     storeParty(partyObject) {
         PartyManager.partyCollection.push(partyObject);
@@ -33,9 +16,10 @@ const PartyManager = {
 };
 
 const createParty = (partyObject) => {
-    // Тука влизат проверките от инпутите
+    // Тук може да се валидира partyObject
 
     return {
+        ID                  : generateEventID(),
         name                : partyObject.name,
         isUnderAged         : partyObject.isUnderAged,
         isOpen              : partyObject.isOpen,
@@ -46,31 +30,12 @@ const createParty = (partyObject) => {
 };
 
 
-// Helper function
-// function getDateFormat(partyDate) {
-//     const date = partyDate;
+// Helpers
+function generateEventID() {
+    const hex = (value) => {
+        return Math.floor(value).toString(16);
+    };
 
-//     const year = date.getFullYear();
-//     const month = date.getMonth() + 1;
-//     const day = date.getDate();
-
-//     if (day < 10) {
-//         day = '0' + day;
-//     }
-//     if (month < 10) {
-//         month = '0' + month;
-//     }
-
-//     return `${day}-${month}-${year}`;
-// }
-
-function fixDate(input) {
-
-    const date = new Date(input);
-
-    const month = ('0' + (date.getMonth() + 1)).slice(-2);
-    const day   = ('0' + date.getDate()).slice(-2);
-    const year  = date.getFullYear();
-
-    return year + '-' + month + '-' + day;
+    return hex(Date.now() / 1000) +
+    ' '.repeat(16).replace(/./g, () => hex(Math.random() * 16));
 }

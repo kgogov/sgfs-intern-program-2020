@@ -25,3 +25,23 @@ a {
     color: currentColor;
     text-decoration: none;
 }
+
+/* Alert */
+.success,
+.error,
+.warning {
+    color: #f4f4f4;
+    padding: 5px;
+    margin: 5px 0 15px 0;
+}
+
+.success {
+    background-color: #008000;
+}
+.error {
+    background-color: #b12323;
+}
+
+.warning {
+    background-color: #dd891a;
+}
