@@ -52,7 +52,7 @@ const ClientManager = {
     },
 
     getClient(clientIndex) {
-        return ClientManager.mainClientCollection(clientIndex);
+        return ClientManager.mainClientCollection[clientIndex];
     }
 }
 

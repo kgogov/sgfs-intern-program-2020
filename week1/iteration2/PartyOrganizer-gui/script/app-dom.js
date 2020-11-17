@@ -99,7 +99,7 @@ const addNewParty = () => {
 }
 
 // ACTION
-const updateData = event => {
+const updateParty = event => {
     const partyIndex = event.target.getAttribute('data-update');
 
     //* Трябва да има и валидация!!
@@ -151,7 +151,7 @@ const updateData = event => {
 }
 
 // Create Add party event listener
-partyFormSubmit.addEventListener('click', (event) => {
+partyFormSubmit.addEventListener('click', event => {
     event.preventDefault();
     
     addNewParty();
@@ -159,7 +159,7 @@ partyFormSubmit.addEventListener('click', (event) => {
 
 
 // Event listener for update filling form data
-document.getElementById('party-list--layout').addEventListener('click', (e) => {
+partyTableList.addEventListener('click', e => {
     if (e.target.className === 'action--party-update') {
 
         const partyIndex = e.target.getAttribute('data-position');
@@ -189,7 +189,7 @@ document.getElementById('party-list--layout').addEventListener('click', (e) => {
 });
 
 // Event listener for delete
-document.getElementById('party-list--layout').addEventListener('click', (e) => {
+document.getElementById('party-list--layout').addEventListener('click', e => {
     if (e.target.className === 'action--party-delete') {
 
         const partyIndex = e.target.getAttribute('data-position');
@@ -203,10 +203,10 @@ document.getElementById('party-list--layout').addEventListener('click', (e) => {
 });
 
 // Event listener to update action
-document.getElementById('action--update-party').addEventListener('click', updateData);
+document.getElementById('action--update-party').addEventListener('click', updateParty);
 
 
-renderPartyList(); // initial rendering of the data
+// renderPartyList(); // initial rendering of the data
 
 
 // Alert
@@ -235,6 +235,7 @@ let clientGenderSelect   = document.querySelector('select[name="select--client-g
 let clientInputAge       = document.querySelector('input[name="input--client-age"]');
 let clientInputWallet    = document.querySelector('input[name="input--client-wallet"]');
 let clientFormSubmit     = document.getElementById('action--submit-client');
+let clientUpdateButton   = document.getElementById('action--update-client');
 
 
 const renderClientList = () => {
@@ -315,11 +316,115 @@ const addNewClient = () => {
     renderClientList();
 }
 
-clientFormSubmit.addEventListener('click', (event) => {
+// ACTION
+const updateClient = event => {
+    const clientIndex = event.target.getAttribute('data-update');
+
+    // Get global data
+    const clients = ClientManager.getMainClientCollection();
+    const client = ClientManager.getClient(clientIndex);
+
+    // Create new object
+    const clientFirstName       = clientInputFirstName.value;
+    const clientLastName        = clientInputLastName.value;
+    const clientGender          = clientGenderSelect.value;
+    const clientAge             = clientInputAge.value;
+    const clientWallet          = clientInputWallet.value;
+
+    //* Трябва да има и валидация!!
+
+    if ( 
+        !clientFirstName             ||
+        !clientLastName              ||
+        !clientGender                ||
+        !clientAge || clientAge < 16 ||
+        !clientWallet || clientWallet < 0) {
+            showAlert('Please fill in all fields', 'error', clientForm);
+
+            clientUpdateButton.style.display = "none";
+            clientFormSubmit.style.display = "inline-block";
+            return;
+        }
+
+    const clientFullName        = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
+    
+    // Update new object
+    client.fullName = clientFullName;
+    client.gender = clientGender;
+    client.age = clientAge;
+    client.wallet = clientWallet;
+
+    // Delete and update at the current index at PartyCollection
+    clients.splice(clientIndex, 1, client);
+
+    // Show Success
+    showAlert('Client updated successfully!', 'success', clientForm);
+
+    clientUpdateButton.style.display = "none";
+    clientFormSubmit.style.display = "inline-block";
+
+    renderClientList();
+}
+
+// Event listener update clients (filling form data)
+clientTableList.addEventListener('click', e => {
+    if (e.target.className === 'action--client-update') {
+
+        const clientIndex = e.target.getAttribute('data-position');
+        const client = ClientManager.getClient(clientIndex);
+
+        // Using some fancy object destructuring
+        const { fullName, gender, age, wallet } = client;
+
+        const clientNames = fullName.split(' ');
+
+        // Fill party form values with the current object values
+        // Може и в отделна функция да се изнесят: clean code
+
+        // Възможност за бъггг с тия имена
+        clientInputFirstName.value = clientNames[0];
+        clientInputLastName.value = clientNames[1];
+
+        clientGenderSelect.value = gender;
+        clientInputAge.value = age;
+        clientInputWallet.value = wallet;
+
+        showAlert('Please enter the new fields here!', 'warning', clientForm)
+
+        // Send data to hidden button
+        clientUpdateButton.setAttribute('data-update', clientIndex);
+        clientUpdateButton.style.display = "inline-block";
+
+        // Disable other button
+        clientFormSubmit.style.display = "none";
+    }
+});
+
+
+// Event listener to update action
+document.getElementById('action--update-client').addEventListener('click', updateClient);
+
+
+// Event listener to add new clients to UI
+clientFormSubmit.addEventListener('click', event => {
     event.preventDefault();
     
     addNewClient();
     
 });
 
-renderClientList(); // initial rendering
+// Event listener for delete clients from UI
+clientTableList.addEventListener('click', e => {
+    if (e.target.className === 'action--client-delete') {
+
+        const clientIndex = e.target.getAttribute('data-position');
+
+        const clients = ClientManager.getMainClientCollection();
+        // /remove the element at the current index
+        clients.splice(clientIndex, 1);
+
+        renderClientList();
+    }
+});
+
+// renderClientList(); // initial rendering

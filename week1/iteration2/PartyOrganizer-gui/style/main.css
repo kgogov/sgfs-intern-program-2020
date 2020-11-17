@@ -3,6 +3,10 @@ body {
     color: #f4f4f4;
 }
 
+input[type="button"] {
+    color: #f4f4f4;
+}
+
 .relative {
     position: relative;
 }
