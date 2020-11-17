@@ -11,6 +11,7 @@
     <script src="./script/app-dom.js" defer></script>
 </head>
 <body>
+    <div class="wallpaper"></div>
     <!-- Main Centering Container -->
     <div class="container">
         <!-- Grid Container: FORM ROW -->
@@ -115,10 +116,9 @@
                     <th>Gender</th>
                     <th>Age</th>
                     <th>Wallet</th>
-                    <th>Attendance</th>
+                    <th>Events</th>
                     <th>VIP</th>
-                    <!-- <th>Choose Party</th> -->
-                    <!-- Или в отделна форма или pop-up ще видим -->
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -126,5 +126,31 @@
             <tbody id="client-list--layout"></tbody>
         </table>
     </div> <!-- GRID CONTAINER END-->
+
+    <!-- MODAL FORM SET PARTY -->
+    <div class="modal-layout">
+        <div class="modal-content">
+            <h4>Choose party
+                <span class="icon-glass2"></span>
+            </h4>
+            <table class="u-full-width">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Under-aged</th>
+                        <th>Date</th>
+                        <th>Entrance Fee</th>
+                        <th>Is Open</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="choose-party-list--layout"></tbody>
+            </table>
+            <a href="#" class="modal--exit">
+                <span class="icon-cancel-circle"></span>
+            </a>
+        </div>
+    </div>
+
 </body>
 </html>

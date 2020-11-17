@@ -143,6 +143,13 @@ const updateParty = event => {
     // Show Success
     showAlert('Party updated successfully!', 'success', partyForm);
 
+    //* Нулиране на инпутите след създаване на ново събитие
+    partyNameInput.value = '';
+    partyIsUnderAged.value = 'yes';
+    partyIsOpen.value = 'yes';
+    partyDatePicker.value = '';
+    partyEntranceFee.value = 0;
+
     partyUpdateButton.style.display = "none";
     partyFormSubmit.style.display = "inline-block";
 
@@ -197,6 +204,8 @@ document.getElementById('party-list--layout').addEventListener('click', e => {
         const parties = PartyManager.getPartyCollection();
         // /remove the element at the current index
         parties.splice(partyIndex, 1);
+
+        showAlert('Party deleted successfully!', 'success', partyForm);
 
         renderPartyList();
     }
@@ -254,6 +263,15 @@ const renderClientList = () => {
             <td>${client.wallet}</td>
             <td>${client.partyCounter}</td>
             <td>${client.isVIP}</td>
+            <td>
+                <span class="icon-glass2"></span>
+                <a 
+                    href="#" 
+                    class="action--choose-party"
+                    data-position="${index}">
+                    Join event
+                </a>
+            </td>
             <td>
                 <span class="icon-loop2"></span>
                 <a 
@@ -360,6 +378,13 @@ const updateClient = event => {
     // Show Success
     showAlert('Client updated successfully!', 'success', clientForm);
 
+    //* Нулиране
+    clientInputFirstName.value = '';
+    clientInputLastName.value  = '';
+    clientGenderSelect.value   = '';
+    clientInputAge.value       = '';
+    clientInputWallet.value    = '';
+
     clientUpdateButton.style.display = "none";
     clientFormSubmit.style.display = "inline-block";
 
@@ -400,6 +425,22 @@ clientTableList.addEventListener('click', e => {
     }
 });
 
+// Event listener for delete clients from UI
+clientTableList.addEventListener('click', e => {
+    if (e.target.className === 'action--client-delete') {
+
+        const clientIndex = e.target.getAttribute('data-position');
+
+        const clients = ClientManager.getMainClientCollection();
+        // /remove the element at the current index
+        clients.splice(clientIndex, 1);
+
+        showAlert('Client deleted successfully!', 'success', clientForm);
+
+        renderClientList();
+    }
+});
+
 
 // Event listener to update action
 document.getElementById('action--update-client').addEventListener('click', updateClient);
@@ -413,18 +454,84 @@ clientFormSubmit.addEventListener('click', event => {
     
 });
 
-// Event listener for delete clients from UI
+// Event listener show modal form select event
 clientTableList.addEventListener('click', e => {
-    if (e.target.className === 'action--client-delete') {
+    if (e.target.className === 'action--choose-party') {
+        
+        const modal = document.querySelector('.modal-layout');
+        modal.classList.add('modal-layout-active');
 
+        const modalExit = document.querySelector('.modal--exit');
+
+        modalExit.addEventListener('click', () => {
+            modal.classList.remove('modal-layout-active');
+        })
+
+        // Render
+        const partyCollection = PartyManager.getPartyCollection();
+        const partyTableList = document.getElementById('choose-party-list--layout');
+        
+        partyTableList.innerHTML = "";
+
+        // Render Party Table List
+        partyCollection.forEach((party, index) => {
+
+            const rowTemplate = document.createElement('tr');
+            rowTemplate.innerHTML =`
+                <td>${party.name}</td>
+                <td>${party.isUnderAged}</td>
+                <td>${party.date}</td>
+                <td>${party.entranceFee}</td>
+                <td>${party.isOpen}</td>
+                <td>
+                    <span class="icon-plus"></span>
+                    <a 
+                        href="#" 
+                        class="action--party-join"
+                        data-position="${index}">
+                        Join
+                    </a>
+                </td>`;
+
+            partyTableList.appendChild(rowTemplate);
+        });
+
+        // get client
         const clientIndex = e.target.getAttribute('data-position');
+        const client = ClientManager.getClient(clientIndex);
 
-        const clients = ClientManager.getMainClientCollection();
-        // /remove the element at the current index
-        clients.splice(clientIndex, 1);
+        // Attach event listeners to Join buttons
+        const joinButtons = partyTableList.querySelectorAll('.action--party-join');
 
-        renderClientList();
+        joinButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // get party
+                const party = PartyManager.getParty(index);
+
+                // Check if client exists in that event
+                if (checkIfIDExists(party.clientCollection, client.ID)) {
+
+                    showAlert(`You cannot sign twice for same event!`, 'warning', partyTableList.parentElement);
+
+                    return;
+                }
+
+                // console.log(party, party.clientCollection);
+
+                // store client
+                ClientManager.storeClientToParty(party, client);
+
+                showAlert(`Client added to ${party.name} successfully!`, 'success', partyTableList.parentElement);
+
+                client.partyCounter++;
+
+                renderClientList();
+            });
+        });
     }
 });
 
-// renderClientList(); // initial rendering
+
+// Initial rendering
+renderClientList();
+renderPartyList();

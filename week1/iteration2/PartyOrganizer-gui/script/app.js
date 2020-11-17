@@ -1,6 +1,27 @@
 // Mock data
 const PartyManager = {
-    partyCollection : [],
+    partyCollection : [
+        {
+            ID: "5fb3e8e9afc1cfd2a349231b",
+            clientCollection: [],
+            date: "2020-11-19",
+            entranceFee: "0",
+            isFree: true,
+            isOpen: "yes",
+            isUnderAged: "yes",
+            name: "Asenovgrad"
+        },
+        {
+            ID: "5fb3e8e9afc1cfd2a345231a",
+            clientCollection: [],
+            date: "2020-12-19",
+            entranceFee: "0",
+            isFree: true,
+            isOpen: "yes",
+            isUnderAged: "yes",
+            name: "Plovdiv"
+        }
+    ],
 
     storeParty(partyObject) {
         PartyManager.partyCollection.push(partyObject);
@@ -37,7 +58,26 @@ const createParty = (partyObject) => {
 
 
 const ClientManager = {
-    mainClientCollection : [],
+    mainClientCollection : [
+        {
+            ID: "45525665",
+            age: "23",
+            fullName: "Konstantin Gogov",
+            gender: "male",
+            isVIP: false,
+            partyCounter: 0,
+            wallet: "1000"
+        },
+        {
+            ID: "45525265",
+            age: "23",
+            fullName: "Petur Panayotov",
+            gender: "male",
+            isVIP: false,
+            partyCounter: 0,
+            wallet: "1000"
+        }
+    ],
 
     storeClient(clientObject) {
         ClientManager.mainClientCollection.push(clientObject);
@@ -110,3 +150,8 @@ function generateClientID() {
 
     return generateClientID();
 }
+
+// More helpers
+const checkIfIDExists = (collection, id) => {
+    return collection.find(item => item.ID == id);
+};

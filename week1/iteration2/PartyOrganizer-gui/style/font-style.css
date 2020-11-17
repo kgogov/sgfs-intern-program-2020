@@ -25,8 +25,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-glass2:before {
+  content: "\e9a1";
+}
 .icon-bin:before {
   content: "\e9ac";
+}
+.icon-plus:before {
+  content: "\ea0a";
+}
+.icon-cancel-circle:before {
+  content: "\ea0d";
 }
 .icon-loop2:before {
   content: "\ea2e";
