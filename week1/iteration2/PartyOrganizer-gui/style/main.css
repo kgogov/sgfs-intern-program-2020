@@ -27,9 +27,16 @@ input[type="button"],
     opacity: 0.2;
 }
 
+.main-heading {
+    position: relative;
+    text-align: center;
+    padding: 3rem 0;
+    text-shadow: 2px 2px 2px #33C3F0;
+}
+
 .container {
     padding: 1rem 2.5rem 0 2.5rem;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 5px 15px 1px rgba(0, 0, 0, 0.3);
     border-radius: 4px;
     background-color: #405080;
     position: relative;
