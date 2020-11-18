@@ -99,10 +99,28 @@ const ClientManager = {
             wallet: 1000
         },
         {
-            ID: "45525265",
+            ID: "45125265",
             age: "23",
-            fullName: "Petur Panayotov",
-            gender: "male",
+            fullName: "Ivana Ivanova",
+            gender: "female",
+            isVIP: false,
+            partyCounter: 0,
+            wallet: 1000
+        },
+        {
+            ID: "45585265",
+            age: "23",
+            fullName: "Rosica Pencheva",
+            gender: "female",
+            isVIP: false,
+            partyCounter: 0,
+            wallet: 1000
+        },
+        {
+            ID: "455250265",
+            age: "23",
+            fullName: "Panayot Panayotov",
+            gender: "prefer not to say",
             isVIP: false,
             partyCounter: 0,
             wallet: 1000

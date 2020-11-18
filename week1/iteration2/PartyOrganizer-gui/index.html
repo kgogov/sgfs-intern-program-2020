@@ -72,7 +72,7 @@
                         <select name="select--client-gender" id="select--client-gender">
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                            <option value="preferNotToSay">Prefer not to say</option>
+                            <option value="prefer not to say">Prefer not to say</option>
                         </select>
                         <!-- Positioned -->
                         <div class="absolute">
@@ -112,6 +112,7 @@
                     <th>Date</th>
                     <th>Entrance Fee</th>
                     <th>Is Open</th>
+                    <th>Clients</th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -163,10 +164,16 @@
             <a href="#" class="modal-join-event--exit">
                 <span class="icon-cancel-circle"></span>
             </a>
+            <select name="party-info-sort-by" id="party-info-sort-by" class="party-info-sort-by">
+                <option selected disabled>Sort by type</option>
+                <option value="no">For adults</option>
+                <option value="yes">For under-aged</option>
+                <option value="noFilter">No filter</option>
+            </select>
         </div>
     </div>
 
-    <!-- MODAL FORM SET PARTY -->
+    <!-- MODAL FORM CLIENT INFO -->
     <div class="modal-client-info--layout">
         <div class="modal-client-info-content">
             <h4>Client Information
@@ -178,7 +185,7 @@
                         <th>Full name</th>
                         <th>Gender</th>
                         <th>Age</th>
-                        <th></th>
+                        <th>VIP</th>
                     </tr>
                 </thead>
                 <tbody id="modal-client-info-list--layout"></tbody>
@@ -187,7 +194,11 @@
                 <span class="icon-cancel-circle"></span>
             </a>
             <select name="client-info-sort-by" id="client-info-sort-by" class="client-info-sort-by">
-                <option selected disabled>Sort by</option>
+                <option selected disabled>Sort by gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="prefer not to say">Prefer not to say</option>
+                <option value="noFilter">No filter</option>
             </select>
         </div>
     </div>

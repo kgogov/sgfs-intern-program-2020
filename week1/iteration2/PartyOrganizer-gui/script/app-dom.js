@@ -109,6 +109,7 @@ const renderPartyList = () => {
             <td>${party.date}</td>
             <td>${party.entranceFee}</td>
             <td>${party.isOpen}</td>
+            <td>${party.clientCollection.length}</td>
             <td>
                 <span class="icon-user-tie"></span>
                 <a 
@@ -497,6 +498,50 @@ clientFormSubmit.addEventListener('click', event => {
     addNewClient();
 });
 
+
+const renderModalParties = (collection, layout, filter) => {
+
+    let filteredParties = [];
+    layout.innerHTML = '';
+
+    if (!filter || filter === 'noFilter') {
+        filteredParties = collection;
+    } else {
+        filteredParties = collection
+            .filter(party => party.isUnderAged === filter);
+    }
+
+    filteredParties.forEach((party, index) => {
+        const rowTemplate = document.createElement('tr');
+        rowTemplate.innerHTML =`
+            <td>${prefixPartyNames(party)}</td>
+            <td>${party.isUnderAged}</td>
+            <td>${party.date}</td>
+            <td>${party.entranceFee}</td>
+            <td>${party.isOpen}</td>
+            <td>
+                <span class="icon-plus"></span>
+                <a 
+                    href="#" 
+                    class="action--party-join"
+                    data-position="${index}">
+                    Join
+                </a>
+            </td>
+            <td>
+                <span class="icon-minus"></span>
+                <a 
+                    href="#" 
+                    class="action--party-leave"
+                    data-position="${index}">
+                    Leave
+                </a>
+            </td>`;
+
+        layout.appendChild(rowTemplate);
+    });
+};
+
 // Event listener show modal form select event
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--choose-party') {
@@ -512,45 +557,22 @@ clientTableList.addEventListener('click', e => {
 
         const partyCollection = PartyManager.getPartyCollection();
         const partyModalTableList = document.getElementById('modal-choose-party-list--layout');
-        
-        partyModalTableList.innerHTML = "";
-        // Render Party Table List
-        partyCollection.forEach((party, index) => {
 
-            const rowTemplate = document.createElement('tr');
-            rowTemplate.innerHTML =`
-                <td>${prefixPartyNames(party)}</td>
-                <td>${party.isUnderAged}</td>
-                <td>${party.date}</td>
-                <td>${party.entranceFee}</td>
-                <td>${party.isOpen}</td>
-                <td>
-                    <span class="icon-plus"></span>
-                    <a 
-                        href="#" 
-                        class="action--party-join"
-                        data-position="${index}">
-                        Join
-                    </a>
-                </td>
-                <td>
-                    <span class="icon-minus"></span>
-                    <a 
-                        href="#" 
-                        class="action--party-leave"
-                        data-position="${index}">
-                        Leave
-                    </a>
-                </td>`;
-
-            partyModalTableList.appendChild(rowTemplate);
-        });
+        const dropdown = document.getElementById('party-info-sort-by');
 
         // get client
         const clientIndex = e.target.getAttribute('data-position');
         const client = ClientManager.getClient(clientIndex);
 
+        dropdown.addEventListener("change", () => {
+            partyModalTableList.innerHTML = "";
+            renderModalParties(partyCollection, partyModalTableList, dropdown.value);
+        });
+
+        renderModalParties(partyCollection, partyModalTableList);
+
         // Attach event listeners to Join buttons
+        //! BUG: не им закача нови event listeneri при филтрация 
         const joinButtons = partyModalTableList.querySelectorAll('.action--party-join');
 
         joinButtons.forEach((button, index) => {
@@ -575,7 +597,7 @@ clientTableList.addEventListener('click', e => {
                 }
 
                 if (client.partyCounter !== 0 && client.partyCounter % 5 === 0) {
-
+                    
                     client.isVIP = true;
                     client.partyCounter++;
                     ClientManager.storeClientToParty(party, client);
@@ -593,6 +615,7 @@ clientTableList.addEventListener('click', e => {
 
                 showAlert(`Client added successfully for ${party.name} event!`, 'success', partyModalTableList.parentElement);
                 renderClientList();
+                renderPartyList();
             });
         });
 
@@ -619,58 +642,72 @@ clientTableList.addEventListener('click', e => {
                 }
             });
         });
-
     } /* IF ENDS HERE! */
 });
 
 
+const renderModalClientList = (currentParty, layoutList, filter) => {
 
+    layoutList.innerHTML = "";
+
+    let filteredClients = [];
+
+    if (!filter || filter === 'noFilter') {
+        filteredClients = currentParty.clientCollection;
+    } else {
+        filteredClients = currentParty.clientCollection
+            .filter(client => client.gender === filter);
+    }
+    
+    filteredClients.forEach(client => {
+
+        const rowTemplate = document.createElement('tr');
+
+        rowTemplate.innerHTML = `
+            <td>${client.fullName}</td>
+            <td>${client.gender}</td>
+            <td>${client.age}</td>
+            <td>${client.isVIP}</td>
+        `;
+
+        layoutList.appendChild(rowTemplate);
+    }
+)};
+
+// Modal for event visualizer
 partyTableList.addEventListener('click', e => {
     if (e.target.className === 'action--show-client-list') {
+
+        const clientTableList = document.getElementById('modal-client-info-list--layout');
+        const modalExit = document.querySelector('.modal-client-info--exit');
+
+        const partyIndex = e.target.getAttribute('data-position');
+        const currentParty = PartyManager.getParty(partyIndex);
 
         const modal = document.querySelector('.modal-client-info--layout');
         modal.classList.add('modal-client-info--layout-active');
 
-        const modalExit = document.querySelector('.modal-client-info--exit');
+        const dropdown = document.querySelector('.client-info-sort-by');
 
         modalExit.addEventListener('click', () => {
             modal.classList.remove('modal-client-info--layout-active');
         });
-    }
+
+        if (currentParty.clientCollection.length === 0) {
+            showAlert('There are no clients at this event!', 'warning', clientTableList.parentElement);
+        }
+
+        dropdown.addEventListener("change", () => {
+            clientTableList.innerHTML = "";
+            renderModalClientList(currentParty, clientTableList, dropdown.value);
+        });
+
+        renderModalClientList(currentParty, clientTableList);
+
+    } /* if ends  ere*/
 });
 
 
 // Initial rendering
 renderClientList();
 renderPartyList();
-
-
-/*
-    Задачи:
-
-    Да се създаде графичен потребителски интерфейс, който да визуализира
-    списък с всички клиенти на дадено парти. Интегрирайте създадената от вас
-    логика за работа с клиенти, в рамките на графичния интерфейс. Не забравяйте
-    VIP клиенти-те. Необходимо е да запазите описаната функционална интеракция
-    между списъка със събития и списъка с клиенти. Това включва добавяне на
-    клиент към списъка със събития.
-
-    Създайте функционалност за извеждане на събитието с най-много
-    добавени клиенти. Ако такова не съществува (всички са с равен брой)
-    или не съществуват събития изведете необходимите съобщения, по ваш
-    избор.
-
-    Изведете всички събития които са подходящи за малолетни посетители.
-
-    Изведете всички събития като ги групирате, събитията които са
-    предназначени за пълнолетни посетители трябва да имат звездичка пред
-    името си “*” а тези подходящи за непълнолетни диез “#”
-
-    Създайте механизъм за филтриране на събития по определен критерии.
-    Функцията трябва да има възможност да получава име / или флаг за
-    достъп и да визуализира само тези събития които отговарят на
-    критериите.
-
-    
-
-*/
