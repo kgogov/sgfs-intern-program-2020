@@ -23,6 +23,21 @@ let clientFormSubmit         = document.getElementById('action--submit-client');
 let clientUpdateButton       = document.getElementById('action--update-client');
 
 
+function showAlert(message, className, position) {
+
+    const div = document.createElement('div');
+    div.className = `alert ${className}`;
+    // Create text node
+    div.appendChild(document.createTextNode(message));
+    // Insert into DOM
+    position.insertAdjacentElement('beforebegin', div);
+
+    // Disappear after 3 seconds
+    setTimeout(() => {
+        document.querySelector('.alert').remove();
+    }, 3000);
+}
+
 
 //! ### Event ####
 const renderPartyList = () => {
@@ -84,11 +99,8 @@ const emptyEventFormFields = () => {
     partyInputEntranceFee.value     = 0;
 }
 
-const emptyClientFormFields = () => {
+const isPartyValid = (name, entrance, date) => {
 
-}
-
-const validateParty = (name, entrance, date) => {
     if (!name     ||
         !date     ||
         !entrance ||
@@ -96,6 +108,16 @@ const validateParty = (name, entrance, date) => {
         return false;
     }
     return true;
+}
+
+const showPartyUpdateButton = () => {
+    partyUpdateButton.style.display = "inline-block";
+    partyFormSubmit.style.display = "none";
+}
+
+const hidePartyUpdateButton = () => {
+    partyUpdateButton.style.display = "none";
+    partyFormSubmit.style.display = "inline-block";
 }
 
 // ACTION
@@ -107,7 +129,7 @@ const addNewParty = () => {
     const partyDate             = partyInputDate.value;
     const partyEntrance         = partyInputEntranceFee.value;
 
-    if(!validateParty(partyName, partyEntrance, partyDate)) {
+    if(!isPartyValid(partyName, partyEntrance, partyDate)) {
         showAlert('Please fill in all fields', 'error', partyForm); return;
     }
 
@@ -128,28 +150,26 @@ const addNewParty = () => {
 
 // ACTION
 const updateParty = event => {
-    // Receive date from hidden input
+    // Receive date from hidden input (returns the value of a specified attribute)
     const partyIndex = event.target.getAttribute('data-update');
     // Get all parties
     const parties = PartyManager.getPartyCollection();
-    // Get party index from data button input
+    // Get party index === 'data-update'
     const party = PartyManager.getParty(partyIndex);
 
-    // Create new object
+    // Get input from form fields
     const name          = partyInputName.value;
     const isUnderAged   = partyInputIsUnderAged.value;
     const isOpen        = partyInputIsOpen.value;
     const entranceFee   = partyInputEntranceFee.value;
     const date          = partyInputDate.value;
 
-    if(!validateParty(partyInputName.value, partyInputEntranceFee.value, partyInputDate.value)) {
+    if(!isPartyValid(partyInputName.value, partyInputEntranceFee.value, partyInputDate.value)) {
         showAlert('Please enter correct fields!', 'error');
-
-        partyUpdateButton.style.display = "none";
-        partyFormSubmit.style.display = "inline-block";
-        return;
+        hidePartyUpdateButton(); return;
     }
-    // Update new object
+
+    // Update new object (така не връщам нов обект, и не променям state)
     party.name          = name;
     party.isUnderAged   = isUnderAged;
     party.isOpen        = isOpen;
@@ -159,10 +179,8 @@ const updateParty = event => {
 
     // Delete and update at the current index at PartyCollection
     parties.splice(partyIndex, 1, party);
-    //* Get default styling - може да се изнесат в отделните функция като toggle
-    partyUpdateButton.style.display = "none";
-    partyFormSubmit.style.display = "inline-block";
 
+    hidePartyUpdateButton();
     showAlert('Party updated successfully!', 'success', partyForm);
     emptyEventFormFields();
     renderPartyList();
@@ -171,55 +189,50 @@ const updateParty = event => {
 // updateParty() button listener
 partyFormSubmit.addEventListener('click', event => {
     event.preventDefault();
-    
     addNewParty();
 });
 
-//! до тук съм с рефакторинга
+
+const fillCurrentPartyFormValues = (name, isUnderAged, entrance, date, isOpen) => {
+
+    partyInputName.value            = name;
+    partyInputIsUnderAged.value     = isUnderAged;
+    partyInputEntranceFee.value     = entrance
+    partyInputDate.value            = date;
+    partyInputIsOpen.value          = isOpen;
+}
 
 
 // Event listener for update filling form data
 partyTableList.addEventListener('click', e => {
-    if (e.target.className === 'action--party-update') {
 
+    if (e.target.className === 'action--party-update') {
+        // Get data from clicked index row
         const partyIndex = e.target.getAttribute('data-position');
         const party = PartyManager.getParty(partyIndex);
-
+        // Send data to hidden button
+        partyUpdateButton.setAttribute('data-update', partyIndex);
         // Using some fancy object destructuring
         const { name, isUnderAged, entranceFee, date, isOpen } = party;
 
-        // Fill party form values with the current object values
-        // Може и в отделна функция да се изнесят: clean code
-        partyInputName.value = name;
-        partyInputIsUnderAged.value = isUnderAged;
-        partyInputIsOpen.value = isOpen;
-        partyInputDate.value = date;
-        partyInputEntranceFee.value = entranceFee;
+        fillCurrentPartyFormValues(name, isUnderAged, entranceFee, date, isOpen);
+        showAlert('Please enter the new fields here!', 'warning', partyForm);
 
-        showAlert('Please enter the new fields here!', 'warning', partyForm)
-
-        // Send data to hidden button
-        partyUpdateButton.setAttribute('data-update', partyIndex);
-        partyUpdateButton.style.display = "inline-block";
-
-        // Disable other button
-        partyFormSubmit.style.display = "none";
-
+        showPartyUpdateButton();
     }
 });
 
 // Event listener for delete
 document.getElementById('party-list--layout').addEventListener('click', e => {
+
     if (e.target.className === 'action--party-delete') {
-
+        // Get data from clicked index row
         const partyIndex = e.target.getAttribute('data-position');
-
         const parties = PartyManager.getPartyCollection();
         // /remove the element at the current index
         parties.splice(partyIndex, 1);
 
         showAlert('Party deleted successfully!', 'success', partyForm);
-
         renderPartyList();
     }
 });
@@ -228,29 +241,7 @@ document.getElementById('party-list--layout').addEventListener('click', e => {
 document.getElementById('action--update-party').addEventListener('click', updateParty);
 
 
-// renderPartyList(); // initial rendering of the data
-
-
-// Alert
-function showAlert(message, className, position) {
-
-    const div = document.createElement('div');
-    div.className = `alert ${className}`;
-    // Create text node
-    div.appendChild(document.createTextNode(message));
-    // Insert into DOM
-    position.insertAdjacentElement('beforebegin', div);
-
-    // Disappear after 3 seconds
-    setTimeout(() => {
-        document.querySelector('.alert').remove();
-    }, 3000);
-}
-
-
-
-
-
+//! ### Client ### 
 const renderClientList = () => {
 
     const clientCollection = ClientManager.getMainClientCollection();
@@ -299,6 +290,40 @@ const renderClientList = () => {
     });
 }
 
+//* идея: да проверя всички имена с RegEx
+const isClientValid = (fName, lName, gender, age, wallet) => {
+
+    if (!fName      ||
+        !lName      ||
+        !gender     ||
+        !age        || 
+        age < 16    ||
+        !wallet     ||
+        wallet < 0) {
+            return false;
+    }
+    return true;
+}
+
+const emptyClientFormFields = () => {
+
+    clientInputFirstName.value      = '';
+    clientInputLastName.value       = '';
+    clientGenderSelect.value        = '';
+    clientInputAge.value            = '';
+    clientInputWallet.value         = '';
+}
+
+const showClientUpdateButton = () => {
+    clientUpdateButton.style.display = "inline-block";
+    clientFormSubmit.style.display = "none";
+}
+
+const hideClientUpdateButton = () => {
+    clientUpdateButton.style.display = "none";
+    clientFormSubmit.style.display = "inline-block";
+}
+
 // ACTION
 const addNewClient = () => {
 
@@ -308,15 +333,9 @@ const addNewClient = () => {
     const clientAge             = clientInputAge.value;
     const clientWallet          = clientInputWallet.value;
 
-    if ( 
-        !clientFirstName             ||
-        !clientLastName              ||
-        !clientGender                ||
-        !clientAge || clientAge < 16 ||
-        !clientWallet || clientWallet < 0) {
-            showAlert('Please fill in all fields', 'error', clientForm);
-            return;
-        }
+    if (!isClientValid(clientFirstName, clientLastName, clientGender, clientAge, clientWallet)) {
+        showAlert('Please fill in all fields', 'error', clientForm); return;
+    }
 
     let clientFullName = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
 
@@ -328,119 +347,79 @@ const addNewClient = () => {
     }));
 
     showAlert('Client added successfully', 'success', clientForm);
-
-    clientInputFirstName.value = '';
-    clientInputLastName.value  = '';
-    clientGenderSelect.value   = '';
-    clientInputAge.value       = '';
-    clientInputWallet.value    = '';
-
+    emptyClientFormFields();
     renderClientList();
 }
 
 // ACTION
 const updateClient = event => {
-    const clientIndex = event.target.getAttribute('data-update');
 
-    // Get global data
     const clients = ClientManager.getMainClientCollection();
+    const clientIndex = event.target.getAttribute('data-update');
     const client = ClientManager.getClient(clientIndex);
 
-    // Create new object
+    // get values
     const clientFirstName       = clientInputFirstName.value;
     const clientLastName        = clientInputLastName.value;
     const clientGender          = clientGenderSelect.value;
     const clientAge             = clientInputAge.value;
     const clientWallet          = clientInputWallet.value;
 
-    //* Трябва да има и валидация!!
+    if (!isClientValid(clientFirstName, clientLastName, clientGender, clientAge, clientWallet)) {
+        hideClientUpdateButton(); return;
+    };
 
-    if ( 
-        !clientFirstName             ||
-        !clientLastName              ||
-        !clientGender                ||
-        !clientAge || clientAge < 16 ||
-        !clientWallet || clientWallet < 0) {
-            showAlert('Please fill in all fields', 'error', clientForm);
-
-            clientUpdateButton.style.display = "none";
-            clientFormSubmit.style.display = "inline-block";
-            return;
-        }
-
-    const clientFullName        = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
-    
-    // Update new object
-    client.fullName = clientFullName;
-    client.gender = clientGender;
-    client.age = clientAge;
-    client.wallet = clientWallet;
+    const clientFullName = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
+    // Update client
+    client.fullName     = clientFullName;
+    client.gender       = clientGender;
+    client.age          = clientAge;
+    client.wallet       = clientWallet;
 
     // Delete and update at the current index at PartyCollection
     clients.splice(clientIndex, 1, client);
 
-    // Show Success
     showAlert('Client updated successfully!', 'success', clientForm);
-
-    //* Нулиране
-    clientInputFirstName.value = '';
-    clientInputLastName.value  = '';
-    clientGenderSelect.value   = '';
-    clientInputAge.value       = '';
-    clientInputWallet.value    = '';
-
-    clientUpdateButton.style.display = "none";
-    clientFormSubmit.style.display = "inline-block";
-
+    emptyClientFormFields();
+    hideClientUpdateButton();
     renderClientList();
 }
 
 // Event listener update clients (filling form data)
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--client-update') {
-
+        // Send data to hidden button
         const clientIndex = e.target.getAttribute('data-position');
         const client = ClientManager.getClient(clientIndex);
+        clientUpdateButton.setAttribute('data-update', clientIndex);
 
         // Using some fancy object destructuring
         const { fullName, gender, age, wallet } = client;
 
         const clientNames = fullName.split(' ');
-
-        // Fill party form values with the current object values
-        // Може и в отделна функция да се изнесят: clean code
-
-        // Възможност за бъггг с тия имена
-        clientInputFirstName.value = clientNames[0];
-        clientInputLastName.value = clientNames[1];
-
-        clientGenderSelect.value = gender;
-        clientInputAge.value = age;
-        clientInputWallet.value = wallet;
+        //! Възможност за бъг с тия имена --- така ако клиента въведе повече имена винаги ще взеима първото и последното
+        clientInputFirstName.value  = clientNames[0];
+        clientInputLastName.value   = clientNames[clientNames.length - 1];
+        clientGenderSelect.value    = gender;
+        clientInputAge.value        = age;
+        clientInputWallet.value     = wallet;
 
         showAlert('Please enter the new fields here!', 'warning', clientForm)
-
-        // Send data to hidden button
-        clientUpdateButton.setAttribute('data-update', clientIndex);
-        clientUpdateButton.style.display = "inline-block";
-
-        // Disable other button
-        clientFormSubmit.style.display = "none";
+        showClientUpdateButton();
     }
 });
+
 
 // Event listener for delete clients from UI
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--client-delete') {
 
-        const clientIndex = e.target.getAttribute('data-position');
-
         const clients = ClientManager.getMainClientCollection();
+        const clientIndex = e.target.getAttribute('data-position');
         // /remove the element at the current index
         clients.splice(clientIndex, 1);
 
         showAlert('Client deleted successfully!', 'success', clientForm);
-
         renderClientList();
     }
 });
@@ -455,7 +434,6 @@ clientFormSubmit.addEventListener('click', event => {
     event.preventDefault();
     
     addNewClient();
-    
 });
 
 // Event listener show modal form select event
@@ -469,14 +447,12 @@ clientTableList.addEventListener('click', e => {
 
         modalExit.addEventListener('click', () => {
             modal.classList.remove('modal-layout-active');
-        })
+        });
 
-        // Render
         const partyCollection = PartyManager.getPartyCollection();
         const partyTableList = document.getElementById('choose-party-list--layout');
         
         partyTableList.innerHTML = "";
-
         // Render Party Table List
         partyCollection.forEach((party, index) => {
 
@@ -521,27 +497,69 @@ clientTableList.addEventListener('click', e => {
                 // get party
                 const party = PartyManager.getParty(index);
 
-                // Check if client exists in that event
-                if (checkIfIDExists(party.clientCollection, client.ID)) {
-
-                    showAlert(`You cannot sign twice for same event!`, 'warning', partyTableList.parentElement);
-
+                if (party.isOpen === 'no') {
+                    showAlert(`This event is closed. You cannot sign right now!`, 'warning', partyTableList.parentElement); 
                     return;
                 }
 
-                // console.log(party, party.clientCollection);
+                if (client.age < 18 && party.isUnderAged === 'no') {
+                    showAlert(`You're too young for this event! You cannot sign!`, 'warning', partyTableList.parentElement);
+                    return;
+                }
 
-                // store client
+                // Check if client exists in that event
+                if (checkIfIDExists(party.clientCollection, client.ID)) {
+                    showAlert(`You cannot sign twice for same event!`, 'warning', partyTableList.parentElement);
+                    return;
+                }
+
+                if (client.partyCounter !== 0 && client.partyCounter % 5 === 0) {
+
+                    client.isVIP = true;
+                    client.partyCounter++;
+                    ClientManager.storeClientToParty(party, client);
+
+                    showAlert(`Client will not pay for ${party.name}. VIP privileges!`, 'vip-gold', partyTableList.parentElement);
+                    renderClientList();
+                    return;
+                }
+
+                client.isVIP = false;
+                client.partyCounter++;
+                client.wallet -= party.entranceFee;
+
                 ClientManager.storeClientToParty(party, client);
 
-                showAlert(`Client added to ${party.name} successfully!`, 'success', partyTableList.parentElement);
-
-                client.partyCounter++;
-
+                showAlert(`Client added successfully for ${party.name} event!`, 'success', partyTableList.parentElement);
                 renderClientList();
             });
         });
-    }
+
+        const leaveButtons = partyTableList.querySelectorAll('.action--party-leave');
+
+        leaveButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+
+                let party = PartyManager.getParty(index);
+                let clientID = client.ID;
+
+                if (checkIfIDExists(party.clientCollection, clientID)) {
+
+                    party.clientCollection = party.clientCollection
+                        .filter(client => client.ID !== clientID);
+
+                    client.partyCounter--;
+                    
+                    showAlert('You have successfully leaved this event!', 'warning', partyTableList.parentElement);
+
+                    renderClientList();
+                } else {
+                    showAlert('Client not found!', 'error', partyTableList.parentElement); return;
+                }
+            });
+        });
+
+    } /* IF ENDS HERE! */
 });
 
 
@@ -550,14 +568,6 @@ renderClientList();
 renderPartyList();
 
 /*
-
-1. Ако възрастта на клиента
-не му позволява да присъства на събитието, известете с помощта на
-необходимото съобщение.
-
-1. Ако партито е затворено не можеш да добавящ клиенти!
-
-2. Премахнете присъстващ потребител от събитието.
 
 3. Създайте функционалност който да спира добавянето на събития или
 добавянето на клиенти на централно ниво. Когато бъде активирана при

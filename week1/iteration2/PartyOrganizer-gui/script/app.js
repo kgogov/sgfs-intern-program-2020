@@ -5,7 +5,7 @@ const PartyManager = {
             ID: "5fb3e8e9afc1cfd2a349231b",
             clientCollection: [],
             date: "2020-11-19",
-            entranceFee: 0,
+            entranceFee: 20,
             isFree: "yes",
             isOpen: "yes",
             isUnderAged: "yes",
@@ -15,11 +15,61 @@ const PartyManager = {
             ID: "5fb3e8e9afc1cfd2a345231a",
             clientCollection: [],
             date: "2020-12-19",
-            entranceFee: 0,
+            entranceFee: 20,
             isFree: "yes",
             isOpen: "yes",
             isUnderAged: "yes",
             name: "Plovdiv"
+        },
+        {
+            ID: "5fb3e8e9afc1cfd2a342231a",
+            clientCollection: [],
+            date: "2020-12-19",
+            entranceFee: 20,
+            isFree: "yes",
+            isOpen: "yes",
+            isUnderAged: "yes",
+            name: "Sofia"
+        },
+        {
+            ID: "5fb3e8e9afc1cfd2a345251a",
+            clientCollection: [],
+            date: "2020-12-19",
+            entranceFee: 20,
+            isFree: "yes",
+            isOpen: "no",
+            isUnderAged: "yes",
+            name: "Primorsko"
+        },
+        {
+            ID: "5fb3e7e9afc1cfd2a345231a",
+            clientCollection: [],
+            date: "2020-12-19",
+            entranceFee: 20,
+            isFree: "yes",
+            isOpen: "yes",
+            isUnderAged: "yes",
+            name: "Varna"
+        },
+        {
+            ID: "5fb3e8e9afc1cfd21345231a",
+            clientCollection: [],
+            date: "2020-12-19",
+            entranceFee: 20,
+            isFree: "yes",
+            isOpen: "yes",
+            isUnderAged: "yes",
+            name: "Burgas"
+        },
+        {
+            ID: "5fb3e8@9afc1cfd2a345231a",
+            clientCollection: [],
+            date: "2020-12-19",
+            entranceFee: 20,
+            isFree: "yes",
+            isOpen: "yes",
+            isUnderAged: "yes",
+            name: "Stara Zagora"
         }
     ],
 
@@ -40,7 +90,7 @@ const ClientManager = {
     // Mock data
     mainClientCollection : [
         {
-            ID: "45525665",
+            ID: "45325665",
             age: "23",
             fullName: "Konstantin Gogov",
             gender: "male",
