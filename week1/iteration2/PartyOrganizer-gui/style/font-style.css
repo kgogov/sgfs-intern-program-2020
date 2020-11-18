@@ -25,6 +25,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-user-tie:before {
+  content: "\e976";
+}
+
 .icon-glass2:before {
   content: "\e9a1";
 }

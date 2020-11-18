@@ -32,7 +32,6 @@
                         <div class="absolute">
                             <label for="select--party-isForUnderAged">Are under-aged allowed?</label>
                             <select name="select--party-isForUnderAged" id="select--party-isForUnderAged" class="u-full-width">
-                                <option selected disabled>Choose event type</option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
@@ -71,7 +70,6 @@
                     <div class="form-group relative">
                         <label for="input--client-gender">Gender:</label>
                         <select name="select--client-gender" id="select--client-gender">
-                            <option disabled selected>Choose gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                             <option value="preferNotToSay">Prefer not to say</option>
@@ -90,7 +88,20 @@
                     <input type="button" value="Update" style="display: none;" id="action--update-client">
                 </form>
             </div>
-        </div>
+        </div> <!-- form row ends here-->
+
+        <div class="row stop-initialization">
+            <div class="six columns">
+                <a class="button" href="#" class="initialization-buttons" id="action--toggle-event-creation">
+                    Toggle party creation
+                </a>
+            </div>
+            <div class="six columns">
+                <a class="button" href="#" class="initialization-buttons" id="action--toggle-client-creation">
+                    Toggle client creation
+                </a>
+            </div>
+        </div>   
 
         <h3>Event visualizer</h3>
         <table class="u-full-width">
@@ -101,6 +112,7 @@
                     <th>Date</th>
                     <th>Entrance Fee</th>
                     <th>Is Open</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -128,9 +140,10 @@
     </div> <!-- GRID CONTAINER END-->
 
     <!-- MODAL FORM SET PARTY -->
-    <div class="modal-layout">
-        <div class="modal-content">
-            <h4>Event menu
+    <div class="modal-join-event-layout">
+        <div class="modal-join-event-content">
+            <h4>Client menu
+                <!-- иконка за човече най-накрая -->
                 <span class="icon-glass2"></span>
             </h4>
             <table class="u-full-width">
@@ -145,11 +158,37 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="choose-party-list--layout"></tbody>
+                <tbody id="modal-choose-party-list--layout"></tbody>
             </table>
-            <a href="#" class="modal--exit">
+            <a href="#" class="modal-join-event--exit">
                 <span class="icon-cancel-circle"></span>
             </a>
+        </div>
+    </div>
+
+    <!-- MODAL FORM SET PARTY -->
+    <div class="modal-client-info--layout">
+        <div class="modal-client-info-content">
+            <h4>Client Information
+                <span class="icon-user-tie"></span>
+            </h4>
+            <table class="u-full-width">
+                <thead>
+                    <tr>
+                        <th>Full name</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="modal-client-info-list--layout"></tbody>
+            </table>
+            <a href="#" class="modal-client-info--exit">
+                <span class="icon-cancel-circle"></span>
+            </a>
+            <select name="client-info-sort-by" id="client-info-sort-by" class="client-info-sort-by">
+                <option selected disabled>Sort by</option>
+            </select>
         </div>
     </div>
 

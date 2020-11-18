@@ -1,3 +1,6 @@
+let isPartyCreationAllowed = true;
+let isClientCreationAllowed = true;
+
 //* Въпрос: да правя ли function wrapper за всички тези input-и
 //* Идея: custom side slider menu with different options and modal forms for sorting etc.
 // Party DOM Selectors
@@ -22,6 +25,41 @@ let clientInputWallet        = document.querySelector('input[name="input--client
 let clientFormSubmit         = document.getElementById('action--submit-client');
 let clientUpdateButton       = document.getElementById('action--update-client');
 
+// State togglers
+const partyCreationButton   = document.getElementById('action--toggle-event-creation');
+const clientCreationButton   = document.getElementById('action--toggle-client-creation');
+
+
+function getPartyCreationState() {
+    return isPartyCreationAllowed;
+}
+
+function getClientCreationState() {
+    return isClientCreationAllowed;
+}
+
+
+// Configuration
+const togglePartyCreation = () => {
+    isPartyCreationAllowed = !isPartyCreationAllowed;
+
+    return (isPartyCreationAllowed)                                   ? 
+        showAlert('Party creation is enabled!', 'success', partyForm) :
+        showAlert('Party creation is disabled!', 'warning', partyForm)
+}
+
+const toggleClientCreation = () => {
+    isClientCreationAllowed = !isClientCreationAllowed;
+
+    return (isClientCreationAllowed)                                     ?
+        showAlert('Client creation is enabled!', 'success', clientForm)  :
+        showAlert('Client creation is disabled!', 'warning', clientForm) 
+}
+
+// Event listeners for creation togglers state
+partyCreationButton.addEventListener('click', togglePartyCreation);
+clientCreationButton.addEventListener('click', toggleClientCreation);
+
 
 function showAlert(message, className, position) {
 
@@ -38,6 +76,12 @@ function showAlert(message, className, position) {
     }, 3000);
 }
 
+const prefixPartyNames = (party) => {
+    let name = party.name;
+    return (party.entranceFee == 0)    ? 
+        name = `! ${name}`             : 
+        name = `$ ${name}`;
+}
 
 //! ### Event ####
 const renderPartyList = () => {
@@ -58,13 +102,22 @@ const renderPartyList = () => {
         // Различни функции за връщане на данни
 
         const rowTemplate = document.createElement('tr');
-
+        
         rowTemplate.innerHTML = `
-            <td>${party.name}</td>
+            <td>${prefixPartyNames(party)}</td>
             <td>${party.isUnderAged}</td>
             <td>${party.date}</td>
             <td>${party.entranceFee}</td>
             <td>${party.isOpen}</td>
+            <td>
+                <span class="icon-user-tie"></span>
+                <a 
+                    href="#" 
+                    class="action--show-client-list"
+                    data-position="${index}">
+                    Info
+                </a>
+            </td>
             <td>
                 <span class="icon-loop2"></span>
                 <a 
@@ -123,7 +176,11 @@ const hidePartyUpdateButton = () => {
 // ACTION
 const addNewParty = () => {
 
-    const partyName             = partyInputName.value;
+    if (!getPartyCreationState()) {
+        showAlert('Party creation is disabled!', 'warning', partyForm); return;
+    }
+
+    let partyName               = partyInputName.value;
     const partyIsUnderAged      = partyInputIsUnderAged.value;
     const partyIsOpen           = partyInputIsOpen.value;
     const partyDate             = partyInputDate.value;
@@ -165,7 +222,7 @@ const updateParty = event => {
     const date          = partyInputDate.value;
 
     if(!isPartyValid(partyInputName.value, partyInputEntranceFee.value, partyInputDate.value)) {
-        showAlert('Please enter correct fields!', 'error');
+        showAlert('Please enter correct fields!', 'error', partyForm); 
         hidePartyUpdateButton(); return;
     }
 
@@ -264,7 +321,7 @@ const renderClientList = () => {
                     href="#" 
                     class="action--choose-party"
                     data-position="${index}">
-                    Event menu
+                    Join Event
                 </a>
             </td>
             <td>
@@ -326,6 +383,10 @@ const hideClientUpdateButton = () => {
 
 // ACTION
 const addNewClient = () => {
+
+    if (!getClientCreationState()) {
+        showAlert('Client creation is disabled!', 'warning', clientForm); return;
+    }
 
     const clientFirstName       = clientInputFirstName.value;
     const clientLastName        = clientInputLastName.value;
@@ -440,25 +501,25 @@ clientFormSubmit.addEventListener('click', event => {
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--choose-party') {
         
-        const modal = document.querySelector('.modal-layout');
-        modal.classList.add('modal-layout-active');
+        const modal = document.querySelector('.modal-join-event-layout');
+        modal.classList.add('modal-join-event-layout-active');
 
-        const modalExit = document.querySelector('.modal--exit');
+        const modalExit = document.querySelector('.modal-join-event--exit');
 
         modalExit.addEventListener('click', () => {
-            modal.classList.remove('modal-layout-active');
+            modal.classList.remove('modal-join-event-layout-active');
         });
 
         const partyCollection = PartyManager.getPartyCollection();
-        const partyTableList = document.getElementById('choose-party-list--layout');
+        const partyModalTableList = document.getElementById('modal-choose-party-list--layout');
         
-        partyTableList.innerHTML = "";
+        partyModalTableList.innerHTML = "";
         // Render Party Table List
         partyCollection.forEach((party, index) => {
 
             const rowTemplate = document.createElement('tr');
             rowTemplate.innerHTML =`
-                <td>${party.name}</td>
+                <td>${prefixPartyNames(party)}</td>
                 <td>${party.isUnderAged}</td>
                 <td>${party.date}</td>
                 <td>${party.entranceFee}</td>
@@ -482,7 +543,7 @@ clientTableList.addEventListener('click', e => {
                     </a>
                 </td>`;
 
-            partyTableList.appendChild(rowTemplate);
+            partyModalTableList.appendChild(rowTemplate);
         });
 
         // get client
@@ -490,7 +551,7 @@ clientTableList.addEventListener('click', e => {
         const client = ClientManager.getClient(clientIndex);
 
         // Attach event listeners to Join buttons
-        const joinButtons = partyTableList.querySelectorAll('.action--party-join');
+        const joinButtons = partyModalTableList.querySelectorAll('.action--party-join');
 
         joinButtons.forEach((button, index) => {
             button.addEventListener('click', () => {
@@ -498,18 +559,18 @@ clientTableList.addEventListener('click', e => {
                 const party = PartyManager.getParty(index);
 
                 if (party.isOpen === 'no') {
-                    showAlert(`This event is closed. You cannot sign right now!`, 'warning', partyTableList.parentElement); 
+                    showAlert(`This event is closed. You cannot sign right now!`, 'warning', partyModalTableList.parentElement); 
                     return;
                 }
 
                 if (client.age < 18 && party.isUnderAged === 'no') {
-                    showAlert(`You're too young for this event! You cannot sign!`, 'warning', partyTableList.parentElement);
+                    showAlert(`You're too young for this event! You cannot sign!`, 'warning', partyModalTableList.parentElement);
                     return;
                 }
 
                 // Check if client exists in that event
                 if (checkIfIDExists(party.clientCollection, client.ID)) {
-                    showAlert(`You cannot sign twice for same event!`, 'warning', partyTableList.parentElement);
+                    showAlert(`You cannot sign twice for same event!`, 'warning', partyModalTableList.parentElement);
                     return;
                 }
 
@@ -519,7 +580,7 @@ clientTableList.addEventListener('click', e => {
                     client.partyCounter++;
                     ClientManager.storeClientToParty(party, client);
 
-                    showAlert(`Client will not pay for ${party.name}. VIP privileges!`, 'vip-gold', partyTableList.parentElement);
+                    showAlert(`Client will not pay for ${party.name}. VIP privileges!`, 'vip-gold', partyModalTableList.parentElement);
                     renderClientList();
                     return;
                 }
@@ -530,12 +591,12 @@ clientTableList.addEventListener('click', e => {
 
                 ClientManager.storeClientToParty(party, client);
 
-                showAlert(`Client added successfully for ${party.name} event!`, 'success', partyTableList.parentElement);
+                showAlert(`Client added successfully for ${party.name} event!`, 'success', partyModalTableList.parentElement);
                 renderClientList();
             });
         });
 
-        const leaveButtons = partyTableList.querySelectorAll('.action--party-leave');
+        const leaveButtons = partyModalTableList.querySelectorAll('.action--party-leave');
 
         leaveButtons.forEach((button, index) => {
             button.addEventListener('click', () => {
@@ -550,11 +611,11 @@ clientTableList.addEventListener('click', e => {
 
                     client.partyCounter--;
                     
-                    showAlert('You have successfully leaved this event!', 'warning', partyTableList.parentElement);
+                    showAlert('You have successfully leaved this event!', 'warning', partyModalTableList.parentElement);
 
                     renderClientList();
                 } else {
-                    showAlert('Client not found!', 'error', partyTableList.parentElement); return;
+                    showAlert('Client not found!', 'error', partyModalTableList.parentElement); return;
                 }
             });
         });
@@ -563,40 +624,53 @@ clientTableList.addEventListener('click', e => {
 });
 
 
+
+partyTableList.addEventListener('click', e => {
+    if (e.target.className === 'action--show-client-list') {
+
+        const modal = document.querySelector('.modal-client-info--layout');
+        modal.classList.add('modal-client-info--layout-active');
+
+        const modalExit = document.querySelector('.modal-client-info--exit');
+
+        modalExit.addEventListener('click', () => {
+            modal.classList.remove('modal-client-info--layout-active');
+        });
+    }
+});
+
+
 // Initial rendering
 renderClientList();
 renderPartyList();
 
+
 /*
+    Задачи:
 
-3. Създайте функционалност който да спира добавянето на събития или
-добавянето на клиенти на централно ниво. Когато бъде активирана при
-опит да се добави събитие или клиент потребителя получава съобщение
-че операцията не може да бъде извършена, защото системата е
-затворена.
+    Да се създаде графичен потребителски интерфейс, който да визуализира
+    списък с всички клиенти на дадено парти. Интегрирайте създадената от вас
+    логика за работа с клиенти, в рамките на графичния интерфейс. Не забравяйте
+    VIP клиенти-те. Необходимо е да запазите описаната функционална интеракция
+    между списъка със събития и списъка с клиенти. Това включва добавяне на
+    клиент към списъка със събития.
 
-4. Добавете, свойство цена към всяко събитие което организирате. Цената не е
-задължително свойство, всяко събитие което е регистрирано без цена, става
-автоматично безплатно.
-Всички събития които са платени трябва да визуализират заглавията си със
-знака $ пред имената си безплатни събития трябва да визуализират имената си
-със знак “!”
-Всеки регистриран клиент, в системата трябва да разполага с портфейл.
-Портфейла съдържа пари които се намаляват при регистрация за ново събитие.
-Ако потребителя няма пари в портфейла си, системата не го регистрира.
-Фирмата добавя понятие VIP клиент. VIP е всеки който е добавен като клиент
-на поне 5 събития. VIP клиентите не заплащат такса при посещението си на
-следващото събитие. При регистрация за шестото си събитие статуса им се
-нулира и те отново се превръщат в обикновени клиенти.
-Създайте функционалност VIP клиент. VIP е всеки който е добавен като клиент
-на поне 5 събития. VIP клиентите не заплащат такса при посещението си
-събития
+    Създайте функционалност за извеждане на събитието с най-много
+    добавени клиенти. Ако такова не съществува (всички са с равен брой)
+    или не съществуват събития изведете необходимите съобщения, по ваш
+    избор.
 
-5. Да се създаде графичен потребителски интерфейс, който да визуализира
-списък с всички клиенти на дадено парти. Интегрирайте създадената от вас
-логика за работа с клиенти, в рамките на графичния интерфейс. Не забравяйте
-VIP клиенти-те. Необходимо е да запазите описаната функционална интеракция
-между списъка със събития и списъка с клиенти. Това включва добавяне на
-клиент към списъка със събития.
+    Изведете всички събития които са подходящи за малолетни посетители.
+
+    Изведете всички събития като ги групирате, събитията които са
+    предназначени за пълнолетни посетители трябва да имат звездичка пред
+    името си “*” а тези подходящи за непълнолетни диез “#”
+
+    Създайте механизъм за филтриране на събития по определен критерии.
+    Функцията трябва да има възможност да получава име / или флаг за
+    достъп и да визуализира само тези събития които отговарят на
+    критериите.
+
+    
 
 */
