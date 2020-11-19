@@ -98,16 +98,30 @@ const customFill = (collection, fillValues, length) => {
 
 
 
-// #5 Assignment (first part)
-const customReverse = (collection) => {
-    const reversed = [];
+// #5 Assignment
+// Newbie solution
+const reverseArr = function(collection) {
+    if (collection.length === 2) {
+        let reversed = [];
 
-    for (let i = collection.length - 1; i >= 0; i--) {
-        reversed.push(collection[i]);
+        for (let i = collection.length - 1; i >= 0; i--) {
+            reversed.push(reverseArr(collection[i]));
+        }
+        return reversed;
+    } else {
+        return reverseArr(collection);
     }
 
-    return reversed;
-}
+    function reverseArr(collection) {
+        let reversed = [];
+
+        for (let i = collection.length - 1; i >= 0; i--) {
+            reversed.push(collection[i]);
+        }
+        return reversed;
+    }
+};
+
 
 // #5 BONUS:
 // const reverse = array => array.map((item, index) => array[array.length - 1 - index]);
@@ -116,4 +130,5 @@ const customReverse = (collection) => {
 
 
 // #5 Test
-// console.log(customReverse([ [1, 2, 3], ['a', 'b', 'c'] ]));
+// console.log(reverseArr([ [1, 2, 3], ['a', 'b', 'c'] ]));
+// console.log(reverseArr([1, 2, 3]));
