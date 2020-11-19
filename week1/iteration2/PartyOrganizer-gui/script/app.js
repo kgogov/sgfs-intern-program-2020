@@ -16,74 +16,74 @@ const PartyManager = {
     // Mock data
     partyCollection : [
         {
-            ID: "5fb3e8e9afc1cfd2a349231b",
+            ID: "5fb62ba802fbf8c69a856933",
             clientCollection: [],
-            date: "2020-11-19",
-            entranceFee: 20,
+            date: "2020-11-20",
+            entranceFee: "10",
+            isFree: "no",
+            isOpen: "yes",
+            isUnderAged: "no",
+            name: "Plovdiv",
+        },
+        {
+            ID: "5fb62ba802fbf8c59a856933",
+            clientCollection: [],
+            date: "2020-11-20",
+            entranceFee: "0",
             isFree: "yes",
             isOpen: "yes",
             isUnderAged: "yes",
-            name: "Asenovgrad"
+            name: "Asenovgrad",
         },
         {
-            ID: "5fb3e8e9afc1cfd2a345231a",
+            ID: "5fb62ba802fbf8c49a856933",
             clientCollection: [],
-            date: "2020-12-19",
-            entranceFee: 20,
-            isFree: "yes",
-            isOpen: "yes",
-            isUnderAged: "yes",
-            name: "Plovdiv"
-        },
-        {
-            ID: "5fb3e8e9afc1cfd2a342231a",
-            clientCollection: [],
-            date: "2020-12-19",
-            entranceFee: 20,
-            isFree: "yes",
-            isOpen: "yes",
-            isUnderAged: "yes",
-            name: "Sofia"
-        },
-        {
-            ID: "5fb3e8e9afc1cfd2a345251a",
-            clientCollection: [],
-            date: "2020-12-19",
-            entranceFee: 20,
-            isFree: "yes",
+            date: "2020-11-20",
+            entranceFee: "10",
+            isFree: "no",
             isOpen: "no",
-            isUnderAged: "yes",
-            name: "Primorsko"
+            isUnderAged: "no",
+            name: "Sofia",
         },
         {
-            ID: "5fb3e7e9afc1cfd2a345231a",
+            ID: "5fb62ba802fbf8c39a856933",
             clientCollection: [],
-            date: "2020-12-19",
-            entranceFee: 20,
+            date: "2020-11-20",
+            entranceFee: "10",
+            isFree: "no",
+            isOpen: "yes",
+            isUnderAged: "no",
+            name: "Burgas",
+        },
+        {
+            ID: "5fb62ba802fbf8c29a856933",
+            clientCollection: [],
+            date: "2020-11-20",
+            entranceFee: "0",
             isFree: "yes",
             isOpen: "yes",
             isUnderAged: "yes",
-            name: "Varna"
+            name: "Primorsko",
         },
         {
-            ID: "5fb3e8e9afc1cfd21345231a",
+            ID: "5fb62ba802fbf8c19a856933",
             clientCollection: [],
-            date: "2020-12-19",
-            entranceFee: 20,
-            isFree: "yes",
-            isOpen: "yes",
-            isUnderAged: "yes",
-            name: "Burgas"
+            date: "2020-11-20",
+            entranceFee: "25",
+            isFree: "no",
+            isOpen: "no",
+            isUnderAged: "no",
+            name: "Varna",
         },
         {
-            ID: "5fb3e8@9afc1cfd2a345231a",
+            ID: "5fb62ba802fbf8c09a856933",
             clientCollection: [],
-            date: "2020-12-19",
-            entranceFee: 20,
-            isFree: "yes",
+            date: "2020-11-20",
+            entranceFee: "5",
+            isFree: "no",
             isOpen: "yes",
-            isUnderAged: "yes",
-            name: "Stara Zagora"
+            isUnderAged: "no",
+            name: "Stara Zagora",
         }
     ],
 
@@ -104,40 +104,31 @@ const ClientManager = {
     // Mock data
     mainClientCollection : [
         {
-            ID: "45325665",
-            age: "23",
+            ID: "24207427",
+            age: "22",
             fullName: "Konstantin Gogov",
             gender: "male",
             isVIP: false,
             partyCounter: 0,
-            wallet: 1000
+            wallet: "100"
         },
         {
-            ID: "45125265",
-            age: "23",
-            fullName: "Ivana Ivanova",
+            ID: "24205427",
+            age: "17",
+            fullName: "Kristina Ivanova",
             gender: "female",
             isVIP: false,
             partyCounter: 0,
-            wallet: 1000
+            wallet: "50"
         },
         {
-            ID: "45585265",
-            age: "23",
-            fullName: "Rosica Pencheva",
-            gender: "female",
-            isVIP: false,
-            partyCounter: 0,
-            wallet: 1000
-        },
-        {
-            ID: "455250265",
-            age: "23",
-            fullName: "Panayot Panayotov",
+            ID: "24206427",
+            age: "24",
+            fullName: "Petur Panayotov",
             gender: "prefer not to say",
             isVIP: false,
             partyCounter: 0,
-            wallet: 1000
+            wallet: "50"
         }
     ],
 
@@ -168,7 +159,7 @@ const createParty = (partyObject) => {
         isOpen              : partyObject.isOpen,
         date                : partyObject.date,
         entranceFee         : partyObject.entranceFee,
-        isFree              : partyObject.entranceFee === 0 ? 'yes' : 'no',
+        isFree              : partyObject.entranceFee == '0' ? 'yes' : 'no',
         clientCollection    : []
     };
 };
@@ -264,7 +255,7 @@ const isClientValid = (fName, lName, gender, age, wallet) => {
 
 const prefixPartyNames = (party) => {
     let name = party.name;
-    return (party.entranceFee == 0)    ? 
+    return (party.entranceFee === '0') ? 
         name = `❗ ${name}`             : 
         name = `💲 ${name}`;
 }
@@ -274,12 +265,5 @@ const prefixPartyNames = (party) => {
 // Notes:
 //* Въпрос: да правя ли function wrapper за всички тези input-и
 //* Идея: custom side slider menu with different options and modal forms for sorting etc.
-
-// Според типа на бутона можем да извикаме функция за Update или Delete
 // Друго хубаво упрaжнение: друг файл script-console
-
-// Различни функции за рендериране
-// Различни функции за манипулация
-// Различни функции за връщане на данни
-
 // Performance upgrade: implement StringBulder with array with .push() and the join() || toString()

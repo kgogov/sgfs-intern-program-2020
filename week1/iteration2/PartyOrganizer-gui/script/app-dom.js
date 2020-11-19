@@ -1,4 +1,3 @@
-
 // Party DOM Selectors
 let partyTableList           = document.getElementById('party-list--layout');
 let partyForm                = document.getElementById('party-form');
@@ -68,7 +67,7 @@ const emptyPartyFormFields = () => {
     partyInputIsUnderAged.value     = 'yes';
     partyInputIsOpen.value          = 'yes';
     partyInputDate.value            = '';
-    partyInputEntranceFee.value     = 0;
+    partyInputEntranceFee.value     = '0';
 }
 
 
@@ -244,7 +243,7 @@ const updateParty = event => {
     party.isOpen        = isOpen;
     party.date          = date;
     party.entranceFee   = entranceFee;
-    party.isFree        = entranceFee === 0 ? 'yes' : 'no';
+    party.isFree        = entranceFee === "0" ? 'yes' : 'no';
 
     // Delete and update at the current index at PartyCollection
     parties.splice(partyIndex, 1, party);
@@ -403,17 +402,42 @@ const renderModalClientList = (currentParty, layoutList, filter) => {
 )};
 
 // Second Modal Form
-const renderModalParties = (collection, layout, filter) => {
+const renderModalParties = (collection, layout, client, filter) => {
 
     let filteredParties = [];
     layout.innerHTML = '';
 
-    if (!filter || filter === 'noFilter') {
-        filteredParties = collection;
-    } else {
+
+    if (filter === 'noFilter') {
         filteredParties = collection
-            .filter(party => party.isUnderAged === filter);
+
+    } else if (filter === 'forUnderAged') {
+        filteredParties = collection
+            .filter(party => party.isUnderAged === 'yes');
+
+    } else if (filter === 'forAdults') {
+        filteredParties = collection
+            .filter(party => party.isUnderAged === 'no');
+
+    } else if (filter === 'free') {
+        filteredParties = collection
+            .filter(party => party.isFree === 'yes');
+
+    } else if (filter === 'paid') {
+        filteredParties = collection
+            .filter(party => party.isFree === 'no');
+
+    } else if (filter === 'open') {
+        filteredParties = collection
+            .filter(party => party.isOpen === 'yes');
+
+    } else if (filter === 'closed') {
+        filteredParties = collection
+            .filter(party => party.isOpen === 'no');
+    } else {
+        filteredParties = collection;
     }
+
 
     filteredParties.forEach((party, index) => {
         const rowTemplate = document.createElement('tr');
@@ -443,6 +467,86 @@ const renderModalParties = (collection, layout, filter) => {
             </td>`;
 
         layout.appendChild(rowTemplate);
+    });
+
+    // After rendering
+    const joinButtons = layout.querySelectorAll('.action--party-join');
+    const leaveButtons = layout.querySelectorAll('.action--party-leave');
+
+    joinButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+
+            const party = PartyManager.getParty(index);
+            const isClientUnderAged = client.age < 18 && party.isUnderAged === 'no';
+            const isClientVIP       = client.partyCounter !== 0 && client.partyCounter % 5 === 0;
+
+            if (party.isOpen === 'no') {
+                showAlert(`This event is closed. You cannot sign right now!`, 'warning', layout.parentElement); 
+                return;
+            }
+
+            if (isClientUnderAged) {
+                showAlert(`You're too young for this event! You cannot sign!`, 'warning', layout.parentElement);
+                return;
+            }
+
+            // Check if client exists in that event
+            if (checkIfIDExists(party.clientCollection, client.ID)) {
+                showAlert(`You cannot sign twice for same event!`, 'warning', layout.parentElement);
+                return;
+            }
+
+            if (isClientVIP) {
+                
+                client.isVIP = true;
+                client.partyCounter++;
+                ClientManager.storeClientToParty(party, client);
+
+                showAlert(`Client will not pay for ${party.name}. VIP privileges!`, 'vip-gold', layout.parentElement);
+                renderClientList();
+                return;
+            }
+
+            //* VITAL! така сравнявам number, а не string 
+            if (+client.wallet < +party.entranceFee) {
+                showAlert(`Not enough money!`, 'warning', layout.parentElement);
+                return;
+            }
+
+            client.isVIP = false;
+            client.partyCounter++;
+            client.wallet -= party.entranceFee;
+
+            ClientManager.storeClientToParty(party, client);
+
+            showAlert(`Client added successfully for ${party.name} event!`, 'success', layout.parentElement);
+            renderClientList();
+            renderPartyList();
+        });
+    });
+
+
+    leaveButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+
+            let party = PartyManager.getParty(index);
+            let clientID = client.ID;
+
+            if (checkIfIDExists(party.clientCollection, clientID)) {
+
+                party.clientCollection = party.clientCollection
+                    .filter(client => client.ID !== clientID);
+
+                client.partyCounter--;
+                
+                showAlert('You have successfully leaved this event!', 'warning', layout.parentElement);
+
+                renderPartyList();
+                renderClientList();
+            } else {
+                showAlert('Client not found!', 'error', layout.parentElement); return;
+            }
+        });
     });
 };
 
@@ -477,7 +581,6 @@ partyTableList.addEventListener('click', e => {
             showAlert('There are no clients at this event!', 'warning', clientTableList.parentElement);
         }
 
-
         dropdown.addEventListener("change", () => {
             clientTableList.innerHTML = "";
             renderModalClientList(currentParty, clientTableList, dropdown.value);
@@ -488,6 +591,7 @@ partyTableList.addEventListener('click', e => {
             modal.classList.remove('modal-client-info--layout-active');
         });
 
+        // Initial rendering without filter
         renderModalClientList(currentParty, clientTableList);
     } /* if ends  ere*/
 });
@@ -515,88 +619,13 @@ clientTableList.addEventListener('click', e => {
         const clientIndex = e.target.getAttribute('data-position');
         const client = ClientManager.getClient(clientIndex);
 
-        // Той ги адва веднъж само когато ги показва
-        // А ние искаме да ги адва всеки път, както и при филтрация
-
-
         dropdown.addEventListener("change", () => {
             partyModalTableList.innerHTML = "";
-            renderModalParties(partyCollection, partyModalTableList, dropdown.value);
+            renderModalParties(partyCollection, partyModalTableList, client, dropdown.value);
         });
 
-        renderModalParties(partyCollection, partyModalTableList);
-
-
-        const joinButtons = partyModalTableList.querySelectorAll('.action--party-join');
-
-        joinButtons.forEach((button, index) => {
-            button.addEventListener('click', () => {
-                // get party
-                const party = PartyManager.getParty(index);
-
-                if (party.isOpen === 'no') {
-                    showAlert(`This event is closed. You cannot sign right now!`, 'warning', partyModalTableList.parentElement); 
-                    return;
-                }
-
-                if (client.age < 18 && party.isUnderAged === 'no') {
-                    showAlert(`You're too young for this event! You cannot sign!`, 'warning', partyModalTableList.parentElement);
-                    return;
-                }
-
-                // Check if client exists in that event
-                if (checkIfIDExists(party.clientCollection, client.ID)) {
-                    showAlert(`You cannot sign twice for same event!`, 'warning', partyModalTableList.parentElement);
-                    return;
-                }
-
-                if (client.partyCounter !== 0 && client.partyCounter % 5 === 0) {
-                    
-                    client.isVIP = true;
-                    client.partyCounter++;
-                    ClientManager.storeClientToParty(party, client);
-
-                    showAlert(`Client will not pay for ${party.name}. VIP privileges!`, 'vip-gold', partyModalTableList.parentElement);
-                    renderClientList();
-                    return;
-                }
-
-                client.isVIP = false;
-                client.partyCounter++;
-                client.wallet -= party.entranceFee;
-
-                ClientManager.storeClientToParty(party, client);
-
-                showAlert(`Client added successfully for ${party.name} event!`, 'success', partyModalTableList.parentElement);
-                renderClientList();
-                renderPartyList();
-            });
-        });
-
-        const leaveButtons = partyModalTableList.querySelectorAll('.action--party-leave');
-
-        leaveButtons.forEach((button, index) => {
-            button.addEventListener('click', () => {
-
-                let party = PartyManager.getParty(index);
-                let clientID = client.ID;
-
-                if (checkIfIDExists(party.clientCollection, clientID)) {
-
-                    party.clientCollection = party.clientCollection
-                        .filter(client => client.ID !== clientID);
-
-                    client.partyCounter--;
-                    
-                    showAlert('You have successfully leaved this event!', 'warning', partyModalTableList.parentElement);
-
-                    renderPartyList();
-                    renderClientList();
-                } else {
-                    showAlert('Client not found!', 'error', partyModalTableList.parentElement); return;
-                }
-            });
-        });
+        // Initial rendering without filter
+        renderModalParties(partyCollection, partyModalTableList, client);
     } /* IF ENDS HERE! */
 });
 
