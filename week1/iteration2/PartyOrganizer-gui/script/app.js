@@ -1,3 +1,17 @@
+// Configuration
+
+let isPartyCreationAllowed = true;
+let isClientCreationAllowed = true;
+
+
+function getPartyCreationState() {
+    return isPartyCreationAllowed;
+}
+
+function getClientCreationState() {
+    return isClientCreationAllowed;
+}
+
 const PartyManager = {
     // Mock data
     partyCollection : [
@@ -147,8 +161,6 @@ const ClientManager = {
 
 const createParty = (partyObject) => {
 
-    //! Тук сетвам даден стейт спрамо стойността на пропъртито
-
     return {
         ID                  : generateEventID(),
         name                : partyObject.name,
@@ -162,8 +174,6 @@ const createParty = (partyObject) => {
 };
 
 const createClient = (clientObject) => {
-
-    //! Тук сетвам даден стейт спрамо стойността на клиента
 
     return {
         ID              : generateClientID(),
@@ -222,3 +232,54 @@ const capitalizeFirstLetter = (string) => {
 const checkIfIDExists = (collection, id) => {
     return collection.find(item => item.ID == id);
 };
+
+// Utility
+const isPartyValid = (name, entrance, date) => {
+
+    if (!name     ||
+        !date     ||
+        !entrance ||
+        entrance < 0) {
+        return false;
+    }
+    return true;
+}
+
+
+// Utility
+//* идея: да проверя всички имена с RegEx
+const isClientValid = (fName, lName, gender, age, wallet) => {
+
+    if (!fName      ||
+        !lName      ||
+        !gender     ||
+        !age        || 
+        age < 16    ||
+        !wallet     ||
+        wallet < 0) {
+            return false;
+    }
+    return true;
+}
+
+const prefixPartyNames = (party) => {
+    let name = party.name;
+    return (party.entranceFee == 0)    ? 
+        name = `❗ ${name}`             : 
+        name = `💲 ${name}`;
+}
+
+
+
+// Notes:
+//* Въпрос: да правя ли function wrapper за всички тези input-и
+//* Идея: custom side slider menu with different options and modal forms for sorting etc.
+
+// Според типа на бутона можем да извикаме функция за Update или Delete
+// Друго хубаво упрaжнение: друг файл script-console
+
+// Различни функции за рендериране
+// Различни функции за манипулация
+// Различни функции за връщане на данни
+
+// Performance upgrade: implement StringBulder with array with .push() and the join() || toString()

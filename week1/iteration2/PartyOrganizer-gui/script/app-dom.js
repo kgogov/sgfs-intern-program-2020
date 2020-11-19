@@ -1,8 +1,4 @@
-let isPartyCreationAllowed = true;
-let isClientCreationAllowed = true;
 
-//* Въпрос: да правя ли function wrapper за всички тези input-и
-//* Идея: custom side slider menu with different options and modal forms for sorting etc.
 // Party DOM Selectors
 let partyTableList           = document.getElementById('party-list--layout');
 let partyForm                = document.getElementById('party-form');
@@ -30,21 +26,13 @@ const partyCreationButton   = document.getElementById('action--toggle-event-crea
 const clientCreationButton   = document.getElementById('action--toggle-client-creation');
 
 
-function getPartyCreationState() {
-    return isPartyCreationAllowed;
-}
 
-function getClientCreationState() {
-    return isClientCreationAllowed;
-}
-
-
-// Configuration
+// DOM Utility
 const togglePartyCreation = () => {
     isPartyCreationAllowed = !isPartyCreationAllowed;
 
-    return (isPartyCreationAllowed)                                   ? 
-        showAlert('Party creation is enabled!', 'success', partyForm) :
+    return (isPartyCreationAllowed)                                     ? 
+        showAlert('Party creation is enabled!', 'success', partyForm)   :
         showAlert('Party creation is disabled!', 'warning', partyForm)
 }
 
@@ -56,12 +44,8 @@ const toggleClientCreation = () => {
         showAlert('Client creation is disabled!', 'warning', clientForm) 
 }
 
-// Event listeners for creation togglers state
-partyCreationButton.addEventListener('click', togglePartyCreation);
-clientCreationButton.addEventListener('click', toggleClientCreation);
-
-
-function showAlert(message, className, position) {
+// DOM Utility
+const showAlert = function(message, className, position) {
 
     const div = document.createElement('div');
     div.className = `alert ${className}`;
@@ -76,14 +60,82 @@ function showAlert(message, className, position) {
     }, 3000);
 }
 
-const prefixPartyNames = (party) => {
-    let name = party.name;
-    return (party.entranceFee == 0)    ? 
-        name = `! ${name}`             : 
-        name = `$ ${name}`;
+
+// Party DOM Utility
+const emptyPartyFormFields = () => {
+
+    partyInputName.value            = '';
+    partyInputIsUnderAged.value     = 'yes';
+    partyInputIsOpen.value          = 'yes';
+    partyInputDate.value            = '';
+    partyInputEntranceFee.value     = 0;
 }
 
-//! ### Event ####
+
+// Party DOM Utility
+const fillCurrentPartyFormValues = (name, isUnderAged, entrance, date, isOpen) => {
+
+    partyInputName.value            = name;
+    partyInputIsUnderAged.value     = isUnderAged;
+    partyInputEntranceFee.value     = entrance
+    partyInputDate.value            = date;
+    partyInputIsOpen.value          = isOpen;
+}
+
+const fillCurrentClientFormValues = (fullName, gender, age, wallet) => {
+
+    const clientNames = fullName.split(' ');
+    //! Възможност за бъг с тия имена
+    //! поне така ако клиента въведе повече имена
+    //! винаги ще взимам първото и последното
+
+    clientInputFirstName.value  = clientNames[0];
+    clientInputLastName.value   = clientNames[clientNames.length - 1];
+    clientGenderSelect.value    = gender;
+    clientInputAge.value        = age;
+    clientInputWallet.value     = wallet;
+}
+
+
+// Party DOM Utility
+const showPartyUpdateButton = () => {
+    partyUpdateButton.style.display = "inline-block";
+    partyFormSubmit.style.display = "none";
+}
+
+const hidePartyUpdateButton = () => {
+    partyUpdateButton.style.display = "none";
+    partyFormSubmit.style.display = "inline-block";
+}
+
+
+
+// Client DOM Utility
+const emptyClientFormFields = () => {
+
+    clientInputFirstName.value      = '';
+    clientInputLastName.value       = '';
+    clientGenderSelect.value        = '';
+    clientInputAge.value            = '';
+    clientInputWallet.value         = '';
+}
+
+// Client DOM Utility
+const showClientUpdateButton = () => {
+    clientUpdateButton.style.display = "inline-block";
+    clientFormSubmit.style.display = "none";
+}
+
+// Client DOM Utility
+const hideClientUpdateButton = () => {
+    clientUpdateButton.style.display = "none";
+    clientFormSubmit.style.display = "inline-block";
+}
+
+
+
+
+//! ### Party ### 
 const renderPartyList = () => {
     // Get current parties
     const partyCollection = PartyManager.getPartyCollection();
@@ -91,15 +143,6 @@ const renderPartyList = () => {
     partyTableList.innerHTML = "";
     // Rendering the current DOM
     partyCollection.forEach((party, index) => {
-
-        //* Performance upgrade: 
-        //* имплементация на StringBuilder: масив --> .push() --> .join() || toString()
-        // Според типа на бутона можем да извикаме функция за Update или Delete
-        // Друго хубаво упрaжнение: друг файл script-console
-
-        // Различни функции за рендериране
-        // Различни функции за манипулация
-        // Различни функции за връщане на данни
 
         const rowTemplate = document.createElement('tr');
         
@@ -143,38 +186,6 @@ const renderPartyList = () => {
 };
 
 
-// Utility
-const emptyEventFormFields = () => {
-
-    partyInputName.value            = '';
-    partyInputIsUnderAged.value     = 'yes';
-    partyInputIsOpen.value          = 'yes';
-    partyInputDate.value            = '';
-    partyInputEntranceFee.value     = 0;
-}
-
-const isPartyValid = (name, entrance, date) => {
-
-    if (!name     ||
-        !date     ||
-        !entrance ||
-        entrance < 0) {
-        return false;
-    }
-    return true;
-}
-
-const showPartyUpdateButton = () => {
-    partyUpdateButton.style.display = "inline-block";
-    partyFormSubmit.style.display = "none";
-}
-
-const hidePartyUpdateButton = () => {
-    partyUpdateButton.style.display = "none";
-    partyFormSubmit.style.display = "inline-block";
-}
-
-// ACTION
 const addNewParty = () => {
 
     if (!getPartyCreationState()) {
@@ -202,11 +213,11 @@ const addNewParty = () => {
     ));
 
     showAlert('Party added successfully', 'success', partyForm);
-    emptyEventFormFields();
+    emptyPartyFormFields();
     renderPartyList();
 }
 
-// ACTION
+
 const updateParty = event => {
     // Receive date from hidden input (returns the value of a specified attribute)
     const partyIndex = event.target.getAttribute('data-update');
@@ -227,7 +238,7 @@ const updateParty = event => {
         hidePartyUpdateButton(); return;
     }
 
-    // Update new object (така не връщам нов обект, и не променям state)
+    // Update new object (така не връщам нов обект, и не ID или други пропъртита)
     party.name          = name;
     party.isUnderAged   = isUnderAged;
     party.isOpen        = isOpen;
@@ -240,63 +251,11 @@ const updateParty = event => {
 
     hidePartyUpdateButton();
     showAlert('Party updated successfully!', 'success', partyForm);
-    emptyEventFormFields();
+    emptyPartyFormFields();
     renderPartyList();
 }
 
-// updateParty() button listener
-partyFormSubmit.addEventListener('click', event => {
-    event.preventDefault();
-    addNewParty();
-});
 
-
-const fillCurrentPartyFormValues = (name, isUnderAged, entrance, date, isOpen) => {
-
-    partyInputName.value            = name;
-    partyInputIsUnderAged.value     = isUnderAged;
-    partyInputEntranceFee.value     = entrance
-    partyInputDate.value            = date;
-    partyInputIsOpen.value          = isOpen;
-}
-
-
-// Event listener for update filling form data
-partyTableList.addEventListener('click', e => {
-
-    if (e.target.className === 'action--party-update') {
-        // Get data from clicked index row
-        const partyIndex = e.target.getAttribute('data-position');
-        const party = PartyManager.getParty(partyIndex);
-        // Send data to hidden button
-        partyUpdateButton.setAttribute('data-update', partyIndex);
-        // Using some fancy object destructuring
-        const { name, isUnderAged, entranceFee, date, isOpen } = party;
-
-        fillCurrentPartyFormValues(name, isUnderAged, entranceFee, date, isOpen);
-        showAlert('Please enter the new fields here!', 'warning', partyForm);
-
-        showPartyUpdateButton();
-    }
-});
-
-// Event listener for delete
-document.getElementById('party-list--layout').addEventListener('click', e => {
-
-    if (e.target.className === 'action--party-delete') {
-        // Get data from clicked index row
-        const partyIndex = e.target.getAttribute('data-position');
-        const parties = PartyManager.getPartyCollection();
-        // /remove the element at the current index
-        parties.splice(partyIndex, 1);
-
-        showAlert('Party deleted successfully!', 'success', partyForm);
-        renderPartyList();
-    }
-});
-
-// Event listener to update action
-document.getElementById('action--update-party').addEventListener('click', updateParty);
 
 
 //! ### Client ### 
@@ -348,41 +307,7 @@ const renderClientList = () => {
     });
 }
 
-//* идея: да проверя всички имена с RegEx
-const isClientValid = (fName, lName, gender, age, wallet) => {
 
-    if (!fName      ||
-        !lName      ||
-        !gender     ||
-        !age        || 
-        age < 16    ||
-        !wallet     ||
-        wallet < 0) {
-            return false;
-    }
-    return true;
-}
-
-const emptyClientFormFields = () => {
-
-    clientInputFirstName.value      = '';
-    clientInputLastName.value       = '';
-    clientGenderSelect.value        = '';
-    clientInputAge.value            = '';
-    clientInputWallet.value         = '';
-}
-
-const showClientUpdateButton = () => {
-    clientUpdateButton.style.display = "inline-block";
-    clientFormSubmit.style.display = "none";
-}
-
-const hideClientUpdateButton = () => {
-    clientUpdateButton.style.display = "none";
-    clientFormSubmit.style.display = "inline-block";
-}
-
-// ACTION
 const addNewClient = () => {
 
     if (!getClientCreationState()) {
@@ -413,7 +338,7 @@ const addNewClient = () => {
     renderClientList();
 }
 
-// ACTION
+
 const updateClient = event => {
 
     const clients = ClientManager.getMainClientCollection();
@@ -447,58 +372,37 @@ const updateClient = event => {
     renderClientList();
 }
 
-// Event listener update clients (filling form data)
-clientTableList.addEventListener('click', e => {
-    if (e.target.className === 'action--client-update') {
-        // Send data to hidden button
-        const clientIndex = e.target.getAttribute('data-position');
-        const client = ClientManager.getClient(clientIndex);
-        clientUpdateButton.setAttribute('data-update', clientIndex);
 
-        // Using some fancy object destructuring
-        const { fullName, gender, age, wallet } = client;
+// First Modal Form
+const renderModalClientList = (currentParty, layoutList, filter) => {
 
-        const clientNames = fullName.split(' ');
-        //! Възможност за бъг с тия имена --- така ако клиента въведе повече имена винаги ще взеима първото и последното
-        clientInputFirstName.value  = clientNames[0];
-        clientInputLastName.value   = clientNames[clientNames.length - 1];
-        clientGenderSelect.value    = gender;
-        clientInputAge.value        = age;
-        clientInputWallet.value     = wallet;
+    layoutList.innerHTML = "";
 
-        showAlert('Please enter the new fields here!', 'warning', clientForm)
-        showClientUpdateButton();
+    let filteredClients = [];
+
+    if (!filter || filter === 'noFilter') {
+        filteredClients = currentParty.clientCollection;
+    } else {
+        filteredClients = currentParty.clientCollection
+            .filter(client => client.gender === filter);
     }
-});
-
-
-// Event listener for delete clients from UI
-clientTableList.addEventListener('click', e => {
-    if (e.target.className === 'action--client-delete') {
-
-        const clients = ClientManager.getMainClientCollection();
-        const clientIndex = e.target.getAttribute('data-position');
-        // /remove the element at the current index
-        clients.splice(clientIndex, 1);
-
-        showAlert('Client deleted successfully!', 'success', clientForm);
-        renderClientList();
-    }
-});
-
-
-// Event listener to update action
-document.getElementById('action--update-client').addEventListener('click', updateClient);
-
-
-// Event listener to add new clients to UI
-clientFormSubmit.addEventListener('click', event => {
-    event.preventDefault();
     
-    addNewClient();
-});
+    filteredClients.forEach(client => {
 
+        const rowTemplate = document.createElement('tr');
 
+        rowTemplate.innerHTML = `
+            <td>${client.fullName}</td>
+            <td>${client.gender}</td>
+            <td>${client.age}</td>
+            <td>${client.isVIP}</td>
+        `;
+
+        layoutList.appendChild(rowTemplate);
+    }
+)};
+
+// Second Modal Form
 const renderModalParties = (collection, layout, filter) => {
 
     let filteredParties = [];
@@ -542,7 +446,55 @@ const renderModalParties = (collection, layout, filter) => {
     });
 };
 
-// Event listener show modal form select event
+
+
+
+//! EVENT LISTENERS
+
+// Toggler Creation
+partyCreationButton.addEventListener('click', togglePartyCreation);
+clientCreationButton.addEventListener('click', toggleClientCreation);
+
+
+
+//* Modal - SHOW CLIENTS - Info
+partyTableList.addEventListener('click', e => {
+    if (e.target.className === 'action--show-client-list') {
+
+        const clientTableList = document.getElementById('modal-client-info-list--layout');
+        const modalExit = document.querySelector('.modal-client-info--exit');
+
+        const partyIndex = e.target.getAttribute('data-position');
+        const currentParty = PartyManager.getParty(partyIndex);
+
+        const modal = document.querySelector('.modal-client-info--layout');
+        modal.classList.add('modal-client-info--layout-active');
+
+        const dropdown = document.querySelector('.client-info-sort-by');
+
+
+        if (currentParty.clientCollection.length === 0) {
+            showAlert('There are no clients at this event!', 'warning', clientTableList.parentElement);
+        }
+
+
+        dropdown.addEventListener("change", () => {
+            clientTableList.innerHTML = "";
+            renderModalClientList(currentParty, clientTableList, dropdown.value);
+        });
+
+        
+        modalExit.addEventListener('click', () => {
+            modal.classList.remove('modal-client-info--layout-active');
+        });
+
+        renderModalClientList(currentParty, clientTableList);
+    } /* if ends  ere*/
+});
+
+
+
+//* Modal - SHOW PARTIES - Join Event
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--choose-party') {
         
@@ -555,14 +507,17 @@ clientTableList.addEventListener('click', e => {
             modal.classList.remove('modal-join-event-layout-active');
         });
 
+        const dropdown = document.getElementById('party-info-sort-by');
+
         const partyCollection = PartyManager.getPartyCollection();
         const partyModalTableList = document.getElementById('modal-choose-party-list--layout');
 
-        const dropdown = document.getElementById('party-info-sort-by');
-
-        // get client
         const clientIndex = e.target.getAttribute('data-position');
         const client = ClientManager.getClient(clientIndex);
+
+        // Той ги адва веднъж само когато ги показва
+        // А ние искаме да ги адва всеки път, както и при филтрация
+
 
         dropdown.addEventListener("change", () => {
             partyModalTableList.innerHTML = "";
@@ -571,8 +526,7 @@ clientTableList.addEventListener('click', e => {
 
         renderModalParties(partyCollection, partyModalTableList);
 
-        // Attach event listeners to Join buttons
-        //! BUG: не им закача нови event listeneri при филтрация 
+
         const joinButtons = partyModalTableList.querySelectorAll('.action--party-join');
 
         joinButtons.forEach((button, index) => {
@@ -636,6 +590,7 @@ clientTableList.addEventListener('click', e => {
                     
                     showAlert('You have successfully leaved this event!', 'warning', partyModalTableList.parentElement);
 
+                    renderPartyList();
                     renderClientList();
                 } else {
                     showAlert('Client not found!', 'error', partyModalTableList.parentElement); return;
@@ -646,66 +601,96 @@ clientTableList.addEventListener('click', e => {
 });
 
 
-const renderModalClientList = (currentParty, layoutList, filter) => {
-
-    layoutList.innerHTML = "";
-
-    let filteredClients = [];
-
-    if (!filter || filter === 'noFilter') {
-        filteredClients = currentParty.clientCollection;
-    } else {
-        filteredClients = currentParty.clientCollection
-            .filter(client => client.gender === filter);
-    }
-    
-    filteredClients.forEach(client => {
-
-        const rowTemplate = document.createElement('tr');
-
-        rowTemplate.innerHTML = `
-            <td>${client.fullName}</td>
-            <td>${client.gender}</td>
-            <td>${client.age}</td>
-            <td>${client.isVIP}</td>
-        `;
-
-        layoutList.appendChild(rowTemplate);
-    }
-)};
-
-// Modal for event visualizer
-partyTableList.addEventListener('click', e => {
-    if (e.target.className === 'action--show-client-list') {
-
-        const clientTableList = document.getElementById('modal-client-info-list--layout');
-        const modalExit = document.querySelector('.modal-client-info--exit');
-
-        const partyIndex = e.target.getAttribute('data-position');
-        const currentParty = PartyManager.getParty(partyIndex);
-
-        const modal = document.querySelector('.modal-client-info--layout');
-        modal.classList.add('modal-client-info--layout-active');
-
-        const dropdown = document.querySelector('.client-info-sort-by');
-
-        modalExit.addEventListener('click', () => {
-            modal.classList.remove('modal-client-info--layout-active');
-        });
-
-        if (currentParty.clientCollection.length === 0) {
-            showAlert('There are no clients at this event!', 'warning', clientTableList.parentElement);
-        }
-
-        dropdown.addEventListener("change", () => {
-            clientTableList.innerHTML = "";
-            renderModalClientList(currentParty, clientTableList, dropdown.value);
-        });
-
-        renderModalClientList(currentParty, clientTableList);
-
-    } /* if ends  ere*/
+// Event listener to add new parties to UI
+partyFormSubmit.addEventListener('click', event => {
+    event.preventDefault();
+    addNewParty();
 });
+
+
+// Event listener to add new clients to UI
+clientFormSubmit.addEventListener('click', event => {
+    event.preventDefault();
+    addNewClient();
+});
+
+
+// PARTY: filling form data
+partyTableList.addEventListener('click', e => {
+
+    if (e.target.className === 'action--party-update') {
+        // Get data from clicked index row
+        const partyIndex = e.target.getAttribute('data-position');
+        const party = PartyManager.getParty(partyIndex);
+        // Send data to hidden button
+        partyUpdateButton.setAttribute('data-update', partyIndex);
+        // Using some fancy object destructuring
+        const { name, isUnderAged, entranceFee, date, isOpen } = party;
+
+        fillCurrentPartyFormValues(name, isUnderAged, entranceFee, date, isOpen);
+        showAlert('Please enter the new fields here!', 'warning', partyForm);
+        showPartyUpdateButton();
+    }
+});
+
+
+// CLIENT: filling form data
+clientTableList.addEventListener('click', e => {
+    if (e.target.className === 'action--client-update') {
+        // Send data to hidden button
+        const clientIndex = e.target.getAttribute('data-position');
+        const client = ClientManager.getClient(clientIndex);
+
+        clientUpdateButton.setAttribute('data-update', clientIndex);
+
+        // Using some fancy object destructuring
+        const { fullName, gender, age, wallet } = client;
+
+        fillCurrentClientFormValues(fullName, gender, age, wallet);
+        showAlert('Please enter the new fields here!', 'warning', clientForm)
+        showClientUpdateButton();
+    }
+});
+
+
+// DELETE parties FROM DOM
+partyTableList.addEventListener('click', e => {
+
+    if (e.target.className === 'action--party-delete') {
+        // Get data from clicked index row
+        const partyIndex = e.target.getAttribute('data-position');
+        const parties = PartyManager.getPartyCollection();
+        // /remove the element at the current index
+        parties.splice(partyIndex, 1);
+
+        showAlert('Party deleted successfully!', 'success', partyForm);
+        renderPartyList();
+    }
+});
+
+
+// DELETE clients FROM DOM
+clientTableList.addEventListener('click', e => {
+
+    if (e.target.className === 'action--client-delete') {
+
+        const clients = ClientManager.getMainClientCollection();
+        const clientIndex = e.target.getAttribute('data-position');
+        // /remove the element at the current index
+        clients.splice(clientIndex, 1);
+
+        showAlert('Client deleted successfully!', 'success', clientForm);
+        renderClientList();
+    }
+});
+
+
+// UPDATE parties
+document.getElementById('action--update-party').addEventListener('click', updateParty);
+
+// UPDATE clients
+document.getElementById('action--update-client').addEventListener('click', updateClient);
+
 
 
 // Initial rendering
