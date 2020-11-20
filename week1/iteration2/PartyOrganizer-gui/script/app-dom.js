@@ -81,20 +81,6 @@ const fillCurrentPartyFormValues = (name, isUnderAged, entrance, date, isOpen) =
     partyInputIsOpen.value          = isOpen;
 }
 
-const fillCurrentClientFormValues = (fullName, gender, age, wallet) => {
-
-    const clientNames = fullName.split(' ');
-    //! Възможност за бъг с тия имена
-    //! поне така ако клиента въведе повече имена
-    //! винаги ще взимам първото и последното
-
-    clientInputFirstName.value  = clientNames[0];
-    clientInputLastName.value   = clientNames[clientNames.length - 1];
-    clientGenderSelect.value    = gender;
-    clientInputAge.value        = age;
-    clientInputWallet.value     = wallet;
-}
-
 
 // Party DOM Utility
 const showPartyUpdateButton = () => {
@@ -102,6 +88,7 @@ const showPartyUpdateButton = () => {
     partyFormSubmit.style.display = "none";
 }
 
+// Party DOM Utility
 const hidePartyUpdateButton = () => {
     partyUpdateButton.style.display = "none";
     partyFormSubmit.style.display = "inline-block";
@@ -117,6 +104,18 @@ const emptyClientFormFields = () => {
     clientGenderSelect.value        = '';
     clientInputAge.value            = '';
     clientInputWallet.value         = '';
+}
+
+// Client DOM Utility
+const fillCurrentClientFormValues = (fullName, gender, age, wallet) => {
+
+    const clientNames = fullName.split(' '); /* it can cause bugs */
+
+    clientInputFirstName.value  = clientNames[0];
+    clientInputLastName.value   = clientNames[clientNames.length - 1];
+    clientGenderSelect.value    = gender;
+    clientInputAge.value        = age;
+    clientInputWallet.value     = wallet;
 }
 
 // Client DOM Utility
@@ -142,7 +141,6 @@ const renderPartyList = () => {
     partyTableList.innerHTML = "";
     // Rendering the current DOM
     partyCollection.forEach((party, index) => {
-
         const rowTemplate = document.createElement('tr');
         
         rowTemplate.innerHTML = `
@@ -218,7 +216,7 @@ const addNewParty = () => {
 
 
 const updateParty = event => {
-    // Receive date from hidden input (returns the value of a specified attribute)
+    // Receive date from hidden input -> getAttribute() returns the value of a specified attribute)
     const partyIndex = event.target.getAttribute('data-update');
     // Get all parties
     const parties = PartyManager.getPartyCollection();
@@ -237,7 +235,7 @@ const updateParty = event => {
         hidePartyUpdateButton(); return;
     }
 
-    // Update new object (така не връщам нов обект, и не ID или други пропъртита)
+    // Update new object (така не връщам нов обект, и не пипам ID или други пропъртита)
     party.name          = name;
     party.isUnderAged   = isUnderAged;
     party.isOpen        = isOpen;
@@ -249,8 +247,8 @@ const updateParty = event => {
     parties.splice(partyIndex, 1, party);
 
     hidePartyUpdateButton();
-    showAlert('Party updated successfully!', 'success', partyForm);
     emptyPartyFormFields();
+    showAlert('Party updated successfully!', 'success', partyForm);
     renderPartyList();
 }
 
@@ -265,8 +263,8 @@ const renderClientList = () => {
     clientTableList.innerHTML = "";
 
     clientCollection.forEach((client, index) => {
-
         const rowTemplate = document.createElement('tr');
+
         rowTemplate.innerHTML = `
             <td>${client.fullName}</td>
             <td>${client.gender}</td>
@@ -365,9 +363,9 @@ const updateClient = event => {
     // Delete and update at the current index at PartyCollection
     clients.splice(clientIndex, 1, client);
 
-    showAlert('Client updated successfully!', 'success', clientForm);
-    emptyClientFormFields();
     hideClientUpdateButton();
+    emptyClientFormFields();
+    showAlert('Client updated successfully!', 'success', clientForm);
     renderClientList();
 }
 
@@ -381,13 +379,13 @@ const renderModalClientList = (currentParty, layoutList, filter) => {
 
     if (!filter || filter === 'noFilter') {
         filteredClients = currentParty.clientCollection;
+
     } else {
         filteredClients = currentParty.clientCollection
             .filter(client => client.gender === filter);
     }
     
     filteredClients.forEach(client => {
-
         const rowTemplate = document.createElement('tr');
 
         rowTemplate.innerHTML = `
@@ -405,9 +403,10 @@ const renderModalClientList = (currentParty, layoutList, filter) => {
 const renderModalParties = (collection, layout, client, filter) => {
 
     let filteredParties = [];
+
     layout.innerHTML = '';
 
-
+    //! It could be refactored
     if (filter === 'noFilter') {
         filteredParties = collection
 
@@ -441,6 +440,7 @@ const renderModalParties = (collection, layout, client, filter) => {
 
     filteredParties.forEach((party, index) => {
         const rowTemplate = document.createElement('tr');
+
         rowTemplate.innerHTML =`
             <td>${prefixPartyNames(party)}</td>
             <td>${party.isUnderAged}</td>
@@ -507,10 +507,9 @@ const renderModalParties = (collection, layout, client, filter) => {
                 return;
             }
 
-            //* VITAL! така сравнявам number, а не string 
+            //* VITAL! Plus Unary === Number()
             if (+client.wallet < +party.entranceFee) {
-                showAlert(`Not enough money!`, 'warning', layout.parentElement);
-                return;
+                showAlert(`Not enough money!`, 'warning', layout.parentElement); return;
             }
 
             client.isVIP = false;
@@ -560,16 +559,15 @@ partyCreationButton.addEventListener('click', togglePartyCreation);
 clientCreationButton.addEventListener('click', toggleClientCreation);
 
 
-
 //* Modal - SHOW CLIENTS - Info
 partyTableList.addEventListener('click', e => {
     if (e.target.className === 'action--show-client-list') {
 
-        const clientTableList = document.getElementById('modal-client-info-list--layout');
-        const modalExit = document.querySelector('.modal-client-info--exit');
-
         const partyIndex = e.target.getAttribute('data-position');
         const currentParty = PartyManager.getParty(partyIndex);
+
+        const clientTableList = document.getElementById('modal-client-info-list--layout');
+        const modalExit = document.querySelector('.modal-client-info--exit');
 
         const modal = document.querySelector('.modal-client-info--layout');
         modal.classList.add('modal-client-info--layout-active');
@@ -601,23 +599,24 @@ partyTableList.addEventListener('click', e => {
 //* Modal - SHOW PARTIES - Join Event
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--choose-party') {
-        
-        const modal = document.querySelector('.modal-join-event-layout');
-        modal.classList.add('modal-join-event-layout-active');
-
-        const modalExit = document.querySelector('.modal-join-event--exit');
-
-        modalExit.addEventListener('click', () => {
-            modal.classList.remove('modal-join-event-layout-active');
-        });
-
-        const dropdown = document.getElementById('party-info-sort-by');
 
         const partyCollection = PartyManager.getPartyCollection();
         const partyModalTableList = document.getElementById('modal-choose-party-list--layout');
 
         const clientIndex = e.target.getAttribute('data-position');
         const client = ClientManager.getClient(clientIndex);
+        
+        const modal = document.querySelector('.modal-join-event-layout');
+        modal.classList.add('modal-join-event-layout-active');
+
+        const dropdown = document.getElementById('party-info-sort-by');
+
+        const modalExit = document.querySelector('.modal-join-event--exit');
+
+        
+        modalExit.addEventListener('click', () => {
+            modal.classList.remove('modal-join-event-layout-active');
+        });
 
         dropdown.addEventListener("change", () => {
             partyModalTableList.innerHTML = "";
