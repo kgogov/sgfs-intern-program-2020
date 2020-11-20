@@ -105,14 +105,14 @@ const reverseArr = function(collection) {
         let reversed = [];
 
         for (let i = collection.length - 1; i >= 0; i--) {
-            reversed.push(reverseArr(collection[i]));
+            reversed.push(reverseCollection(collection[i]));
         }
         return reversed;
     } else {
-        return reverseArr(collection);
+        return reverseCollection(collection);
     }
 
-    function reverseArr(collection) {
+    function reverseCollection(collection) {
         let reversed = [];
 
         for (let i = collection.length - 1; i >= 0; i--) {
@@ -130,5 +130,5 @@ const reverseArr = function(collection) {
 
 
 // #5 Test
-// console.log(reverseArr([ [1, 2, 3], ['a', 'b', 'c'] ]));
-// console.log(reverseArr([1, 2, 3]));
+console.log(reverseArr([ [1, 2, 3], ['a', 'b', 'c'] ]));
+console.log(reverseArr([1, 2, 3]));
