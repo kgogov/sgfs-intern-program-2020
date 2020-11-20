@@ -1,12 +1,25 @@
+:root {
+    --bg-color: #405080;
+    --text-color: #f4f4f4;
+    --primary-color: #33C3F0;
+    --btn-border-color: #d1d1d1;
+    --alert-success: #008000;
+    --alert-error: #b12323;
+    --alert-warning: #dd891a;
+    --alert-vip: #ffd700;
+    --container-box-shadow: 0px 0px 25px 5px #33c4f032;
+    --modal-bg-color: #4f5a7b;
+}
+
 body {
     /* Vital color! It mixes well with image wallpaper */
-    background-color: #405080;
-    color: #f4f4f4;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 input[type="button"],
 .button {
-    color: #f4f4f4;
+    color: var(--text-color);
 }
 
 .button {
@@ -14,7 +27,7 @@ input[type="button"],
 }
 
 .btn-blue {
-    color: #33C3F0;
+    color: var(--primary-color);
 }
 
 
@@ -33,16 +46,17 @@ input[type="button"],
 
 .main-heading {
     position: relative;
+    z-index: 1; /* cool effect with modal forms! */
     text-align: center;
     padding: 3rem 0;
-    text-shadow: 2px 2px 2px #33C3F0;
+    text-shadow: 2px 2px 2px var(--primary-color);
 }
 
 .container {
     padding: 1rem 2.5rem 0 2.5rem;
     box-shadow: 0px 5px 15px 1px rgba(0, 0, 0, 0.3);
     border-radius: 4px;
-    background-color: #405080;
+    background-color: var(--bg-color);
     position: relative;
 }
 
@@ -60,12 +74,12 @@ input[type="button"],
 #input--party-date {
     display: inline-block;
     border-radius: 4px;
-    border: 1px solid #d1d1d1;
+    border: 1px solid var(--btn-border-color);
     padding: 7px;
 }
 
 #input--party-date:focus {
-    border: 1px solid #33C3F0;
+    border: 1px solid var(--primary-color);
     outline: 0;
 }
 
@@ -80,25 +94,25 @@ a {
 .error,
 .warning,
 .vip-gold {
-    color: #f4f4f4;
+    color: var(--text-color);
     padding: 5px;
     margin: 5px 0 15px 0;
     border-radius: 4px;
 }
 
 .success {
-    background-color: #008000;
+    background-color: var(--alert-success);
 }
 .error {
-    background-color: #b12323;
+    background-color: var(--alert-error);
 }
 
 .warning {
-    background-color: #dd891a;
+    background-color: var(--alert-warning);
 }
 
 .vip-gold {
-    background-color: #ffd700;
+    background-color: var(--alert-vip);
     color: #000;
 }
 
@@ -127,8 +141,8 @@ a {
 
 .modal-join-event-content,
 .modal-client-info-content {
-    background-color: #4f5a7b;
-    box-shadow: 0px 0px 25px 5px #33c4f032;
+    background-color: var(--modal-bg-color);
+    box-shadow: var(--container-box-shadow);
     border-radius: 4px;
     height: 60%;
     width: 50%;
