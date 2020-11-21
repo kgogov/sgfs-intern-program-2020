@@ -156,7 +156,7 @@ const createParty = (partyObject) => {
         ID                  : generateEventID(),
         name                : partyObject.name,
         isUnderAged         : partyObject.isUnderAged === 'true' ? 'yes' : 'no',
-        isOpen              : partyObject.isOpen,
+        isOpen              : partyObject.isOpen      === 'true' ? 'yes' : 'no',
         date                : partyObject.date,
         entranceFee         : partyObject.entranceFee,
         isFree              : partyObject.entranceFee === '0' ? 'yes' : 'no',

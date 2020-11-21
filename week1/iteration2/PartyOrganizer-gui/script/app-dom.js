@@ -265,8 +265,8 @@ const updateParty = event => {
     }
 
     party.name          = name;
-    party.isUnderAged   = isUnderAged;
-    party.isOpen        = isOpen;
+    party.isUnderAged   = isUnderAged === 'true' ? 'yes' : 'no';
+    party.isOpen        = isOpen      === 'true' ? 'yes' : 'no';
     party.date          = date;
     party.entranceFee   = entranceFee;
     party.isFree        = entranceFee === "0" ? 'yes' : 'no';
