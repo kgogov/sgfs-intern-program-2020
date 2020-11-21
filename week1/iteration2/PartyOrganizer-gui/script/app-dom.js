@@ -24,52 +24,87 @@ let clientUpdateButton       = document.getElementById('action--update-client');
 const partyCreationButton   = document.getElementById('action--toggle-event-creation');
 const clientCreationButton   = document.getElementById('action--toggle-client-creation');
 
-
-
-// DOM Utility
-const togglePartyCreation = () => {
-    isPartyCreationAllowed = !isPartyCreationAllowed;
-
-    return (isPartyCreationAllowed)                                     ? 
-        showAlert('Party creation is enabled!', 'success', partyForm)   :
-        showAlert('Party creation is disabled!', 'warning', partyForm)
-}
-
-const toggleClientCreation = () => {
-    isClientCreationAllowed = !isClientCreationAllowed;
-
-    return (isClientCreationAllowed)                                     ?
-        showAlert('Client creation is enabled!', 'success', clientForm)  :
-        showAlert('Client creation is disabled!', 'warning', clientForm) 
-}
-
-// DOM Utility
 const showAlert = function(message, className, position) {
 
     const div = document.createElement('div');
     div.className = `alert ${className}`;
-    // Create text node
     div.appendChild(document.createTextNode(message));
-    // Insert into DOM
-    position.insertAdjacentElement('beforebegin', div);
 
-    // Disappear after 3 seconds
+    position.insertAdjacentElement('beforebegin', div);
+    
+    //* Fat operation 
     setTimeout(() => {
         document.querySelector('.alert').remove();
     }, 3000);
 }
 
 
+// DOM Utility
+const togglePartyCreation = () => {
+    isPartyCreationAllowed = !isPartyCreationAllowed;
+
+    if (isPartyCreationAllowed) {
+        enablePartyInputs();
+        showAlert('Party creation is enabled!', 'success', partyForm); return;
+    }
+
+    disablePartyInputs();
+    showAlert('Party creation is disabled!', 'warning', partyForm)
+}
+
+const toggleClientCreation = () => {
+    isClientCreationAllowed = !isClientCreationAllowed;
+
+    if (isClientCreationAllowed) {
+        enableClientInputs();
+        showAlert('Client creation is enabled!', 'success', clientForm); return;
+    }
+
+    disableClientInputs();
+    showAlert('Client creation is disabled!', 'warning', clientForm);
+}
+
+const disablePartyInputs = () => {
+    partyInputName.disabled         = true;
+    partyInputEntranceFee.disabled  = true;
+    partyInputDate.disabled         = true;
+    partyInputIsUnderAged.disabled  = true;
+    partyInputIsOpen.disabled       = true;
+}
+
+const enablePartyInputs = () => {
+    partyInputName.disabled         = false;
+    partyInputEntranceFee.disabled  = false;
+    partyInputDate.disabled         = false;
+    partyInputIsUnderAged.disabled  = false;
+    partyInputIsOpen.disabled       = false;
+}
+
+const disableClientInputs = () => {
+    clientInputFirstName.disabled = true;
+    clientInputLastName.disabled  = true;
+    clientGenderSelect.disabled   = true;
+    clientInputAge.disabled       = true;
+    clientInputWallet.disabled    = true;
+}
+
+const enableClientInputs = () => {
+    clientInputFirstName.disabled = false;
+    clientInputLastName.disabled  = false;
+    clientGenderSelect.disabled   = false;
+    clientInputAge.disabled       = false;
+    clientInputWallet.disabled    = false;
+}
+
 // Party DOM Utility
 const emptyPartyFormFields = () => {
 
     partyInputName.value            = '';
-    partyInputIsUnderAged.value     = 'yes';
-    partyInputIsOpen.value          = 'yes';
+    partyInputIsUnderAged.value     = 'true';
+    partyInputIsOpen.value          = 'true';
     partyInputDate.value            = '';
     partyInputEntranceFee.value     = '0';
 }
-
 
 // Party DOM Utility
 const fillCurrentPartyFormValues = (name, isUnderAged, entrance, date, isOpen) => {
@@ -80,7 +115,6 @@ const fillCurrentPartyFormValues = (name, isUnderAged, entrance, date, isOpen) =
     partyInputDate.value            = date;
     partyInputIsOpen.value          = isOpen;
 }
-
 
 // Party DOM Utility
 const showPartyUpdateButton = () => {
@@ -93,7 +127,6 @@ const hidePartyUpdateButton = () => {
     partyUpdateButton.style.display = "none";
     partyFormSubmit.style.display = "inline-block";
 }
-
 
 
 // Client DOM Utility
@@ -109,7 +142,7 @@ const emptyClientFormFields = () => {
 // Client DOM Utility
 const fillCurrentClientFormValues = (fullName, gender, age, wallet) => {
 
-    const clientNames = fullName.split(' '); /* it can cause bugs */
+    const clientNames = fullName.split(' ');
 
     clientInputFirstName.value  = clientNames[0];
     clientInputLastName.value   = clientNames[clientNames.length - 1];
@@ -132,14 +165,13 @@ const hideClientUpdateButton = () => {
 
 
 
-
 //! ### Party ### 
 const renderPartyList = () => {
-    // Get current parties
+
     const partyCollection = PartyManager.getPartyCollection();
-    // Empty the table list of any existing data
+
     partyTableList.innerHTML = "";
-    // Rendering the current DOM
+
     partyCollection.forEach((party, index) => {
         const rowTemplate = document.createElement('tr');
         
@@ -189,7 +221,7 @@ const addNewParty = () => {
         showAlert('Party creation is disabled!', 'warning', partyForm); return;
     }
 
-    let partyName               = partyInputName.value;
+    const partyName             = partyInputName.value;
     const partyIsUnderAged      = partyInputIsUnderAged.value;
     const partyIsOpen           = partyInputIsOpen.value;
     const partyDate             = partyInputDate.value;
@@ -216,14 +248,11 @@ const addNewParty = () => {
 
 
 const updateParty = event => {
-    // Receive date from hidden input -> getAttribute() returns the value of a specified attribute)
+
     const partyIndex = event.target.getAttribute('data-update');
-    // Get all parties
     const parties = PartyManager.getPartyCollection();
-    // Get party index === 'data-update'
     const party = PartyManager.getParty(partyIndex);
 
-    // Get input from form fields
     const name          = partyInputName.value;
     const isUnderAged   = partyInputIsUnderAged.value;
     const isOpen        = partyInputIsOpen.value;
@@ -235,7 +264,6 @@ const updateParty = event => {
         hidePartyUpdateButton(); return;
     }
 
-    // Update new object (така не връщам нов обект, и не пипам ID или други пропъртита)
     party.name          = name;
     party.isUnderAged   = isUnderAged;
     party.isOpen        = isOpen;
@@ -342,7 +370,7 @@ const updateClient = event => {
     const clientIndex = event.target.getAttribute('data-update');
     const client = ClientManager.getClient(clientIndex);
 
-    // get values
+
     const clientFirstName       = clientInputFirstName.value;
     const clientLastName        = clientInputLastName.value;
     const clientGender          = clientGenderSelect.value;
@@ -354,13 +382,12 @@ const updateClient = event => {
     };
 
     const clientFullName = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
-    // Update client
+
     client.fullName     = clientFullName;
     client.gender       = clientGender;
     client.age          = clientAge;
     client.wallet       = clientWallet;
 
-    // Delete and update at the current index at PartyCollection
     clients.splice(clientIndex, 1, client);
 
     hideClientUpdateButton();
@@ -370,20 +397,31 @@ const updateClient = event => {
 }
 
 
+
+const getFilteredClientCollection = (party, filter) => {
+    if (filter === 'noFilter') return party.clientCollection;
+    return (filter) ? party.clientCollection.filter(client => client.gender === filter) : party.clientCollection;
+}
+
+
+const getFilteredPartyCollection = (collection, filter) => {
+    if (filter === 'forUnderAged')  return collection.filter(party => party.isUnderAged === 'yes');
+    if (filter === 'forAdults')     return collection.filter(party => party.isUnderAged === 'no');
+    if (filter === 'free')          return collection.filter(party => party.isFree === 'yes');
+    if (filter === 'paid')          return collection.filter(party => party.isFree === 'no');
+    if (filter === 'open')          return collection.filter(party => party.isOpen === 'yes');
+    if (filter === 'closed')        return collection.filter(party => party.isOpen === 'no');
+
+    return collection;
+}
+
+
 // First Modal Form
 const renderModalClientList = (currentParty, layoutList, filter) => {
+    
+    let filteredClients = getFilteredClientCollection(currentParty, filter);
 
     layoutList.innerHTML = "";
-
-    let filteredClients = [];
-
-    if (!filter || filter === 'noFilter') {
-        filteredClients = currentParty.clientCollection;
-
-    } else {
-        filteredClients = currentParty.clientCollection
-            .filter(client => client.gender === filter);
-    }
     
     filteredClients.forEach(client => {
         const rowTemplate = document.createElement('tr');
@@ -399,44 +437,14 @@ const renderModalClientList = (currentParty, layoutList, filter) => {
     }
 )};
 
+
+
 // Second Modal Form
 const renderModalParties = (collection, layout, client, filter) => {
 
-    let filteredParties = [];
+    let filteredParties = getFilteredPartyCollection(collection, filter);
 
     layout.innerHTML = '';
-
-    //! It could be refactored
-    if (filter === 'noFilter') {
-        filteredParties = collection
-
-    } else if (filter === 'forUnderAged') {
-        filteredParties = collection
-            .filter(party => party.isUnderAged === 'yes');
-
-    } else if (filter === 'forAdults') {
-        filteredParties = collection
-            .filter(party => party.isUnderAged === 'no');
-
-    } else if (filter === 'free') {
-        filteredParties = collection
-            .filter(party => party.isFree === 'yes');
-
-    } else if (filter === 'paid') {
-        filteredParties = collection
-            .filter(party => party.isFree === 'no');
-
-    } else if (filter === 'open') {
-        filteredParties = collection
-            .filter(party => party.isOpen === 'yes');
-
-    } else if (filter === 'closed') {
-        filteredParties = collection
-            .filter(party => party.isOpen === 'no');
-    } else {
-        filteredParties = collection;
-    }
-
 
     filteredParties.forEach((party, index) => {
         const rowTemplate = document.createElement('tr');
@@ -481,19 +489,15 @@ const renderModalParties = (collection, layout, client, filter) => {
             const isClientVIP       = client.partyCounter !== 0 && client.partyCounter % 5 === 0;
 
             if (party.isOpen === 'no') {
-                showAlert(`This event is closed. You cannot sign right now!`, 'warning', layout.parentElement); 
-                return;
+                return showAlert(`This event is closed. You cannot sign right now!`, 'warning', layout.parentElement); 
             }
 
             if (isClientUnderAged) {
-                showAlert(`You're too young for this event! You cannot sign!`, 'warning', layout.parentElement);
-                return;
+                return showAlert(`You're too young for this event! You cannot sign!`, 'warning', layout.parentElement);
             }
 
-            // Check if client exists in that event
             if (checkIfIDExists(party.clientCollection, client.ID)) {
-                showAlert(`You cannot sign twice for same event!`, 'warning', layout.parentElement);
-                return;
+                return showAlert(`You cannot sign twice for same event!`, 'warning', layout.parentElement);
             }
 
             if (isClientVIP) {
@@ -507,9 +511,8 @@ const renderModalParties = (collection, layout, client, filter) => {
                 return;
             }
 
-            //* VITAL! Plus Unary === Number()
             if (+client.wallet < +party.entranceFee) {
-                showAlert(`Not enough money!`, 'warning', layout.parentElement); return;
+                return showAlert(`Not enough money!`, 'warning', layout.parentElement);
             }
 
             client.isVIP = false;
@@ -542,14 +545,13 @@ const renderModalParties = (collection, layout, client, filter) => {
 
                 renderPartyList();
                 renderClientList();
-            } else {
-                showAlert('Client not found!', 'error', layout.parentElement); return;
+                return;
             }
+
+            return showAlert('Client not found!', 'error', layout.parentElement);
         });
     });
 };
-
-
 
 
 //! EVENT LISTENERS
@@ -574,7 +576,6 @@ partyTableList.addEventListener('click', e => {
 
         const dropdown = document.querySelector('.client-info-sort-by');
 
-
         if (currentParty.clientCollection.length === 0) {
             showAlert('There are no clients at this event!', 'warning', clientTableList.parentElement);
         }
@@ -584,14 +585,13 @@ partyTableList.addEventListener('click', e => {
             renderModalClientList(currentParty, clientTableList, dropdown.value);
         });
 
-        
         modalExit.addEventListener('click', () => {
             modal.classList.remove('modal-client-info--layout-active');
         });
 
         // Initial rendering without filter
         renderModalClientList(currentParty, clientTableList);
-    } /* if ends  ere*/
+    }
 });
 
 
@@ -613,7 +613,6 @@ clientTableList.addEventListener('click', e => {
 
         const modalExit = document.querySelector('.modal-join-event--exit');
 
-        
         modalExit.addEventListener('click', () => {
             modal.classList.remove('modal-join-event-layout-active');
         });
@@ -625,7 +624,7 @@ clientTableList.addEventListener('click', e => {
 
         // Initial rendering without filter
         renderModalParties(partyCollection, partyModalTableList, client);
-    } /* IF ENDS HERE! */
+    }
 });
 
 
@@ -646,80 +645,77 @@ clientFormSubmit.addEventListener('click', event => {
 // PARTY: filling form data
 partyTableList.addEventListener('click', e => {
 
-    if (e.target.className === 'action--party-update') {
-        // Get data from clicked index row
-        const partyIndex = e.target.getAttribute('data-position');
-        const party = PartyManager.getParty(partyIndex);
-        // Send data to hidden button
-        partyUpdateButton.setAttribute('data-update', partyIndex);
-        // Using some fancy object destructuring
-        const { name, isUnderAged, entranceFee, date, isOpen } = party;
-
-        fillCurrentPartyFormValues(name, isUnderAged, entranceFee, date, isOpen);
-        showAlert('Please enter the new fields here!', 'warning', partyForm);
-        showPartyUpdateButton();
+    if (e.target.className !== 'action--party-update') {
+        return;
     }
-});
 
+    const partyIndex = e.target.getAttribute('data-position');
+    const party = PartyManager.getParty(partyIndex);
+
+    partyUpdateButton.setAttribute('data-update', partyIndex);
+
+    const { name, isUnderAged, entranceFee, date, isOpen } = party;
+
+    fillCurrentPartyFormValues(name, isUnderAged, entranceFee, date, isOpen);
+    showAlert('Please enter the new fields here!', 'warning', partyForm);
+    showPartyUpdateButton();
+});
 
 // CLIENT: filling form data
 clientTableList.addEventListener('click', e => {
-    if (e.target.className === 'action--client-update') {
-        // Send data to hidden button
-        const clientIndex = e.target.getAttribute('data-position');
-        const client = ClientManager.getClient(clientIndex);
-
-        clientUpdateButton.setAttribute('data-update', clientIndex);
-
-        // Using some fancy object destructuring
-        const { fullName, gender, age, wallet } = client;
-
-        fillCurrentClientFormValues(fullName, gender, age, wallet);
-        showAlert('Please enter the new fields here!', 'warning', clientForm)
-        showClientUpdateButton();
+    if (e.target.className !== 'action--client-update') {
+        return;
     }
-});
 
+    const clientIndex = e.target.getAttribute('data-position');
+    const client = ClientManager.getClient(clientIndex);
+
+    clientUpdateButton.setAttribute('data-update', clientIndex);
+
+    const { fullName, gender, age, wallet } = client;
+
+    fillCurrentClientFormValues(fullName, gender, age, wallet);
+    showAlert('Please enter the new fields here!', 'warning', clientForm)
+    showClientUpdateButton();
+});
 
 // DELETE parties FROM DOM
 partyTableList.addEventListener('click', e => {
 
-    if (e.target.className === 'action--party-delete') {
-        // Get data from clicked index row
-        const partyIndex = e.target.getAttribute('data-position');
-        const parties = PartyManager.getPartyCollection();
-        // /remove the element at the current index
-        parties.splice(partyIndex, 1);
-
-        showAlert('Party deleted successfully!', 'success', partyForm);
-        renderPartyList();
+    if (e.target.className !== 'action--party-delete') {
+        return;
     }
-});
 
+    const partyIndex = e.target.getAttribute('data-position');
+    const parties = PartyManager.getPartyCollection();
+
+    parties.splice(partyIndex, 1);
+
+    showAlert('Party deleted successfully!', 'success', partyForm);
+    renderPartyList();
+});
 
 // DELETE clients FROM DOM
 clientTableList.addEventListener('click', e => {
 
-    if (e.target.className === 'action--client-delete') {
-
-        const clients = ClientManager.getMainClientCollection();
-        const clientIndex = e.target.getAttribute('data-position');
-        // /remove the element at the current index
-        clients.splice(clientIndex, 1);
-
-        showAlert('Client deleted successfully!', 'success', clientForm);
-        renderClientList();
+    if (e.target.className !== 'action--client-delete') {
+        return;
     }
-});
 
+    const clients = ClientManager.getMainClientCollection();
+    const clientIndex = e.target.getAttribute('data-position');
+
+    clients.splice(clientIndex, 1);
+
+    showAlert('Client deleted successfully!', 'success', clientForm);
+    renderClientList();
+});
 
 // UPDATE parties
 document.getElementById('action--update-party').addEventListener('click', updateParty);
 
 // UPDATE clients
 document.getElementById('action--update-client').addEventListener('click', updateClient);
-
-
 
 // Initial rendering
 renderClientList();

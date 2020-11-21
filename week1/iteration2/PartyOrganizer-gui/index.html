@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="./style/font-style.css">
     <link rel="stylesheet" href="./style/main.css">
     <script src="./script/app.js" defer></script>
+    <script src="./script/generateID.js" defer></script>
+    <script src="./script/utility-validators.js" defer></script>
     <script src="./script/app-dom.js" defer></script>
 </head>
 <body>
@@ -16,7 +18,6 @@
         <h1 class="main-heading">Party Manager</h1>
     </header>
     
-    <!-- Grid Container: FORM ROW -->
     <div class="container">
         <div class="row">
             <!-- Event -->
@@ -26,34 +27,35 @@
                 <form id="party-form">
                     <div class="form-group">
                         <label for="input--party-name">Event name:</label>
-                        <input type="text" name="input--party-name" id="input--party-name" class="u-full-width" placeholder="[Ibiza] Carl Cox 2021">
+                        <input type="text" id="input--party-name" name="input--party-name" class="u-full-width" placeholder="Example..">
                     </div>
                     <div class="form-group relative">
                         <label for="input--entranceFee">Entrance fee:</label>
-                        <input type="number" name="input--entranceFee" id="input--entranceFee" value="0" min="0">
-                        <!-- Positioned -->
+                        <input type="number" id="input--entranceFee" name="input--entranceFee" value="0" min="0">
+
                         <div class="absolute">
                             <label for="select--party-isForUnderAged">Are under-aged allowed?</label>
-                            <select name="select--party-isForUnderAged" id="select--party-isForUnderAged" class="u-full-width">
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
+                            <select id="select--party-isForUnderAged" name="select--party-isForUnderAged" class="u-full-width" >
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
                         </div>
+
                     </div>
                     <div class="form-group relative">
                         <label for="input--party-date">Event date:</label>
-                        <input type="date" name="input--party-date" id="input--party-date">
+                        <input type="date" id="input--party-date" name="input--party-date">
 
                         <div class="absolute">
                             <label for="select--party-isOpenForClients">Is Open for reservations?</label>
-                            <select name="select--party-isOpenForClients" id="select--party-isOpenForClients" class="u-full-width">
-                                <option value="yes" selected>Yes</option>
-                                <option value="no">No</option>
+                            <select id="select--party-isOpenForClients" name="select--party-isOpenForClients" class="u-full-width">
+                                <option value="true" selected>Yes</option>
+                                <option value="false">No</option>
                             </select>
                         </div>
                     </div>
-                    <input class="button-primary" type="submit" value="Submit" id="action--submit-party">
-                    <input type="button" value="Update" style="display: none;" id="action--update-party">
+                    <input type="submit" id="action--submit-party" class="button-primary" value="Submit" >
+                    <input type="button" id="action--update-party" style="display: none;" value="Update"  >
                 </form>
             </div>
             <!-- CLient -->
@@ -63,46 +65,44 @@
                 <form id="client-form">
                     <div class="form-group relative">
                         <label for="input--client-firstName">First name:</label>
-                        <input type="text" name="input--client-firstName" id="input--client-firstName">
-                        <!-- Positioned -->
+                        <input type="text" id="input--client-firstName" name="input--client-firstName">
+
                         <div class="absolute">
                             <label for="input--client-lastName">Last name:</label>
-                            <input type="text" name="input--client-lastName" id="input--client-lastName">
+                            <input type="text" id="input--client-lastName" name="input--client-lastName" >
                         </div>
+
                     </div>
                     <div class="form-group relative">
                         <label for="input--client-gender">Gender:</label>
-                        <select name="select--client-gender" id="select--client-gender">
+                        <select id="select--client-gender" name="select--client-gender" >
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                             <option value="prefer not to say">Prefer not to say</option>
                         </select>
-                        <!-- Positioned -->
+
                         <div class="absolute">
                             <label for="input--client-age">Age:</label>
-                            <input type="number" name="input--client-age" id="input--client-age" min="16">
+                            <input type="number" id="input--client-age" name="input--client-age" min="16">
                         </div>
+
                     </div>
                     <div class="form-group">
                         <label for="input--client-wallet">Cash in:</label>
-                        <input type="number" name="input--client-wallet" id="input--client-wallet" min="10" step="5">
+                        <input type="number" id="input--client-wallet" name="input--client-wallet" min="10" step="5">
                     </div>
-                    <input class="button-primary" id="action--submit-client" type="submit" value="Submit">
-                    <input type="button" value="Update" style="display: none;" id="action--update-client">
+                    <input type="submit" id="action--submit-client" class="button-primary" value="Submit">
+                    <input type="button" id="action--update-client" style="display: none;" value="Update">
                 </form>
             </div>
-        </div> <!-- form row ends here-->
+        </div>
 
-        <div class="row stop-initialization">
+        <div class="row mb-5">
             <div class="six columns">
-                <a class="button btn-blue" id="action--toggle-event-creation">
-                    Toggle party creation
-                </a>
+                <input type="button" id="action--toggle-event-creation" class="button" value="Toggle party creation">
             </div>
             <div class="six columns">
-                <a class="button btn-blue" id="action--toggle-client-creation">
-                    Toggle client creation
-                </a>
+                <input type="button" id="action--toggle-client-creation" class="button" value="Toggle client creation">
             </div>
         </div>   
 
@@ -166,7 +166,7 @@
             <a href="#" class="modal-join-event--exit">
                 <span class="icon-cancel-circle"></span>
             </a>
-            <select name="party-info-sort-by" id="party-info-sort-by" class="party-info-sort-by">
+            <select id="party-info-sort-by" name="party-info-sort-by" class="party-info-sort-by">
                 <option selected disabled>Sort by</option>
                 <option value="forAdults">For adults</option>
                 <option value="forUnderAged">For under-aged</option>
@@ -199,7 +199,7 @@
             <a href="#" class="modal-client-info--exit">
                 <span class="icon-cancel-circle"></span>
             </a>
-            <select name="client-info-sort-by" id="client-info-sort-by" class="client-info-sort-by">
+            <select id="client-info-sort-by" name="client-info-sort-by" class="client-info-sort-by">
                 <option selected disabled>Sort by gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>

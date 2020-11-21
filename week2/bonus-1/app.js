@@ -98,8 +98,7 @@ const customFill = (collection, fillValues, length) => {
 
 
 
-// #5 Assignment
-// Newbie solution
+// #5 Assignment (not perfect solution)
 const reverseArr = function(collection) {
     if (collection.length === 2) {
         let reversed = [];
@@ -130,5 +129,5 @@ const reverseArr = function(collection) {
 
 
 // #5 Test
-console.log(reverseArr([ [1, 2, 3], ['a', 'b', 'c'] ]));
-console.log(reverseArr([1, 2, 3]));
+// console.log(reverseArr([ [1, 2, 3], ['a', 'b', 'c'] ]));
+// console.log(reverseArr([1, 2, 3]));

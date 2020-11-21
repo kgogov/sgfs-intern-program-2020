@@ -31,7 +31,7 @@ const PartyManager = {
             date: "2020-11-20",
             entranceFee: "0",
             isFree: "yes",
-            isOpen: "yes",
+            isOpen: "no",
             isUnderAged: "yes",
             name: "Asenovgrad",
         },
@@ -41,7 +41,7 @@ const PartyManager = {
             date: "2020-11-20",
             entranceFee: "10",
             isFree: "no",
-            isOpen: "no",
+            isOpen: "yes",
             isUnderAged: "no",
             name: "Sofia",
         },
@@ -52,7 +52,7 @@ const PartyManager = {
             entranceFee: "10",
             isFree: "no",
             isOpen: "yes",
-            isUnderAged: "no",
+            isUnderAged: "yes",
             name: "Burgas",
         },
         {
@@ -155,11 +155,11 @@ const createParty = (partyObject) => {
     return {
         ID                  : generateEventID(),
         name                : partyObject.name,
-        isUnderAged         : partyObject.isUnderAged,
+        isUnderAged         : partyObject.isUnderAged === 'true' ? 'yes' : 'no',
         isOpen              : partyObject.isOpen,
         date                : partyObject.date,
         entranceFee         : partyObject.entranceFee,
-        isFree              : partyObject.entranceFee == '0' ? 'yes' : 'no',
+        isFree              : partyObject.entranceFee === '0' ? 'yes' : 'no',
         clientCollection    : []
     };
 };
@@ -176,94 +176,3 @@ const createClient = (clientObject) => {
         isVIP           : false
     }
 }
-
-
-
-// ID Generators
-function generateEventID() {
-    const hex = (value) => {
-        return Math.floor(value).toString(16);
-    };
-
-    return hex(Date.now() / 1000) +
-    ' '.repeat(16).replace(/./g, () => hex(Math.random() * 16));
-}
-
-function generateClientID() {
-
-    const length = 8;
-    const timestamp = +new Date();
-
-    const getRandomInt = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
-
-    const generateClientID = () => {
-        let ts = timestamp.toString();
-        let parts = ts.split("").reverse();
-        let id = "";
-
-        for (let i = 0; i < length; ++i) {
-            let index = getRandomInt(0, parts.length - 1);
-            id += parts[index];
-        }
-
-        return id;
-    };
-
-    return generateClientID();
-}
-
-// Utility
-const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-// Utility
-const checkIfIDExists = (collection, id) => {
-    return collection.find(item => item.ID == id);
-};
-
-// Utility
-const isPartyValid = (name, entrance, date) => {
-
-    if (!name     ||
-        !date     ||
-        !entrance ||
-        entrance < 0) {
-        return false;
-    }
-    return true;
-}
-
-
-// Utility
-//* идея: да проверя всички имена с RegEx
-const isClientValid = (fName, lName, gender, age, wallet) => {
-
-    if (!fName      ||
-        !lName      ||
-        !gender     ||
-        !age        || 
-        age < 16    ||
-        !wallet     ||
-        wallet < 0) {
-            return false;
-    }
-    return true;
-}
-
-const prefixPartyNames = (party) => {
-    let name = party.name;
-    return (party.entranceFee === '0') ? 
-        name = `❗ ${name}`             : 
-        name = `💲 ${name}`;
-}
-
-
-
-// Notes:
-//* Въпрос: да правя ли function wrapper за всички тези input-и
-//* Идея: custom side slider menu with different options and modal forms for sorting etc.
-// Друго хубаво упрaжнение: друг файл script-console
-// Performance upgrade: implement StringBulder with array with .push() and the join() || toString()
