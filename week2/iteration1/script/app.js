@@ -27,23 +27,30 @@
 
 
 
+
+
 //* Practical Test
 
 // 1. Select an element
 const playground = KQ('#playground');
+
 
 // 2. Create
 const para = KQ('<p>Hello! I am new!</p>');
 
 const greet = KQ('<p>')
     .text('Greetings!')
-    .css('color: lightblue')
+    .css('color: lightblue;')
     .attr('id', 'greetings')
     .addClass('greet-test');
 
 // 3. Append
 playground[0].append(para[0]);
 playground[0].append(greet[0]);
+
+
+// 4. Test children()
+// console.log(KQ('#sibling').children().css('color: red;'));
 
 
 

@@ -45,6 +45,7 @@
         }
 
         if (selector instanceof HTMLElement || selector instanceof NodeList) {
+
             this.nodes = selector.length > 1 
                 ? [].slice(selector) 
                 : [selector];
@@ -85,7 +86,6 @@
         }
 
         this.each(element => {
-            console.log(element);
             element.innerHTML = value;
         });
 
@@ -124,6 +124,9 @@
             element.parentNode.removeChild(element);
         });
     }
+    
+
+
 
     // Traversing
     KQ.fn.parent = function() {
@@ -138,27 +141,7 @@
         return KQ(this.nodes[0].nextElementSibling);
     }
 
-    //! Не работи
-    KQ.fn.children = function() {
-        return KQ(this.nodes[0].parentNode);
-    }
 
-    //! Не работи
-    //! Като се оптивам да променя this.nodes не работи
-    KQ.fn.siblings = function() {
-        // console.log(this.nodes[0].parentNode.children);
-
-        this.nodes = 
-            [].filter.call(this.nodes[0].parentNode.children, (child) => {
-                child !== this.nodes[0];
-
-            // Debug
-            // console.log(this[0]);
-            // console.log(this.nodes);
-        });
-
-        return this;
-    }
 
     
     // CSS
@@ -286,3 +269,26 @@
 //     this.nodes = [this.nodes[node]];
 //     return this;
 // }
+
+//* TODO
+/*
+    KQ.fn.children = function() {
+        return [...this.nodes[0].parentNode.children]; 
+    }
+
+    KQ.fn.siblings = function() {
+        // console.log(this.nodes[0].parentNode.children);
+
+        this.nodes = 
+            [].filter.call(this.nodes[0].parentNode.children, (child) => {
+                child !== this.nodes[0];
+
+            // Debug
+            // console.log(this[0]);
+            // console.log(this.nodes);
+        });
+
+        return this;
+    }
+
+*/

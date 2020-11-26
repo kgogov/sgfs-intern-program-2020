@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kQuery Calendar</title>
+    <link rel="stylesheet" href="./style/calendar-epic.css">
+</head>
+<body>
+    <div class="container">
+        <div id="calendar" class="calendar">
+    
+            <div class="calendar-left-side">
+                <div class="current-day text-center">
+                    <h1 class="calendar-left-side-day"></h1>
+                    <div class="calendar-left-side-day-of-week"></div>
+                </div>
+                <div class="current-day-events">
+                    <div>Current Events:</div>
+                    <ul class="current-day-events-list">
+                        <li>some event</li>
+                    </ul>
+                </div>
+                <div class="add-event-day">
+                    <span class="add-event-day-field-btn cursor-pointer">😎</span>
+                    <input type="text" class="add-event-day-field" placeholder="Create an Event">
+                </div>
+            </div>
+    
+            <div class="calendar-right-side">
+                <div class="calendar-change-year text-right">
+                    <div class="calendar-change-year-slider">
+                        <span class="calendar-change-year-slider-prev cursor-pointer">&#10094;</span>
+                        <span class="calendar-current-year noselect"></span>
+                        <span class="calendar-change-year-slider-next cursor-pointer">&#10095;</span>
+                    </div>
+                </div>
+    
+                <div class="calendar-month-list">
+                    <ul class="calendar-month"></ul>
+                </div>
+    
+                <div class="calendar-week-list">
+                    <ul class="calendar-week"></ul>
+                </div>
+    
+                <div class="calendar-day-list">
+                    <ul class="calendar-days"></ul>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+    
+    <!-- <script src="./script/kQuery.js"></script> -->
+    <script src="./script/calendar-epic.js"></script>
+</body>
+</html>

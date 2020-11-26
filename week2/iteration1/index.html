@@ -25,7 +25,7 @@
     }
 
     .container {
-        max-width: 600px;
+        max-width: 45rem;
         min-height: 100vh;
         margin: 0 auto;
         box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
@@ -59,15 +59,31 @@
         padding-left: 0.5rem;
     }
 
+    .sub-list {
+        padding-left: 1rem;
+        font-style: italic;
+    }
+
     .greet-test {
         text-shadow: 2px 2px 2px rgba(255, 255, 255, 0.415);
+        font-size: 2rem;
+        transition: all 300ms ease-in-out;
+        cursor: pointer;
+    }
+
+    hr {
+        border: none;
+        border-radius: 4px;
+        background: linear-gradient(to right, red, yellow);
+        height: 5px;
+        max-width: 5rem;
     }
 
 
 </style>
 <body>
     <div class="container">
-        <h1 class="main-heading mb-1">The testing page!</h1>
+        <h1 class="main-heading mb-1">The testing page</h1>
         <p id="description" class="mb-3">This is the playground where you can test kQuery functionality</p>
 
         <h3 class="sub-heading">Common functions:</h3>
@@ -79,14 +95,24 @@
             <li>✅ Get and set text content of an element</li>
             <li>✅ Get and set html of an element</li>
             <li>✅ Change CSS and set CSS as object</li>
-            <li>DOM traversing: (parent, sibling, children)</li>
+            <li>🟡 DOM traversing: (parent, siblings, children)
+                <ul class="sub-list">
+                    <li>Not fully implemented</li>
+                </ul>
+            </li>
             <li>✅ Add or Remove event listeners</li>
         </ul>
 
         <h3 class="sub-heading">Common features:</h3>
-        <ul class="list test-eq">
+        <ul class="list mb-3">
             <li>Method chaining</li>
+            <li>Revealing module pattern</li>
         </ul>
+
+        <h3 class="sub-heading">Playground below</h3>
+        <hr class="mb-3">
+
+        <ul class="test-eq"></ul>
 
         <div id="playground"></div>
 
