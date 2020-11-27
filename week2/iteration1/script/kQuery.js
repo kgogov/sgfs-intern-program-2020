@@ -1,5 +1,4 @@
-// https://github.com/umdjs/umd
-!(function (factory) {
+!(function (factory) { // https://github.com/umdjs/umd
     if (typeof exports === 'object' && typeof module !== 'undefined') {
         module.exports = factory();
     } else if (typeof define === 'function' && define.amd) {
@@ -141,6 +140,11 @@
         return KQ(this.nodes[0].nextElementSibling);
     }
 
+    KQ.fn.children = function() {
+        this.nodes = this.nodes[0].children;
+        return this; 
+    }
+
 
 
     
@@ -212,21 +216,70 @@
 
     // Add/remove events
     KQ.fn.on = function(name, handler) {
-        return this.each(function (e) {
-            e.addEventListener(name, handler, false);
+        return this.each(function (element) {
+            element.addEventListener(name, handler);
         });
     }
 
     KQ.fn.off = function(name, handler) {
-        return this.each(function (e) {
-            e.removeEventListener(name, handler);
+        return this.each(function (element) {
+            element.removeEventListener(name, handler);
         });
     }
 
-
-    // Others Utilities
+    // Returns the first value
     KQ.fn.valueOf = function() {
         return this[0];
+    }
+
+    // Returns the value at selected index
+    KQ.fn.eq = function(index) {
+        return [this[index]];
+    }
+
+
+
+
+
+
+    
+    //! NOT PROPERLY WORKING [Object object] 🤬 
+    //* To be tested - нещо мн малко ми обягва.........
+    KQ.fn.insertBefore = function (value) {
+        return this.each(function (element) {
+            element.insertAdjacentHTML("beforeBegin", value);
+        });
+    },
+    
+    KQ.fn.insertAfter = function (value) {
+        return this.each(function (element) {
+            element.insertAdjacentHTML("afterEnd", value);
+        });
+    },
+    
+    KQ.fn.insertFirst = function (value) {
+        return this.each(function (element) {
+            element.insertAdjacentHTML("afterBegin", value);
+        });
+    },
+    
+    KQ.fn.insertLast = function (value) {
+        return this.each(function (element) {
+            element.insertAdjacentHTML("beforeEnd", value);
+        });
+    },
+
+    KQ.fn.siblings = function() {
+        // this.nodes = 
+        //     [].filter.call(this.nodes[0].parentNode.children, (child) => {
+        //         child !== this.nodes[0];
+
+        //     // Debug
+        //     // console.log(this[0]);
+        //     // console.log(this.nodes);
+        // });
+
+        // return this;
     }
 
 
@@ -238,57 +291,3 @@
         return new KQ(selector);
     }
 });
-
-
-//* To be tested 
-// KQ.fn.insertBefore = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("beforeBegin", value);
-//     });
-// },
-
-// KQ.fn.insertAfter = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("afterEnd", value);
-//     });
-// },
-
-// KQ.fn.insertFirst = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("afterBegin", value);
-//     });
-// },
-
-// KQ.fn.insertLast = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("beforeEnd", value);
-//     });
-// },
-
-// KQ.fn.eq = function (node) {
-//     this.nodes = [this.nodes[node]];
-//     return this;
-// }
-
-//* TODO
-/*
-    KQ.fn.children = function() {
-        return [...this.nodes[0].parentNode.children]; 
-    }
-
-    KQ.fn.siblings = function() {
-        // console.log(this.nodes[0].parentNode.children);
-
-        this.nodes = 
-            [].filter.call(this.nodes[0].parentNode.children, (child) => {
-                child !== this.nodes[0];
-
-            // Debug
-            // console.log(this[0]);
-            // console.log(this.nodes);
-        });
-
-        return this;
-    }
-
-*/

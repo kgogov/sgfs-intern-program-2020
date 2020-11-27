@@ -22,7 +22,7 @@ class Calendar {
         this.eventList = JSON.parse(localStorage.getItem(localStorageName)) || {};
 
         this.date = +new Date();
-        this.options.maxDays = 37;
+        this.options.maxDays = 37; // Max days which are being showed in the calendar
         this.init();
     }
 
@@ -30,23 +30,25 @@ class Calendar {
     init() {
         if (!this.options.id) return false;
         this.eventsTrigger();
-        this.drawAll();
+        this.renderAll();
     }
 
-    // draw Methods
-    drawAll() {
-        this.drawWeekDays();
-        this.drawMonths();
-        this.drawDays();
-        this.drawYearAndCurrentDay();
-        this.drawEvents();
+    // Render Methods
+    renderAll() {
+        this.renderWeekDays();
+        this.renderMonths();
+        this.renderDays();
+        this.renderYearAndCurrentDay();
+        this.renderEvents();
 
     }
 
-    drawEvents() {
+    renderEvents() {
         let calendar = this.getCalendar();
-        let eventList = this.eventList[calendar.active.formatted] || ['There is not any events'];
+
+        let eventList = this.eventList[calendar.active.formatted] || ['There are no events.'];
         let eventTemplate = "";
+
         eventList.forEach(item => {
             eventTemplate += `<li>${item}</li>`;
         });
@@ -54,49 +56,51 @@ class Calendar {
         this.elements.eventList.innerHTML = eventTemplate;
     }
 
-    drawYearAndCurrentDay() {
+    renderYearAndCurrentDay() {
         let calendar = this.getCalendar();
+
         this.elements.year.innerHTML            = calendar.active.year;
         this.elements.currentDay.innerHTML      = calendar.active.day;
         this.elements.currentWeekDay.innerHTML  = AVAILABLE_WEEK_DAYS[calendar.active.week];
     }
 
-    drawDays() {
+    renderDays() {
         let calendar = this.getCalendar();
 
         let latestDaysInPrevMonth = this.range(calendar.active.startWeek).map((day, idx) => {
             return {
-                dayNumber:      this.countOfDaysInMonth(calendar.pMonth) - idx,
-                month:          new Date(calendar.pMonth).getMonth(),
-                year:           new Date(calendar.pMonth).getFullYear(),
+                dayNumber:      this.countOfDaysInMonth(calendar.prevMonth) - idx,
+                month:          new Date(calendar.prevMonth).getMonth(),
+                year:           new Date(calendar.prevMonth).getFullYear(),
                 currentMonth:   false
             }
         }).reverse();
 
-
         let daysInActiveMonth = this.range(calendar.active.days).map((day, idx) => {
             let dayNumber = idx + 1;
             let today = new Date();
+
             return {
                 dayNumber,
-                today:          today.getDate()     === dayNumber            && 
-                                today.getFullYear() === calendar.active.year && 
-                                today.getMonth()    === calendar.active.month,
+                today:          today.getDate()         === dayNumber               && 
+                                today.getFullYear()     === calendar.active.year    && 
+                                today.getMonth()        === calendar.active.month,
 
                 month:          calendar.active.month,
                 year:           calendar.active.year,
-                selected:       calendar.active.day === dayNumber,
+                selected:       calendar.active.day     === dayNumber,
                 currentMonth:   true
             }
         });
 
 
         let countOfDays = this.options.maxDays - (latestDaysInPrevMonth.length + daysInActiveMonth.length);
+
         let daysInNextMonth = this.range(countOfDays).map((day, idx) => {
             return {
                 dayNumber:      idx + 1,
-                month:          new Date(calendar.nMonth).getMonth(),
-                year:           new Date(calendar.nMonth).getFullYear(),
+                month:          new Date(calendar.nextMonth).getMonth(),
+                year:           new Date(calendar.nextMonth).getFullYear(),
                 currentMonth:   false
             }
         });
@@ -118,9 +122,10 @@ class Calendar {
         this.elements.days.innerHTML = daysTemplate;
     }
 
-    drawMonths() {
-        let monthTemplate = "";
+    renderMonths() {
         let calendar = this.getCalendar();
+        let monthTemplate = "";
+
         AVAILABLE_MONTHS.forEach((month, idx) => {
             monthTemplate += `<li class="${idx === calendar.active.month ? 'active' : ''}" data-month="${idx}">${month}</li>`
         });
@@ -128,8 +133,9 @@ class Calendar {
         this.elements.month.innerHTML = monthTemplate;
     }
 
-    drawWeekDays() {
+    renderWeekDays() {
         let weekTemplate = "";
+
         AVAILABLE_WEEK_DAYS.forEach(week => {
             weekTemplate += `<li>${week.slice(0, 3)}</li>`
         });
@@ -141,14 +147,14 @@ class Calendar {
     eventsTrigger() {
         this.elements.prevYear.addEventListener('click', e => {
             let calendar = this.getCalendar();
-            this.updateTime(calendar.pYear);
-            this.drawAll()
+            this.updateTime(calendar.prevYear);
+            this.renderAll()
         });
 
         this.elements.nextYear.addEventListener('click', e => {
             let calendar = this.getCalendar();
-            this.updateTime(calendar.nYear);
-            this.drawAll()
+            this.updateTime(calendar.nextYear);
+            this.renderAll()
         });
 
         this.elements.month.addEventListener('click', e => {
@@ -159,7 +165,7 @@ class Calendar {
 
             let newMonth = new Date(calendar.active.tm).setMonth(month);
             this.updateTime(newMonth);
-            this.drawAll()
+            this.renderAll()
         });
 
 
@@ -174,7 +180,7 @@ class Calendar {
             let strDate = `${Number(month) + 1}/${day}/${year}`;
 
             this.updateTime(strDate);
-            this.drawAll()
+            this.renderAll()
         });
 
 
@@ -190,10 +196,8 @@ class Calendar {
 
             this.elements.eventField.value = '';
 
-            this.drawAll()
+            this.renderAll()
         });
-
-
     }
 
 
@@ -215,10 +219,10 @@ class Calendar {
                 formatted:  this.getFormattedDate(time),
                 tm:         +time
             },
-            pMonth: new Date(time.getFullYear(), time.getMonth() - 1, 1),
-            nMonth: new Date(time.getFullYear(), time.getMonth() + 1, 1),
-            pYear:  new Date(new Date(time).getFullYear() - 1, 0, 1),
-            nYear:  new Date(new Date(time).getFullYear() + 1, 0, 1)
+            prevMonth: new Date(time.getFullYear(), time.getMonth() - 1, 1),
+            nextMonth: new Date(time.getFullYear(), time.getMonth() + 1, 1),
+            prevYear:  new Date(new Date(time).getFullYear() - 1, 0, 1),
+            nextYear:  new Date(new Date(time).getFullYear() + 1, 0, 1)
         }
     }
 

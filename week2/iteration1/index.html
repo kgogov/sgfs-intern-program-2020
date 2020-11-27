@@ -4,83 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kgQuery</title>
+    <link rel="stylesheet" href="./style/index.css">
 </head>
-<style>
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    html {
-        font-family: sans-serif;
-        line-height: 1.5;
-        background-color: #333;
-        color: #f4f4f4;
-    }
-
-    ul {
-        list-style-type: none;
-    }
-
-    .container {
-        max-width: 45rem;
-        min-height: 100vh;
-        margin: 0 auto;
-        box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
-        padding: 1rem 2rem 0 2rem;
-    }
-
-    /* Utility */
-    .mb {
-        margin-bottom: 0.5rem;
-    }
-
-    .mb-1 {
-        margin-bottom: 1rem;
-    }
-
-    .mb-3 {
-        margin-bottom: 3rem;
-    }
-
-    div#toolbox{
-        width:250px;
-        float:right;
-        background-color:lightgreen;
-    }
-
-    h3.sub-heading {
-        margin-bottom: 0.5rem;
-    }
-
-    .test-padding {
-        padding-left: 0.5rem;
-    }
-
-    .sub-list {
-        padding-left: 1rem;
-        font-style: italic;
-    }
-
-    .greet-test {
-        text-shadow: 2px 2px 2px rgba(255, 255, 255, 0.415);
-        font-size: 2rem;
-        transition: all 300ms ease-in-out;
-        cursor: pointer;
-    }
-
-    hr {
-        border: none;
-        border-radius: 4px;
-        background: linear-gradient(to right, red, yellow);
-        height: 5px;
-        max-width: 5rem;
-    }
-
-
-</style>
 <body>
     <div class="container">
         <h1 class="main-heading mb-1">The testing page</h1>
@@ -91,11 +16,11 @@
             <li>✅ Select an element</li>
             <li>✅ Create an element</li>
             <li>✅ Remove an element</li>
-            <li id="sibling">✅ Change attribute of an element (id, class, data, name)</li>
+            <li id="sibling">✅ Change an attribute of an element (id, class, data, name)</li>
             <li>✅ Get and set text content of an element</li>
             <li>✅ Get and set html of an element</li>
             <li>✅ Change CSS and set CSS as object</li>
-            <li>🟡 DOM traversing: (parent, siblings, children)
+            <li>✅ DOM traversing: (parent, siblings, children)
                 <ul class="sub-list">
                     <li>Not fully implemented</li>
                 </ul>
@@ -105,21 +30,33 @@
 
         <h3 class="sub-heading">Common features:</h3>
         <ul class="list mb-3">
-            <li>Method chaining</li>
+            <li>🟡 Method chaining</li>
             <li>Revealing module pattern</li>
         </ul>
+
+        <h3 class="sub-heading">Motivational quote of the day:</h3>
+        <p class="mb-3 quote">&#171;It’s going to be hard, but hard does not mean impossible.&#187;</p>
 
         <h3 class="sub-heading">Playground below</h3>
         <hr class="mb-3">
 
-        <ul class="test-eq"></ul>
+        <!-- Playground Container -->
+        <div class="container-box">
+            <div class="playground box-1 cursor-pointer">1</div>
+            <div class="playground box-2 cursor-pointer">2</div>
+            <div class="playground box-3 cursor-pointer">3</div>
+            <div class="playground box-4 cursor-pointer">4</div>
+        </div>
 
-        <div id="playground"></div>
+        <div id="attr">Add values to me!</div>
 
-        <p class="test-para">Hi!</p>
+        <div id="container-playground">
+            <div class="sibling-1"></div>
+            <div class="sibling-2"></div>
+        </div>
     </div>
 
     <script src="./script/kQuery.js"></script>
-    <script src="./script/app.js"></script>
+    <script src="./script/index.js"></script>
 </body>
 </html>

@@ -19,6 +19,46 @@
     --padding-size:                 3rem;
 }
 
+/*! Fonts  */
+@font-face {
+font-family: 'icomoon';
+src:  url('../fonts/icomoon.eot?24qvwa');
+src:  url('../fonts/icomoon.eot?24qvwa#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?24qvwa') format('truetype'),
+    url('../fonts/icomoon.woff?24qvwa') format('woff'),
+    url('../fonts/icomoon.svg?24qvwa#icomoon') format('svg');
+font-weight: normal;
+font-style: normal;
+font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+/* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+/* Better Font Rendering =========== */
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-circle-left:before    { content: "\ea44"; }
+.icon-arrow-right2:before   { content: "\ea3c"; }
+.icon-arrow-left2:before    { content: "\ea40"; }
+
+.icon-arrow-left2,
+.icon-arrow-right2 {
+    vertical-align: middle;
+    padding: 0 0.5rem;
+}
+
+/*! Main  */
+
 * {
     margin: 0;
     padding: 0;
@@ -28,7 +68,7 @@
 html {
     background-color: var(--body-bg-color);
     font-family: Helvetica, Arial, sans-serif;
-    font-size: 62.5%; 
+    font-size: 62.5%;
 }
 
 /*! Utilities */
@@ -142,6 +182,7 @@ h1.calendar-left-side-day {
     height: 3.4rem;
     width: 100%;
     font-size: 1.6rem;
+    color: #fff;
 }
 
 .add-event-day-field:focus {
@@ -167,6 +208,10 @@ h1.calendar-left-side-day {
 .calendar-change-year-slider {
     margin: 1.5rem 0; /* padding-size / 2 */
     color: var(--week-color);
+}
+
+.calendar-current-year {
+    vertical-align: middle;
 }
 
 .calendar-days,
@@ -209,7 +254,7 @@ h1.calendar-left-side-day {
 .calendar-days li:after {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 1.5rem;
     content: attr(data-day);
     color: var(--day-color);
     height: 4rem;
@@ -239,8 +284,8 @@ h1.calendar-left-side-day {
     width: 0.5rem;
     height: 0.5rem;
     position: absolute;
-    top: 0rem;
-    right: 2.5rem;
+    top: 0.7rem;
+    right: 0.7rem;
     background-color: var(--blue-event);
 }
 
