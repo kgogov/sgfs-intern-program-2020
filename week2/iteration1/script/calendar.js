@@ -20,13 +20,17 @@ const getDateObj = function() {
 }
 
 const renderCalendar = () => {
+    // Get first day of the current month
     getDateObj().setDate(1);
 
     const monthDays = KQ('.days');
-    const lastDay = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDate();
-    const prevLastDay = new Date(getDateObj().getFullYear(), getDateObj().getMonth(), 0).getDate();
+    const lastOfMonth = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDate();
+    const prevMonthLastDays = new Date(getDateObj().getFullYear(), getDateObj().getMonth(), 0).getDate();
+
     const firstDayIndex = getDateObj().getDay();
     const lastDayIndex = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDay();
+    
+    // Formula to display the next month days
     const nextDays = 7 - lastDayIndex - 1;
 
     KQ('.date h1').html(months[getDateObj().getMonth()]);
@@ -35,12 +39,14 @@ const renderCalendar = () => {
     let days = [];
     let template;
 
+    // Determine the previous month days
     for (let i = firstDayIndex; i > 0; i--) {
-        template =  `<div class="prev-date">${prevLastDay - i + 1}</div>`;
+        template =  `<div class="prev-date">${prevMonthLastDays - i + 1}</div>`;
         days.push(template);
     }
 
-    for (let i = 1; i <= lastDay; i++) {
+    // Current month days
+    for (let i = 1; i <= lastOfMonth; i++) {
         if (i === new Date().getDate() && 
             getDateObj().getMonth() === new Date().getMonth()) {
 
@@ -55,6 +61,7 @@ const renderCalendar = () => {
         monthDays.html(days.map(div => `${div}`).join(''));
     }
 
+    // Next month days
     for (let j = 1; j <= nextDays; j++) {
         let template =  `<div class="next-date">${j}</div>`;
         days.push(template);
