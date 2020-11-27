@@ -71,7 +71,7 @@ hr {
     border-radius: 4px;
     background: linear-gradient(to right, red, yellow);
     height: 5px;
-    max-width: 5rem;
+    max-width: 8rem;
 }
 
 .container-box {

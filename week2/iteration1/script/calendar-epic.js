@@ -1,3 +1,9 @@
+//! За Мишо: Този календар не съм го измислил аз, ще го махна от репоситорито 
+//! Добавил съм го, защото мисля, че има какво да науча от този проект,
+//! А пък си играх ред по ред да го пиша от 5 минутно fast-paced видео за на slowmotion (0.25x)
+//! както и SCSS към CSS, за по-добра разбираемост за всички, които не знаят SASS както и направи подобрения по CSS-а 
+//! Искам да разбера логиката за работа с Date и да го reverse-engineer-на 
+
 const AVAILABLE_WEEK_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const AVAILABLE_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const localStorageName = 'calendar-events';

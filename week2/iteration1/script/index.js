@@ -5,7 +5,6 @@
 const playground = KQ('.playground');
 console.log(playground);
 console.log(playground[0]);
-console.log(playground.eq(0));
 console.log(playground.valueOf());
 
 
@@ -76,8 +75,6 @@ const newBoxTwo = KQ('<div>')
 
 KQ('#container-playground').valueOf().append(newBoxTwo.valueOf());
 
-//! Problem #1 Chaining does not work properly 😡
-// console.log(KQ('.attr-special').eq(1).removeClass('attr-special'));
 
 // Remove
 // KQ('#target-box').removeClass('attr-special');
@@ -101,12 +98,14 @@ const playgroundChildren = KQ('.container-box').children();
 // console.log('Children test:', playgroundChildren);
 // it returns HTMLCollection, за да го минава през KQ() функцията трябва да добавя към проверката за селектор: selector instanceof HTMLCollection
 
-const log = function() {
-    console.log('Hello!');
-}
 
 // @6. Events
 playgroundChildren.on('click', item => alert(`You've clicked on box number: ${item.target.textContent}`));
+
+
+const log = function() {
+    console.log('Hello!');
+}
 
 // On
 playgroundChildren.on('click', log);

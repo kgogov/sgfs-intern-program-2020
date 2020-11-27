@@ -1,3 +1,10 @@
+:root {
+    --calendar-color:     #3282B8;
+    --calendar-bg-color:  #3d3d3d;
+    --container-bg-color: #cccccc;
+    --text-color:         #eeeeee;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +12,7 @@
 }
 
 html {
-    color: #eee;
+    color: var(--text-color);
     font-size: 62.5%;
     font-family: Helvetica, sans-serif;
 }
@@ -15,14 +22,14 @@ html {
     justify-content: center;
     align-items: center;
 
-    background-color: #313131;
+    background-color: var(--container-bg-color);
     height: 100vh;
     width: 100%;
 }
 
 #calendar {
-    background-color: #222227;
-    box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.6); /* see more on the Web */
+    background-color: var(--calendar-bg-color);
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.6);
     height: 52rem;
     width: 45rem;
 }
@@ -32,7 +39,7 @@ html {
     justify-content: space-between;
     align-items: center;
 
-    background-color: #16567e;
+    background-color: var(--calendar-color);
     padding: 0 2rem;
     text-align: center;
     text-shadow: 0 0.3rem 0.5rem rgba(0, 0, 0, 0.5);
@@ -80,7 +87,7 @@ html {
 }
 
 .line {
-    background-color: #16567e;
+    background-color: var(--calendar-color);
     height: 0.1rem;
     width: 100%;
 }
@@ -107,7 +114,7 @@ html {
 
 .days div:hover:not(.today) {
     cursor: pointer;
-    background-color: #262626;
+    background-color: #4e4e4e;
     border: 0.2rem solid #777;
 }
 
@@ -117,5 +124,5 @@ html {
 }
 
 .today {
-    background-color: #16567e;
+    background-color: var(--calendar-color);
 }

@@ -23,33 +23,27 @@ const renderCalendar = () => {
     getDateObj().setDate(1);
 
     const monthDays = KQ('.days');
-
     const lastDay = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDate();
-
     const prevLastDay = new Date(getDateObj().getFullYear(), getDateObj().getMonth(), 0).getDate();
-
     const firstDayIndex = getDateObj().getDay();
-
     const lastDayIndex = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDay();
-
     const nextDays = 7 - lastDayIndex - 1;
 
-    // Display current month name
     KQ('.date h1').html(months[getDateObj().getMonth()]);
-    // Display current date in readable format
     KQ('.date p').html(new Date().toDateString());
 
     let days = [];
     let template;
 
-    for (let x = firstDayIndex; x > 0; x--) {
-        template =  `<div class="prev-date">${prevLastDay - x + 1}</div>`;
+    for (let i = firstDayIndex; i > 0; i--) {
+        template =  `<div class="prev-date">${prevLastDay - i + 1}</div>`;
         days.push(template);
     }
 
     for (let i = 1; i <= lastDay; i++) {
-        
-        if (i === new Date().getDate() && getDateObj().getMonth() === new Date().getMonth()) {
+        if (i === new Date().getDate() && 
+            getDateObj().getMonth() === new Date().getMonth()) {
+
             template = `<div class="today">${i}</div>`;
             days.push(template);
 
