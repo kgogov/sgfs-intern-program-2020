@@ -5,11 +5,13 @@ const getDateObj = function() { return date; }
 const daysOfNextOrPrevMonthToShow = 6;
 
 const renderCalendar = () => {
+    let calendarDaysTemplate;
+    let daysCollection = [];
     // Get first day of the current month
     getDateObj().setDate(1);
 
     const calendarDaysLayout    = KQ('.calendar-days--layout');
-    const monthDays             = new Date( getDateObj().getFullYear(),
+    const currentMonthDays             = new Date( getDateObj().getFullYear(),
                                         getDateObj().getMonth() + 1, 0)
                                         .getDate();
 
@@ -28,49 +30,47 @@ const renderCalendar = () => {
     KQ('.calendar-month-text h1').html(MONTHS[getDateObj().getMonth()]);
     KQ('.calendar-month-text p').html(new Date().toDateString());
 
-    let template;
-    // Days storage
-    let days = [];
+
     // Determine the previous month days
     for (let i = firstDayIndex; i > 0; i--) {
-        template =  `<div class="prev-date">${prevMonthDays - i + 1}</div>`;
-        days.push(template);
+        calendarDaysTemplate =  `<div class="prev-date">${prevMonthDays - i + 1}</div>`;
+        daysCollection.push(calendarDaysTemplate);
     }
 
     // Current month days
-    for (let i = 1; i <= monthDays; i++) {
+    for (let i = 1; i <= currentMonthDays; i++) {
         const today = i === new Date().getDate() && getDateObj().getMonth() === new Date().getMonth();
 
         if (!today) {
-            template = `<div>${i}</div>`;
-            days.push(template);
+            calendarDaysTemplate = `<div>${i}</div>`;
+            daysCollection.push(calendarDaysTemplate);
         }
 
         if (today) {
-            template = `<div class="today">${i}</div>`;
-            days.push(template);
+            calendarDaysTemplate = `<div class="today">${i}</div>`;
+            daysCollection.push(calendarDaysTemplate);
         }
 
-        calendarDaysLayout.html(days.map(div => `${div}`).join(''));
+        calendarDaysLayout.html(daysCollection.map(div => `${div}`).join(''));
     }
 
     // Next month days
     for (let j = 1; j <= nextDays; j++) {
-        let template =  `<div class="next-date">${j}</div>`;
-        days.push(template);
+        let calendarDaysTemplate =  `<div class="next-date">${j}</div>`;
+        daysCollection.push(calendarDaysTemplate);
 
-        calendarDaysLayout.html(days.map(div => `${div}`).join(''));
+        calendarDaysLayout.html(daysCollection.map(div => `${div}`).join(''));
     }
 };
 
 
 KQ('.prev-btn').on('click', () => {
-    date.setMonth(date.getMonth() - 1);
+    getDateObj().setMonth(getDateObj().getMonth() - 1);
     renderCalendar();
 });
 
 KQ('.next-btn').on('click', () => {
-    date.setMonth(date.getMonth() + 1);
+    getDateObj().setMonth(getDateObj().getMonth() + 1);
     renderCalendar();
 })  
 
