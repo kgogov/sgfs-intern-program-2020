@@ -11,25 +11,25 @@ const renderCalendar = () => {
     getDateObj().setDate(1);
 
     const calendarDaysLayout    = KQ('.calendar-days--layout');
-    const currentMonthDays             = new Date( getDateObj().getFullYear(),
-                                        getDateObj().getMonth() + 1, 0)
-                                        .getDate();
+
+    const currentMonthDays      = new Date( getDateObj().getFullYear(),
+                                            getDateObj().getMonth() + 1, 0)
+                                            .getDate();
 
     const prevMonthDays         = new Date( getDateObj().getFullYear(),
-                                        getDateObj().getMonth(), 0)
-                                        .getDate();
+                                            getDateObj().getMonth(), 0)
+                                            .getDate();
 
     const firstDayIndex         = getDateObj().getDay();
     const lastDayIndex          = new Date( getDateObj().getFullYear(),
-                                        getDateObj().getMonth() + 1, 0).
-                                        getDay();
+                                            getDateObj().getMonth() + 1, 0).
+                                            getDay();
     
     // Formula to display the next month days
     const nextDays = daysOfNextOrPrevMonthToShow - lastDayIndex;
 
     KQ('.calendar-month-text h1').html(MONTHS[getDateObj().getMonth()]);
     KQ('.calendar-month-text p').html(new Date().toDateString());
-
 
     // Determine the previous month days
     for (let i = firstDayIndex; i > 0; i--) {
