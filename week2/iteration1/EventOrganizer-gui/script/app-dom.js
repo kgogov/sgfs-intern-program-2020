@@ -81,19 +81,19 @@ const enablePartyInputs = () => {
 }
 
 const disableClientInputs = () => {
-    clientInputFirstName.disabled = true;
-    clientInputLastName.disabled  = true;
-    clientGenderSelect.disabled   = true;
-    clientInputAge.disabled       = true;
-    clientInputWallet.disabled    = true;
+    clientInputFirstName.disabled   = true;
+    clientInputLastName.disabled    = true;
+    clientGenderSelect.disabled     = true;
+    clientInputAge.disabled         = true;
+    clientInputWallet.disabled      = true;
 }
 
 const enableClientInputs = () => {
-    clientInputFirstName.disabled = false;
-    clientInputLastName.disabled  = false;
-    clientGenderSelect.disabled   = false;
-    clientInputAge.disabled       = false;
-    clientInputWallet.disabled    = false;
+    clientInputFirstName.disabled   = false;
+    clientInputLastName.disabled    = false;
+    clientGenderSelect.disabled     = false;
+    clientInputAge.disabled         = false;
+    clientInputWallet.disabled      = false;
 }
 
 // Party DOM Utility
@@ -144,23 +144,23 @@ const fillCurrentClientFormValues = (fullName, gender, age, wallet) => {
 
     const clientNames = fullName.split(' ');
 
-    clientInputFirstName.value  = clientNames[0];
-    clientInputLastName.value   = clientNames[clientNames.length - 1];
-    clientGenderSelect.value    = gender;
-    clientInputAge.value        = age;
-    clientInputWallet.value     = wallet;
+    clientInputFirstName.value      = clientNames[0];
+    clientInputLastName.value       = clientNames[clientNames.length - 1];
+    clientGenderSelect.value        = gender;
+    clientInputAge.value            = age;
+    clientInputWallet.value         = wallet;
 }
 
 // Client DOM Utility
 const showClientUpdateButton = () => {
-    clientUpdateButton.style.display = "inline-block";
-    clientFormSubmit.style.display = "none";
+    clientUpdateButton.style.display    = "inline-block";
+    clientFormSubmit.style.display      = "none";
 }
 
 // Client DOM Utility
 const hideClientUpdateButton = () => {
-    clientUpdateButton.style.display = "none";
-    clientFormSubmit.style.display = "inline-block";
+    clientUpdateButton.style.display    = "none";
+    clientFormSubmit.style.display      = "inline-block";
 }
 
 
@@ -383,10 +383,10 @@ const updateClient = event => {
 
     const clientFullName = `${capitalizeFirstLetter(clientFirstName)} ${capitalizeFirstLetter(clientLastName)}`;
 
-    client.fullName     = clientFullName;
-    client.gender       = clientGender;
-    client.age          = clientAge;
-    client.wallet       = clientWallet;
+    client.fullName             = clientFullName;
+    client.gender               = clientGender;
+    client.age                  = clientAge;
+    client.wallet               = clientWallet;
 
     clients.splice(clientIndex, 1, client);
 
@@ -407,10 +407,10 @@ const getFilteredClientCollection = (party, filter) => {
 const getFilteredPartyCollection = (collection, filter) => {
     if (filter === 'forUnderAged')  return collection.filter(party => party.isUnderAged === 'yes');
     if (filter === 'forAdults')     return collection.filter(party => party.isUnderAged === 'no');
-    if (filter === 'free')          return collection.filter(party => party.isFree === 'yes');
-    if (filter === 'paid')          return collection.filter(party => party.isFree === 'no');
-    if (filter === 'open')          return collection.filter(party => party.isOpen === 'yes');
-    if (filter === 'closed')        return collection.filter(party => party.isOpen === 'no');
+    if (filter === 'free')          return collection.filter(party => party.isFree      === 'yes');
+    if (filter === 'paid')          return collection.filter(party => party.isFree      === 'no');
+    if (filter === 'open')          return collection.filter(party => party.isOpen      === 'yes');
+    if (filter === 'closed')        return collection.filter(party => party.isOpen      === 'no');
 
     return collection;
 }
@@ -484,7 +484,7 @@ const renderModalParties = (collection, layout, client, filter) => {
     joinButtons.forEach((button, index) => {
         button.addEventListener('click', () => {
 
-            const party = PartyManager.getParty(index);
+            const party             = PartyManager.getParty(index);
             const isClientUnderAged = client.age < 18 && party.isUnderAged === 'no';
             const isClientVIP       = client.partyCounter !== 0 && client.partyCounter % 5 === 0;
 
@@ -565,16 +565,14 @@ clientCreationButton.addEventListener('click', toggleClientCreation);
 partyTableList.addEventListener('click', e => {
     if (e.target.className === 'action--show-client-list') {
 
-        const partyIndex = e.target.getAttribute('data-position');
-        const currentParty = PartyManager.getParty(partyIndex);
+        const partyIndex        = e.target.getAttribute('data-position');
+        const currentParty      = PartyManager.getParty(partyIndex);
 
-        const clientTableList = document.getElementById('modal-client-info-list--layout');
-        const modalExit = document.querySelector('.modal-client-info--exit');
-
-        const modal = document.querySelector('.modal-client-info--layout');
+        const clientTableList   = document.getElementById('modal-client-info-list--layout');
+        const modalExit         = document.querySelector('.modal-client-info--exit');
+        const modal             = document.querySelector('.modal-client-info--layout');
         modal.classList.add('modal-client-info--layout-active');
-
-        const dropdown = document.querySelector('.client-info-sort-by');
+        const dropdown          = document.querySelector('.client-info-sort-by');
 
         if (currentParty.clientCollection.length === 0) {
             showAlert('There are no clients at this event!', 'warning', clientTableList.parentElement);
@@ -600,18 +598,16 @@ partyTableList.addEventListener('click', e => {
 clientTableList.addEventListener('click', e => {
     if (e.target.className === 'action--choose-party') {
 
-        const partyCollection = PartyManager.getPartyCollection();
-        const partyModalTableList = document.getElementById('modal-choose-party-list--layout');
+        const partyCollection       = PartyManager.getPartyCollection();
+        const partyModalTableList   = document.getElementById('modal-choose-party-list--layout');
 
-        const clientIndex = e.target.getAttribute('data-position');
-        const client = ClientManager.getClient(clientIndex);
+        const clientIndex           = e.target.getAttribute('data-position');
+        const client                = ClientManager.getClient(clientIndex);
         
-        const modal = document.querySelector('.modal-join-event-layout');
+        const modal                 = document.querySelector('.modal-join-event-layout');
         modal.classList.add('modal-join-event-layout-active');
-
-        const dropdown = document.getElementById('party-info-sort-by');
-
-        const modalExit = document.querySelector('.modal-join-event--exit');
+        const modalExit             = document.querySelector('.modal-join-event--exit');
+        const dropdown              = document.getElementById('party-info-sort-by');
 
         modalExit.addEventListener('click', () => {
             modal.classList.remove('modal-join-event-layout-active');
@@ -649,8 +645,8 @@ partyTableList.addEventListener('click', e => {
         return;
     }
 
-    const partyIndex = e.target.getAttribute('data-position');
-    const party = PartyManager.getParty(partyIndex);
+    const partyIndex    = e.target.getAttribute('data-position');
+    const party         = PartyManager.getParty(partyIndex);
 
     partyUpdateButton.setAttribute('data-update', partyIndex);
 
@@ -667,8 +663,8 @@ clientTableList.addEventListener('click', e => {
         return;
     }
 
-    const clientIndex = e.target.getAttribute('data-position');
-    const client = ClientManager.getClient(clientIndex);
+    const clientIndex   = e.target.getAttribute('data-position');
+    const client        = ClientManager.getClient(clientIndex);
 
     clientUpdateButton.setAttribute('data-update', clientIndex);
 
@@ -686,8 +682,8 @@ partyTableList.addEventListener('click', e => {
         return;
     }
 
-    const partyIndex = e.target.getAttribute('data-position');
-    const parties = PartyManager.getPartyCollection();
+    const partyIndex    = e.target.getAttribute('data-position');
+    const parties       = PartyManager.getPartyCollection();
 
     parties.splice(partyIndex, 1);
 
@@ -702,8 +698,8 @@ clientTableList.addEventListener('click', e => {
         return;
     }
 
-    const clients = ClientManager.getMainClientCollection();
-    const clientIndex = e.target.getAttribute('data-position');
+    const clients       = ClientManager.getMainClientCollection();
+    const clientIndex   = e.target.getAttribute('data-position');
 
     clients.splice(clientIndex, 1);
 

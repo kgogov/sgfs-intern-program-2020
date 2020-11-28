@@ -175,7 +175,7 @@ Party.prototype.listClients = function(gender = '') {
     } else {
         return this.clientsCollection
             .filter(client => client.gender === gender)
-                .forEach(client => console.log(`${client.fullName}`));
+            .forEach(client => console.log(`${client.fullName}`));
     }
 };
 
@@ -233,8 +233,7 @@ Party.prototype.removeClient = function(ID) {
 
     if (checkIfIDExists(this.clientsCollection, ID)) {
 
-        this.clientsCollection = this.clientsCollection
-            .filter(client => client.ID !== ID);
+        this.clientsCollection = this.clientsCollection.filter(client => client.ID !== ID);
         
         message.successfullyRemovedClient();
     } else {
@@ -246,7 +245,7 @@ Party.prototype.removeClient = function(ID) {
 function Client(firstName, lastName, gender, age, wallet) {
 
     if (!isClientCreationAllowed) {
-        message.objCreationDisabled(); return;
+        return message.objCreationDisabled(); 
     }
     verifyClientCreation(firstName, lastName, gender, age, wallet);
 
@@ -280,8 +279,8 @@ const verifyClientCreation = (firstName, lastName, gender, age, wallet) => {
             isGenderValid(gender)      &&
             isAgeValid(age)            &&
             isWalletValid(wallet))) {
-            message.verifyCreationWarning();
-            return;
+
+            return message.verifyCreationWarning();
         }
     return true;
 };
@@ -335,11 +334,11 @@ const capitalizeFirstLetter = (string) => {
 };
 
 const getPartyInfoReadableFormat = (party) => {
-    Object.keys(party).forEach(e => console.log(`key=${e}  value=${party[e]}`));
+    Object.keys(party).forEach(e => console.log(`key=${e} value=${party[e]}`));
 };
 
 const getClientInfoReadableFormat = (client) => {
-    Object.keys(client).forEach(e => console.log(`key=${e}  value=${client[e]}`));
+    Object.keys(client).forEach(e => console.log(`key=${e} value=${client[e]}`));
 };
 
 const checkIfIDExists = (collection, id) => {
@@ -359,9 +358,8 @@ const listAllPartiesWIthPrefix = () => {
 
     getPartiesCollection()
         .filter(party => !party.isSuitableForMinors)
-            .forEach(party => {
-            console.log(`Party suitable for adults: *${party.partyName}`);
-        });
+        .forEach(party => { console.log(`Party suitable for adults: *${party.partyName}`);
+    });
 };
 
 const listAllParties = () => {
@@ -387,14 +385,13 @@ const listAllUnderAgedEvents = () => {
 
     getPartiesCollection()
         .filter(party => party.isSuitableForMinors)
-            .forEach(party => console.log(`Suitable parties: ${party.partyName}`));
+        .forEach(party => console.log(`Suitable parties: ${party.partyName}`));
 };
 
 const listEventsWithClients = () => {
     getPartiesCollection()
-        .map(party => 
-            `Event name: ${party.partyName}, Clients: ${party.clientsCollection.length}`)
-            .forEach(str => console.log(str));
+        .map(party => `Event name: ${party.partyName}, Clients: ${party.clientsCollection.length}`)
+        .forEach(str => console.log(str));
 };
 
 const getMaxClients = () => {
@@ -413,7 +410,7 @@ const getMaxClients = () => {
 
     let filteredCollection = party
         .filter(obj => obj.clientsCollection.length === partyWithMostClients)
-            .map(obj => obj.partyName);
+        .map(obj => obj.partyName);
 
     console.log(`Event: ${filteredCollection.toString()}, Clients: ${partyWithMostClients}`);
 };
@@ -422,9 +419,7 @@ const deletePartyByID = (ID) => {
 
     if (checkIfIDExists(getPartiesCollection(), ID)) {
 
-        partiesCollection = partiesCollection
-            .filter(party => party.ID !== ID);
-        
+        partiesCollection = partiesCollection.filter(party => party.ID !== ID);
         message.successfullyRemovedEvent();
     } else {
         message.unsuccessfullyEventRemoval();

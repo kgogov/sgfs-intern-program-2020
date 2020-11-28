@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kgQuery</title>
+    <link rel="stylesheet" href="./style/test-page.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="main-heading">The testing page</h1>
+        <hr class="mb-1">
+        <p id="description" class="mb-3">This is the playground where you can test kQuery functionality</p>
+
+        <h3 class="sub-heading">Common functions:</h3>
+        <ul id="list" class="list mb-3">
+            <li>✅ Select an element</li>
+            <li>✅ Create an element</li>
+            <li>✅ Remove an element</li>
+            <li id="sibling">✅ Change an attribute of an element (id, class, data, name)</li>
+            <li>✅ Get and set text content of an element</li>
+            <li>✅ Get and set html of an element</li>
+            <li>✅ Change CSS and set CSS as object</li>
+            <li>✅ DOM traversing: (parent, siblings, children)
+            </li>
+            <li>✅ Add or Remove event listeners</li>
+        </ul>
+
+        <h3 class="sub-heading">Common features:</h3>
+        <ul class="list mb-3">
+            <li>Method chaining</li>
+            <li>Revealing module pattern</li>
+        </ul>
+
+        <h3 class="sub-heading">Motivational quote of the day:</h3>
+        <p class="mb-3 quote">&#171;It’s going to be hard, but hard does not mean impossible.&#187;</p>
+
+        <h3 class="sub-heading">Playground below</h3>
+        <hr class="mb-3">
+
+        <!-- Playground Container -->
+        <div class="container-box">
+            <div class="playground box-1 cursor-pointer">1</div>
+            <div class="playground box-2 cursor-pointer">2</div>
+            <div class="playground box-3 cursor-pointer">3</div>
+            <div class="playground box-4 cursor-pointer">4</div>
+        </div>
+
+        <div id="attr">Add values to me!</div>
+
+        <div id="container-playground">
+            <div class="sibling-1"></div>
+            <div class="sibling-2"></div>
+        </div>
+    </div>
+
+    <script src="./script/kQuery.js"></script>
+    <script src="./script/test-page.js"></script>
+</body>
+</html>

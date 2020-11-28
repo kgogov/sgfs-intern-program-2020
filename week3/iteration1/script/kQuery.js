@@ -8,7 +8,7 @@
     }
 })(function () {
 
-    let domReadyQueue = []; // First In First Out (FIFO)
+    let domReadyQueue = [];
 
     const handleDOMReady = (fn) => {
         return document.readyState === 'complete'
@@ -70,7 +70,7 @@
 
     KQ.fn = KQ.prototype;
 
-    //! the main HERO OF THIS LIBRARY 💪💪💪
+
     KQ.fn.valueOf = function() {
         return this[0];
     }
@@ -152,7 +152,6 @@
     // CSS
     KQ.fn.css = function (value) {
         return this.each(function (element) {
-            //* refactor 
             element.style.cssText += value;
         });
     };
@@ -235,51 +234,4 @@
     return function (selector) {
         return new KQ(selector);
     }
-
 });
-
-
-
-//! NOT PROPERLY WORKING [Object object] 🤬 
-//* To be tested - нещо мн малко ми обягва.........
-// KQ.fn.insertBefore = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("beforeBegin", value);
-//     });
-// },
-
-// KQ.fn.insertAfter = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("afterEnd", value);
-//     });
-// },
-
-// KQ.fn.insertFirst = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("afterBegin", value);
-//     });
-// },
-
-// KQ.fn.insertLast = function (value) {
-//     return this.each(function (element) {
-//         element.insertAdjacentHTML("beforeEnd", value);
-//     });
-// },
-
-// KQ.fn.siblings = function() {
-//     this.nodes = 
-//         [].filter.call(this.nodes[0].parentNode.children, (child) => {
-//             child !== this.nodes[0];
-
-//         // Debug
-//         // console.log(this[0]);
-//         // console.log(this.nodes);
-//     });
-
-//     return this;
-// }
-
-// Returns the value at selected index
-// KQ.fn.eq = function(index) {
-//     return [this[index]];
-// }
