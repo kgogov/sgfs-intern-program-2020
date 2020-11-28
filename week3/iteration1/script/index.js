@@ -96,7 +96,6 @@ console.log(KQ('#target-box').prev());
 // Children: ✅
 const playgroundChildren = KQ('.container-box').children();
 // console.log('Children test:', playgroundChildren);
-// it returns HTMLCollection, за да го минава през KQ() функцията трябва да добавя към проверката за селектор: selector instanceof HTMLCollection
 
 
 // @6. Events

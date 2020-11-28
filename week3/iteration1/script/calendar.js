@@ -23,7 +23,7 @@ const renderCalendar = () => {
     // Get first day of the current month
     getDateObj().setDate(1);
 
-    const monthDays = KQ('.days');
+    const daysLayout = KQ('.days');
     const lastOfMonth = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDate();
     const prevMonthLastDays = new Date(getDateObj().getFullYear(), getDateObj().getMonth(), 0).getDate();
 
@@ -31,6 +31,7 @@ const renderCalendar = () => {
     const lastDayIndex = new Date(getDateObj().getFullYear(), getDateObj().getMonth() + 1, 0).getDay();
     
     // Formula to display the next month days
+    //! REFACTORING
     const nextDays = 7 - lastDayIndex - 1;
 
     KQ('.date h1').html(months[getDateObj().getMonth()]);
@@ -58,7 +59,7 @@ const renderCalendar = () => {
             days.push(template);
         }
 
-        monthDays.html(days.map(div => `${div}`).join(''));
+        daysLayout.html(days.map(div => `${div}`).join(''));
     }
 
     // Next month days
@@ -66,7 +67,7 @@ const renderCalendar = () => {
         let template =  `<div class="next-date">${j}</div>`;
         days.push(template);
 
-        monthDays.html(days.map(div => `${div}`).join(''));
+        daysLayout.html(days.map(div => `${div}`).join(''));
     }
 };
 

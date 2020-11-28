@@ -145,13 +145,14 @@
 
     KQ.fn.children = function() {
         this.nodes = this.nodes[0].children;
-        return this; 
+        return this;
     }
 
     
     // CSS
     KQ.fn.css = function (value) {
         return this.each(function (element) {
+            //* refactor 
             element.style.cssText += value;
         });
     };
