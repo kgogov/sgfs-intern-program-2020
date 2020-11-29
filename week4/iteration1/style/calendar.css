@@ -66,7 +66,6 @@ html {
 }
 
 .calendar--layout {
-    /* border: 1px solid blue; */
     padding: 3rem;
     flex: 2;
 }
@@ -82,11 +81,10 @@ html {
 .calenday-heading--layout {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 2rem;
     font-size: 2.2rem;
     font-weight: 700;
 }
-
 
 /* Calendar-Months-Layout */
 .calendar-months--layout {
@@ -95,6 +93,29 @@ html {
     padding-bottom: 0.8rem;
     justify-content: space-between;
     font-size: 1.3rem;
+}
+
+.calendar-months--layout div,
+.calendar-year--text,
+.action--previous,
+.action--next {
+    cursor: pointer;
+}
+
+.calendar-year--text,
+.action--previous,
+.action--next {
+    transition: color 300ms ease;
+}
+
+.calendar-year--text:hover,
+.action--previous:hover,
+.action--next:hover {
+    color: var(--red);
+}
+
+.calendar-months--layout div.active {
+    font-weight: 700;
 }
 
 
@@ -116,7 +137,87 @@ html {
     font-size: 1.6rem;
 }
 
+/* .calendar-month-days-list div {
+    position: relative;
+} */
+
+.calendar-month-days-list div::before {
+    /* content: attr(data-day); */
+    /* content: ''; */
+    /* position: absolute;
+    top: 0;
+    left: 0; */
+    /* width: 4rem; */
+    /* height: 4rem; */
+    /* line-height: 4rem; */
+    /* border-radius: 50%;
+    background-color: #404b69; */
+
+}
+
 .calendar-month-days-list div.active {
     background-color: var(--red);   
     color: var(--light-gray);
+}
+
+/* Flip experiment */
+.flip-container {
+    perspective: 1000;
+}
+
+.flip-container.hover .flipper, .flip-container.flip .flipper {
+	transform: rotateY(180deg);
+}
+
+.flip-container, .calendar-front-side, .calendar-back-side {
+    width: 100%;
+    height: 100%;
+}
+
+.flipper {
+	transition: 0.6s;
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+.calendar-front-side, .calendar-back-side {
+	backface-visibility: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+/* front pane, placed above back */
+.calendar-front-side {
+	z-index: 2;
+	/* for firefox 31 */
+	transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.calendar-back-side {
+    transform: rotateY(180deg);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    justify-items: center;
+    gap: 1rem;
+    font-size: 1.6rem;
+}
+
+.calendar-back-side div {
+    border: 1px solid red;
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 300ms ease;
+}
+
+.calendar-back-side div:hover {
+    background-color: var(--red);
+    color: #dbedf3;
 }
