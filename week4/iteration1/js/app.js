@@ -8,12 +8,12 @@ const actionNext                = document.querySelector('.action--next');
 const calendarBackSide          = document.querySelector('.calendar-back-side');
 const calendarContainer         = document.querySelector('.calendar--layout');
 
-let calendarBackSideYears     = null;
+let calendarBackSideYears       = null;
 
 
 const MONTHS         = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_FULL    = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const DAYS           = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS           = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const daysAfterTheMonthStarted = 32;
 
 
@@ -25,6 +25,7 @@ let currentYear     = today.getFullYear();
 
 const init = function() {
     renderAll();
+    eventTriggers();
 }
 
 
@@ -34,6 +35,39 @@ const renderAll = function() {
     renderWeekNames();
     renderYearBackSelection(2010, 2045);
 }
+
+const next = function() {
+	currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+	currentMonth = (currentMonth + 1) % 12;
+    renderDays(currentMonth, currentYear);
+    renderMonthNames();
+}
+
+const previous = function() {
+	currentYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+	currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    renderDays(currentMonth, currentYear);
+    renderMonthNames();
+}
+
+const jumpToMonth = function(index) {
+    currentMonth = index;
+    renderDays(currentMonth, currentYear);
+    renderMonthNames();
+}
+
+
+const isToday = function(day) {
+    return  todayIndex   === day                 && 
+            currentMonth === today.getMonth()    && 
+            currentYear  === today.getFullYear();
+}
+
+// day 0 here returns the last day of the PREVIOUS month
+const daysInMonth = function(month, year) {
+	return new Date(year, month + 1, 0).getDate();
+}
+
 
 const renderDays = function(month, year) {
 
@@ -76,7 +110,6 @@ const renderMonthNames = function() {
 
         monthsTemplate.setAttribute('data-month', `${index}`);
 
-        // Think about wrapping this
         monthsTemplate.addEventListener('click', () => {
             jumpToMonth(index);
         });
@@ -115,64 +148,30 @@ const renderYearBackSelection = function(startYear, endYear) {
 
 }
 
-function next() {
-	currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-	currentMonth = (currentMonth + 1) % 12;
-    renderDays(currentMonth, currentYear);
-    renderMonthNames();
-}
 
-function previous() {
-	currentYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-	currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-    renderDays(currentMonth, currentYear);
-    renderMonthNames();
-}
+const eventTriggers = function() {
+    actionNext.addEventListener('click', next);
+    actionPrevious.addEventListener('click', previous);
 
-function jumpToMonth(index) {
-    currentMonth = index;
-    renderDays(currentMonth, currentYear);
-    renderMonthNames();
-}
+    yearHeading.addEventListener('click', () => {
+        document.querySelector(".flip-container").classList.toggle("flip");
+    });
 
-
-function isToday(day) {
-    return  todayIndex   === day                 && 
-            currentMonth === today.getMonth()    && 
-            currentYear  === today.getFullYear();
-}
-
-function daysInMonth(month, year) {
-	// day 0 here returns the last day of the PREVIOUS month
-	return new Date(year, month + 1, 0).getDate();
-}
-
-
-
-// Event listeners ---> wrap them in other function
-actionNext.addEventListener('click', next);
-actionPrevious.addEventListener('click', previous);
-
-
-yearHeading.addEventListener('click', () => {
-    document.querySelector(".flip-container").classList.toggle("flip");
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    calendarBackSideYears = document.querySelectorAll('.calendar-back-side div');
-
-    calendarBackSideYears.forEach(year => {
-        year.addEventListener('click', (e) => {
-            const yearData = e.target.getAttribute('data-year');
-            currentYear = +yearData;
-
-            calendarContainer.classList.toggle('flip');
-            renderDays(currentMonth, currentYear);
+    document.addEventListener('DOMContentLoaded', () => {
+        calendarBackSideYears = document.querySelectorAll('.calendar-back-side div');
+    
+        calendarBackSideYears.forEach(year => {
+            year.addEventListener('click', (e) => {
+                const yearData = e.target.getAttribute('data-year');
+                currentYear = +yearData;
+    
+                calendarContainer.classList.toggle('flip');
+                renderDays(currentMonth, currentYear);
+            });
         });
     });
-});
+}
 
 
-
-
+// Startup
 init();

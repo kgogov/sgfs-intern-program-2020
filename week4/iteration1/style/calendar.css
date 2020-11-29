@@ -37,8 +37,15 @@ html {
     margin-bottom: 3rem;
 }
 
-
-/* Shared */
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
 
 
 /* Calendar Setup */
@@ -52,9 +59,9 @@ html {
 .calendar--container {
     background-color: var(--light-gray);
     box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.3);
-
+    overflow: hidden;
+    border-radius: 10px;
     display: flex;
-
     height: 50rem;
     width: 110rem;
 }
@@ -77,25 +84,24 @@ html {
 }
 
 
-/* Calendar-Heading-Layout */
 .calenday-heading--layout {
     display: flex;
     justify-content: center;
     gap: 2rem;
-    font-size: 2.2rem;
+    font-size: 3rem;
     font-weight: 700;
 }
 
-/* Calendar-Months-Layout */
 .calendar-months--layout {
     display: flex;
     border-bottom: 1px solid var(--red);
-    padding-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
     justify-content: space-between;
     font-size: 1.3rem;
 }
 
 .calendar-months--layout div,
+.calendar-month-days-list div,
 .calendar-year--text,
 .action--previous,
 .action--next {
@@ -118,49 +124,47 @@ html {
     font-weight: 700;
 }
 
-
-/* Calendar-WeekDays-Layout */
 .calendar-week-days-names--layout {
     display: flex;
     justify-content: space-around;
     font-weight: 700;
     font-size: 1.6rem;
+    padding-top: 0.5rem;
 }
 
 
-/* Calendar-week-days-list */
 .calendar-month-days-list {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     justify-items: center;
-    row-gap: 4rem;
+    row-gap: 0.5rem;
     font-size: 1.6rem;
+    text-align: center;
 }
 
-/* .calendar-month-days-list div {
-    position: relative;
-} */
-
-.calendar-month-days-list div::before {
-    /* content: attr(data-day); */
-    /* content: ''; */
-    /* position: absolute;
-    top: 0;
-    left: 0; */
-    /* width: 4rem; */
-    /* height: 4rem; */
-    /* line-height: 4rem; */
-    /* border-radius: 50%;
-    background-color: #404b69; */
-
+.calendar-month-days-list div {
+    padding: 1.3rem 0;
+    width: 5rem;
+    height: 5rem;
+    border: 1px solid transparent;
+    transition: all 200ms ease;
 }
+
+
+.calendar-month-days-list div:hover:not(.active) {
+    background-color: #d5d5d5;
+    border: 1px solid red;
+}
+
 
 .calendar-month-days-list div.active {
     background-color: var(--red);   
     color: var(--light-gray);
 }
 
-/* Flip experiment */
+
+
+/* Flip Magic */
 .flip-container {
     perspective: 1000;
 }
@@ -202,7 +206,7 @@ html {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     justify-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     font-size: 1.6rem;
 }
 

@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jgthms/minireset.css@master/minireset.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/config.css">
     <link rel="stylesheet" href="style/calendar.css">
 </head>
 <body>
     <div class="calendar-flex-wrapper">
+
         <div id='calendar' class="calendar--container">
             <div class="calendar-weather--layout">1</div>
             
@@ -18,13 +20,14 @@
                 <div class="flipper">
                     <div class="calendar-front-side">
                         <div class="calenday-heading--layout mb-3">
+                            <!-- да сменя стрелките с други -->
                             <span class="action--previous">&#10094;</span>
-                            <div class="calendar-month--text"></div>
+                            <div class="calendar-month--text noselect"></div>
                             <div class="calendar-year--text"></div>
                             <span class="action--next">&#10095;</span>
                         </div>
                         
-                        <div class="calendar-months--layout mb"></div>
+                        <div class="calendar-months--layout"></div>
                         <div class="calendar-week-days-names--layout mb-3"></div>
         
                         <div class="calendar-month-days-list--layout">
@@ -35,8 +38,8 @@
                 </div>
             </div>
 
-
             <div class="calendar-clock-layout">3</div>
+
         </div>
     </div>
     <script src="./js/app.js"></script>
