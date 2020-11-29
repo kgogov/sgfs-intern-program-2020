@@ -99,7 +99,7 @@ html {
 
 
 /* Calendar-WeekDays-Layout */
-.calendar-week-names--layout {
+.calendar-week-days-names--layout {
     display: flex;
     justify-content: space-around;
     font-weight: 700;
@@ -108,10 +108,15 @@ html {
 
 
 /* Calendar-week-days-list */
-.calendar-week-days-list {
+.calendar-month-days-list {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     justify-items: center;
     row-gap: 4rem;
     font-size: 1.6rem;
+}
+
+.calendar-month-days-list div.active {
+    background-color: var(--red);   
+    color: var(--light-gray);
 }
