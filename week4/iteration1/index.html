@@ -9,12 +9,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style/calendar.css">
     <link rel="stylesheet" href="style/clock.css">
+    <link rel="stylesheet" href="style/forecast.css">
 </head>
 <body>
     <div class="calendar-flex-wrapper">
 
         <div id='calendar' class="calendar--container">
-            <div class="calendar-weather--layout"></div>
+
+            <div class="calendar-weather--layout">
+                <div class="weather-location">
+                    <div class="weather-location-city"></div>
+                    <p class="weather-location-countryTag"></p>
+                </div>
+                <div class="weather-icon--container">
+                    <div class="weather-temperature-degree"></div>
+                </div>
+                <div class="weather-description">
+                    <div class="weather-description-full"></div>
+                    <div class="weather-description-feels-like"></div>
+                </div>
+            </div>
             
             <div class="calendar--layout flip-container">
                 <div class="flipper">
@@ -49,12 +63,13 @@
                 <div class="synergy-logo">
                     <img src="./images/synegy-logo.png" alt="SynergyGFS">
                 </div>
-
             </div>
 
-        </div>
+        </div> <!-- #calendar div ends-->
     </div>
-    <script src="./js/app.js"></script>
+
     <script src="./js/clock.js"></script>
+    <script src="./js/forecast.js"></script>
+    <script src="./js/app.js"></script>
 </body>
 </html>

@@ -139,6 +139,7 @@ const renderWeekNames = function() {
     DAYS.forEach(day => {
         let daysTemplate = document.createElement('div');
         daysTemplate.textContent = `${day}`;
+        daysTemplate.classList.add('noselect');
 
         calendarWeekDaysNameList.appendChild(daysTemplate);
     });
