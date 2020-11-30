@@ -10,7 +10,6 @@ const calendarContainer         = document.querySelector('.calendar--layout');
 
 let calendarBackSideYears       = null;
 
-
 const MONTHS         = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_FULL    = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAYS           = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -171,7 +170,13 @@ const eventTriggers = function() {
     actionPrevious.addEventListener('click', previous);
 
     yearHeading.addEventListener('click', () => {
-        document.querySelector(".flip-container").classList.toggle("flip");
+        calendarContainer.classList.toggle("flip");
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'ArrowUp') {
+            calendarContainer.classList.toggle('flip');
+        }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -185,6 +190,11 @@ const eventTriggers = function() {
                 calendarContainer.classList.toggle('flip');
                 renderDays(currentMonth, currentYear);
             });
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.code === 'ArrowLeft') previous();
+            if (e.code === 'ArrowRight') next();
         });
     });
 }
