@@ -97,7 +97,7 @@ html {
     border-bottom: 1px solid var(--red);
     padding-bottom: 0.5rem;
     justify-content: space-between;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
 }
 
 .calendar-months--layout div,
@@ -128,7 +128,7 @@ html {
     display: flex;
     justify-content: space-around;
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     padding-top: 0.5rem;
 }
 
@@ -137,7 +137,6 @@ html {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     justify-items: center;
-    row-gap: 0.5rem;
     font-size: 1.6rem;
     text-align: center;
 }
@@ -151,15 +150,20 @@ html {
 }
 
 
-.calendar-month-days-list div:hover:not(.active) {
+.calendar-month-days-list div:hover:not(.active):not(.empty-cell) {
     background-color: #d5d5d5;
     border: 1px solid red;
 }
 
 
 .calendar-month-days-list div.active {
-    background-color: var(--red);   
-    color: var(--light-gray);
+    background-color: var(--red);
+    border: 1px solid var(--light-gray);
+    color: #fff;
+}
+
+.calendar-month-days-list div.empty-cell {
+    cursor: initial;
 }
 
 

@@ -68,12 +68,28 @@ const daysInMonth = function(month, year) {
 	return new Date(year, month + 1, 0).getDate();
 }
 
+const fillBlankDays = function(count) {
+    for (let space = 0; space < count; space++) {
+        let cell = document.createElement('div');
+        let cellText = document.createTextNode('');
+
+        cell.classList.add('empty-cell');
+        cell.appendChild(cellText);
+        calendarWeekDaysBody.appendChild(cell);
+    }
+}
+
 
 const renderDays = function(month, year) {
+
+    let firstDayOfWeek = new Date(year, month).getDay();
 
     let totalDaysInMonth = daysInMonth(month, year);
 
     calendarWeekDaysBody.innerHTML = '';
+
+    // adding the blank boxes so that date start on correct day of the week
+    fillBlankDays(firstDayOfWeek);
 
     for (let day = 1; day <= totalDaysInMonth; day++) {
         let cell = document.createElement('div');
