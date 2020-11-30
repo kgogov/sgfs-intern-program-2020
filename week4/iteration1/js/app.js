@@ -16,18 +16,17 @@ const MONTHS_FULL    = ['January', 'February', 'March', 'April', 'May', 'June', 
 const DAYS           = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const daysAfterTheMonthStarted = 32;
 
-
 let today           = new Date();
 let todayIndex      = today.getDate();
 let currentMonth    = today.getMonth();
 let currentYear     = today.getFullYear();
 
 
+
 const init = function() {
     renderAll();
     eventTriggers();
 }
-
 
 const renderAll = function() {
     renderDays(currentMonth, currentYear);
@@ -87,7 +86,6 @@ const renderDays = function(month, year) {
     let totalDaysInMonth = daysInMonth(month, year);
 
     calendarWeekDaysBody.innerHTML = '';
-
     // adding the blank boxes so that date start on correct day of the week
     fillBlankDays(firstDayOfWeek);
 
@@ -98,13 +96,17 @@ const renderDays = function(month, year) {
         if (isToday(day)) {
             cell.classList.add('active');
         }
-
+        // Event data
         cell.setAttribute('data-day', day);
         cell.setAttribute('data-month', month);
         cell.setAttribute('data-year', year);
 
         cell.appendChild(cellText);
         calendarWeekDaysBody.appendChild(cell);
+
+        // cell.addEventListener('click', e => {
+            
+        // });
 
         monthHeading.textContent = MONTHS_FULL[month];
         yearHeading.textContent = year;
@@ -159,13 +161,12 @@ const renderYearBackSelection = function(startYear, endYear) {
 
         yearBoxTemplate.appendChild(yearBoxText);
         calendarBackSide.appendChild(yearBoxTemplate);
-
     }
-
 }
 
 
 const eventTriggers = function() {
+
     actionNext.addEventListener('click', next);
     actionPrevious.addEventListener('click', previous);
 
