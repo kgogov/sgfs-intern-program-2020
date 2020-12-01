@@ -3,7 +3,7 @@ const minHand       = document.querySelector('.min-hand');
 const hourHand      = document.querySelector('.hour-hand');
 const rotateDegrees = 90;
 
-const setDate = () =>  {
+const getClock = () =>  {
     const now                   = new Date();
 
     const seconds               = now.getSeconds();
@@ -21,5 +21,3 @@ const setDate = () =>  {
 
     [secondHand, minHand, hourHand].forEach(el => el.style.transitionDuration = (seconds === 0) ? '0s' : '0.05s');
 }
-
-setInterval(setDate, 1000);

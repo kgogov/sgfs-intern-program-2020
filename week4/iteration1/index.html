@@ -7,15 +7,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jgthms/minireset.css@master/minireset.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style/calendar.css">
     <link rel="stylesheet" href="style/clock.css">
     <link rel="stylesheet" href="style/forecast.css">
+    <link rel="stylesheet" href="style/calendar.css">
 </head>
 <body>
     <div class="calendar-flex-wrapper">
-
         <div id='calendar' class="calendar--container">
-
             <div class="calendar-weather--layout">
                 <div class="weather-container">
                     <div class="weather-location">
@@ -33,7 +31,10 @@
 
                 <div class="events-container">
                     <div class="calendar-events-list--container">
-                        <p class="event-list-heading">Current events: <span class="current-event-date"></span></p>
+                        <p class="event-list-heading">
+                            Event for
+                            <span class="current-event-date"></span>
+                        </p>
                         <ul class="current-events-list"></ul>
                     </div>
                     <div class="add-event-day--layout">
@@ -52,10 +53,8 @@
                             <div class="calendar-year--text"></div>
                             <span class="action--next">&#10095;</span>
                         </div>
-                        
                         <div class="calendar-months--layout"></div>
                         <div class="calendar-week-days-names--layout mb-2"></div>
-        
                         <div class="calendar-month-days-list--layout">
                             <div class="calendar-month-days-list"></div>
                         </div>
@@ -76,12 +75,12 @@
                     <img src="./images/synegy-logo.png" alt="SynergyGFS">
                 </div>
             </div>
-
-        </div> <!-- #calendar div ends-->
+        </div>
     </div>
 
     <script src="./js/clock.js"></script>
     <script src="./js/forecast.js"></script>
+    <script src="./js/calendar-utilities.js"></script>
     <script src="./js/app.js"></script>
 </body>
 </html>

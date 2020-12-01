@@ -1,9 +1,10 @@
-const LOCAL_STORAGE_NAME = 'calendar-events';
+const LOCAL_STORAGE_NAME        = 'calendar-events';
 
-const MONTHS         = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_FULL    = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const DAYS           = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const daysAfterTheMonthStarted = 32;
+const MONTHS                    = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_FULL               = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS                      = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const daysAfterTheMonthStarted  = 32;
+const backSideLayoutYear        = 42;
 
 const calendarMonthListNameList = document.querySelector('.calendar-months--layout');
 const calendarWeekDaysNameList  = document.querySelector('.calendar-week-days-names--layout');
@@ -17,24 +18,18 @@ const calendarContainer         = document.querySelector('.calendar--layout');
 const inputField                = document.querySelector('.add-event-day-field');
 const inputFieldButton          = document.querySelector('.add-event-day-field-btn--action');
 const currentEventDateInfo      = document.querySelector('.current-event-date');
+const eventList                 = document.querySelector('.current-events-list');
+let calendarBackSideYears       = null; // has to be let in order to flip effect work
 
-let eventList                   = document.querySelector('.current-events-list');
-let calendarBackSideYears       = null;
 
-let today           = new Date();
-let todayIndex      = today.getDate();
-let currentMonth    = today.getMonth();
-let currentYear     = today.getFullYear();
-
-// Notes:
-// Add Today jump to today
-
-const init = function() {
+const init = () => {
     renderAll();
     eventTriggers();
+    setInterval(getClock, 1000);
+    // getWeatherData();
 }
 
-const renderAll = function() {
+const renderAll = () => {
     renderDays(currentMonth, currentYear);
     renderMonthNames();
     renderWeekNames();
@@ -42,146 +37,28 @@ const renderAll = function() {
     renderEventsList(getTodayFormatted());
 }
 
-const next = function() {
-	currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-	currentMonth = (currentMonth + 1) % 12;
+const next = () => {
+	currentYear     = currentMonth === 11 ? currentYear + 1 : currentYear;
+	currentMonth    = (currentMonth + 1) % 12;
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
-const previous = function() {
-	currentYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-	currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+const previous = () => {
+	currentYear     = currentMonth === 0 ? currentYear - 1 : currentYear;
+	currentMonth    = currentMonth === 0 ? 11 : currentMonth - 1;
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
-const jumpToMonth = function(index) {
-    currentMonth = index;
+const jumpToMonth = (index) =>  {
+    currentMonth  = index;
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
 
-const isToday = function(day) {
-    return  todayIndex   === day                 && 
-            currentMonth === today.getMonth()    && 
-            currentYear  === today.getFullYear();
-}
-
-// day 0 here returns the last day of the PREVIOUS month
-const daysInMonth = function(month, year) {
-	return new Date(year, month + 1, 0).getDate();
-}
-
-const fillBlankDays = function(count) {
-    for (let space = 0; space < count; space++) {
-        let cell = document.createElement('div');
-        let cellText = document.createTextNode('');
-
-        cell.classList.add('empty-cell');
-        cell.appendChild(cellText);
-        calendarWeekDaysBody.appendChild(cell);
-    }
-}
-
-const getFormattedDate = (date) => {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-}
-
-const getTodayFormatted = () => {
-    return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-}
-
-
-const addBlankEventInfo = (eventList) => {
-    let eventListItemTemplate = document.createElement('li');
-
-    eventList.textContent = 'No events found 🤔';
-    eventList.classList.add('event-list-item-not-found');
-    eventList.appendChild(eventListItemTemplate);
-} 
-
-
-const renderEventsList = (eventDate) => {
-    let storedEvents = localStorage.getItem(LOCAL_STORAGE_NAME)
-        ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
-        : [];
-
-    if (storedEvents) {
-        let currentDayEvents = storedEvents.filter(eventsToday => eventsToday.eventDate === eventDate);
-
-        if (currentDayEvents.length > 0) {
-
-            eventList.innerHTML = '';
-            
-            for (let i = 0; i < currentDayEvents.length; i++) {
-
-                let eventListItemTemplate = document.createElement('li');
-        
-                eventListItemTemplate.textContent = currentDayEvents[i].eventDescription;
-                eventListItemTemplate.setAttribute('data-event-id', currentDayEvents[i].id);
-                eventListItemTemplate.classList.add('event-list-item');
-        
-                eventListItemTemplate.addEventListener('click', e => {
-                    const currentEventElement = e.target;
-                    const currentEventId = currentEventElement.getAttribute('data-event-id');
-                    removeEvent(currentEventId);
-                    renderEventsList(eventDate);
-                });
-        
-                eventList.appendChild(eventListItemTemplate);
-            }
-            return; // !important
-        }
-
-        addBlankEventInfo(eventList);
-    }
-}
-
-
-
-const removeEvent = (id) => {
-    let storedEvents = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME));
-
-    if (storedEvents !== null) {
-        storedEvents = storedEvents.filter(event => event.id != id ); 
-        localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
-    }
-}     
-
-const createEvent = () => {
-    let eventDescription = inputField.value;
-    eventDate = inputField.getAttribute('data-event-info');
-
-    if (!eventDescription) return alert('Invalid input');
-
-    let events = localStorage.getItem(LOCAL_STORAGE_NAME);
-    let obj = [];
-
-    if (events) {
-        obj = JSON.parse(events);
-    }
-
-    let id = 1;
-    if (obj.length > 0) {
-        //! APPLY FUNCTION DOES THE MAGIC
-        id = Math.max.apply('', obj.map(entry => parseFloat(entry.id))) + 1;
-    }
-
-    obj.push({
-        'id' : id,
-        'eventDate': eventDate,
-        'eventDescription': eventDescription
-    });
-
-    localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
-    inputField.value = '';
-    renderEventsList(eventDate);
-}
-
-
-
+// Render Methods
 const renderDays = function(month, year) {
 
     let firstDayOfWeek = new Date(year, month).getDay();
@@ -191,7 +68,7 @@ const renderDays = function(month, year) {
     fillBlankDays(firstDayOfWeek);
 
     for (let day = 1; day <= totalDaysInMonth; day++) {
-        let cell = document.createElement('div');
+        let cell     = document.createElement('div');
         let cellText = document.createTextNode(day);
 
         if (isToday(day)) {
@@ -221,7 +98,7 @@ const renderDays = function(month, year) {
         });
 
         monthHeading.textContent = MONTHS_FULL[month];
-        yearHeading.textContent = year;
+        yearHeading.textContent  = year;
     }
 }
 
@@ -231,7 +108,7 @@ const renderMonthNames = function() {
 
     MONTHS.forEach((month, index) => {
 
-        let monthsTemplate = document.createElement('div');
+        let monthsTemplate         = document.createElement('div');
         monthsTemplate.textContent = `${month}`;
 
         if (currentMonth === index) {
@@ -250,7 +127,7 @@ const renderMonthNames = function() {
 
 const renderWeekNames = function() {
     DAYS.forEach(day => {
-        let daysTemplate = document.createElement('div');
+        let daysTemplate         = document.createElement('div');
         daysTemplate.textContent = `${day}`;
         daysTemplate.classList.add('noselect');
 
@@ -260,12 +137,9 @@ const renderWeekNames = function() {
 
 // 42 years is suitable for layout
 const renderYearBackSelection = function(startYear, endYear) {
-    if (endYear - startYear > 42) {
-        return alert('Please enter other value!');
-    }
+    if (endYear - startYear > backSideLayoutYear) return alert('Please enter other value!');
 
     calendarBackSide.innerHTML = '';
-
     for (let year = startYear; year <= endYear; year++) {
         let yearBoxTemplate = document.createElement('div');
         let yearBoxText     = document.createTextNode(year);
@@ -277,45 +151,109 @@ const renderYearBackSelection = function(startYear, endYear) {
     }
 }
 
+const renderEventsList = (eventDate) => {
 
+    const storedEvents = localStorage.getItem(LOCAL_STORAGE_NAME)  ? 
+            JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) : [];
+
+    if (storedEvents) {
+        const currentDayEvents = storedEvents.filter(eventsToday => eventsToday.eventDate === eventDate);
+
+        if (currentDayEvents.length > 0) {
+
+            eventList.innerHTML = '';
+            for (let i = 0; i < currentDayEvents.length; i++) {
+
+                let eventListItemTemplate = document.createElement('li');
+        
+                eventListItemTemplate.textContent = currentDayEvents[i].eventDescription;
+                eventListItemTemplate.setAttribute('data-event-id', currentDayEvents[i].id);
+                eventListItemTemplate.classList.add('event-list-item');
+        
+                eventListItemTemplate.addEventListener('click', e => {
+                    const currentEventElement   = e.target;
+                    const currentEventId        = currentEventElement.getAttribute('data-event-id');
+                    removeEvent(currentEventId);
+                    renderEventsList(eventDate);
+                });
+        
+                eventList.appendChild(eventListItemTemplate);
+            }
+            return; // In order to escape addBlankEventInfo() Otherwise it wont render the newer added events
+        }
+
+        addBlankEventInfo(eventList);
+    }
+}
+
+const createEvent = () => {
+    const eventDescription  = inputField.value;
+    const eventDate         = inputField.getAttribute('data-event-info');
+    const events    = localStorage.getItem(LOCAL_STORAGE_NAME);
+    let obj         = [];
+    let id          = 1;
+
+    if (!eventDescription) return alert('Invalid input');
+
+    if (events) obj = JSON.parse(events)
+
+    if (obj.length > 0) {
+        id = Math.max.apply('', obj.map(entry => parseFloat(entry.id))) + 1;
+    }
+
+    obj.push({
+        'id' : id,
+        'eventDate': eventDate,
+        'eventDescription': eventDescription
+    });
+
+    localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
+    inputField.value = '';
+    renderEventsList(eventDate);
+}
+
+const removeEvent = (id) => {
+    let storedEvents = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME));
+
+    if (storedEvents !== null) {
+        storedEvents = storedEvents.filter(event => event.id != id ); 
+        localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
+    }
+}  
+
+
+// Service Method
 const eventTriggers = function() {
 
-    actionNext.addEventListener('click', next);
-    actionPrevious.addEventListener('click', previous);
-
-    yearHeading.addEventListener('click', () => {
-        calendarContainer.classList.toggle("flip");
-    });
-
-    inputFieldButton.addEventListener('click', createEvent);
-
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'ArrowUp') {
-            calendarContainer.classList.toggle('flip');
-        }
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
-        calendarBackSideYears = document.querySelectorAll('.calendar-back-side div');
+        calendarBackSideYears   = document.querySelectorAll('.calendar-back-side div');
     
         calendarBackSideYears.forEach(year => {
             year.addEventListener('click', (e) => {
-                const yearData = e.target.getAttribute('data-year');
-                currentYear = +yearData;
+                const yearData  = e.target.getAttribute('data-year');
+                currentYear     = +yearData;
     
                 calendarContainer.classList.toggle('flip');
                 renderDays(currentMonth, currentYear);
             });
         });
-
-        document.addEventListener('keydown', e => {
-            if (e.code === 'ArrowLeft') previous();
-            if (e.code === 'ArrowRight') next();
-            if (e.code === 'Enter') createEvent();
-        });
     });
-}
 
+    document.addEventListener('keydown', e => {
+        if (e.code === 'ArrowLeft') previous();
+        if (e.code === 'ArrowRight') next();
+        if (e.code === 'Enter') createEvent();
+        if (e.code === 'ArrowUp') calendarContainer.classList.toggle('flip');
+    });
+
+    yearHeading.addEventListener('click', () => {
+        calendarContainer.classList.toggle("flip");
+    });
+
+    actionNext.addEventListener('click', next);
+    actionPrevious.addEventListener('click', previous);
+    inputFieldButton.addEventListener('click', createEvent);
+}
 
 // Startup
 init();
