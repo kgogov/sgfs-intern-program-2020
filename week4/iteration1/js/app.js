@@ -1,4 +1,9 @@
-const localStorageName = 'calendar-events';
+const LOCAL_STORAGE_NAME = 'calendar-events';
+
+const MONTHS         = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_FULL    = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS           = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const daysAfterTheMonthStarted = 32;
 
 const calendarMonthListNameList = document.querySelector('.calendar-months--layout');
 const calendarWeekDaysNameList  = document.querySelector('.calendar-week-days-names--layout');
@@ -11,20 +16,18 @@ const calendarBackSide          = document.querySelector('.calendar-back-side');
 const calendarContainer         = document.querySelector('.calendar--layout');
 const inputField                = document.querySelector('.add-event-day-field');
 const inputFieldButton          = document.querySelector('.add-event-day-field-btn--action');
+const currentEventDateInfo      = document.querySelector('.current-event-date');
 
 let eventList                   = document.querySelector('.current-events-list');
 let calendarBackSideYears       = null;
-
-const MONTHS         = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_FULL    = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const DAYS           = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const daysAfterTheMonthStarted = 32;
 
 let today           = new Date();
 let todayIndex      = today.getDate();
 let currentMonth    = today.getMonth();
 let currentYear     = today.getFullYear();
 
+// Notes:
+// Add Today jump to today
 
 const init = function() {
     renderAll();
@@ -36,6 +39,7 @@ const renderAll = function() {
     renderMonthNames();
     renderWeekNames();
     renderYearBackSelection(2010, 2045);
+    renderEventsList(getTodayFormatted());
 }
 
 const next = function() {
@@ -89,13 +93,70 @@ const getTodayFormatted = () => {
     return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
 }
 
+
+const addBlankEventInfo = (eventList) => {
+    let eventListItemTemplate = document.createElement('li');
+
+    eventList.textContent = 'No events found 🤔';
+    eventList.classList.add('event-list-item-not-found');
+    eventList.appendChild(eventListItemTemplate);
+} 
+
+
+const renderEventsList = (eventDate) => {
+    let storedEvents = localStorage.getItem(LOCAL_STORAGE_NAME)
+        ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
+        : [];
+
+    if (storedEvents) {
+        let currentDayEvents = storedEvents.filter(eventsToday => eventsToday.eventDate === eventDate);
+
+        if (currentDayEvents.length > 0) {
+
+            eventList.innerHTML = '';
+            
+            for (let i = 0; i < currentDayEvents.length; i++) {
+
+                let eventListItemTemplate = document.createElement('li');
+        
+                eventListItemTemplate.textContent = currentDayEvents[i].eventDescription;
+                eventListItemTemplate.setAttribute('data-event-id', currentDayEvents[i].id);
+                eventListItemTemplate.classList.add('event-list-item');
+        
+                eventListItemTemplate.addEventListener('click', e => {
+                    const currentEventElement = e.target;
+                    const currentEventId = currentEventElement.getAttribute('data-event-id');
+                    removeEvent(currentEventId);
+                    renderEventsList(eventDate);
+                });
+        
+                eventList.appendChild(eventListItemTemplate);
+            }
+            return; // !important
+        }
+
+        addBlankEventInfo(eventList);
+    }
+}
+
+
+
+const removeEvent = (id) => {
+    let storedEvents = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME));
+
+    if (storedEvents !== null) {
+        storedEvents = storedEvents.filter(event => event.id != id ); 
+        localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
+    }
+}     
+
 const createEvent = () => {
     let eventDescription = inputField.value;
     eventDate = inputField.getAttribute('data-event-info');
 
     if (!eventDescription) return alert('Invalid input');
 
-    let events = localStorage.getItem(localStorageName);
+    let events = localStorage.getItem(LOCAL_STORAGE_NAME);
     let obj = [];
 
     if (events) {
@@ -104,6 +165,7 @@ const createEvent = () => {
 
     let id = 1;
     if (obj.length > 0) {
+        //! APPLY FUNCTION DOES THE MAGIC
         id = Math.max.apply('', obj.map(entry => parseFloat(entry.id))) + 1;
     }
 
@@ -113,8 +175,9 @@ const createEvent = () => {
         'eventDescription': eventDescription
     });
 
-    localStorage.setItem(localStorageName, JSON.stringify(obj));
+    localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
     inputField.value = '';
+    renderEventsList(eventDate);
 }
 
 
@@ -134,6 +197,7 @@ const renderDays = function(month, year) {
         if (isToday(day)) {
             cell.classList.add('active');
             // Set initial date to the add event action button
+            currentEventDateInfo.textContent = getTodayFormatted();
             inputField.setAttribute('data-event-info', getTodayFormatted());
         }
         // Event data
@@ -151,9 +215,9 @@ const renderDays = function(month, year) {
                 +e.target.getAttribute('data-day')
             );
 
-            console.log(getFormattedDate(date));
-
+            currentEventDateInfo.textContent = getFormattedDate(date);
             inputField.setAttribute('data-event-info', getFormattedDate(date));
+            renderEventsList(getFormattedDate(date));
         });
 
         monthHeading.textContent = MONTHS_FULL[month];
@@ -225,7 +289,6 @@ const eventTriggers = function() {
 
     inputFieldButton.addEventListener('click', createEvent);
 
-
     document.addEventListener('keydown', (e) => {
         if (e.code === 'ArrowUp') {
             calendarContainer.classList.toggle('flip');
@@ -248,6 +311,7 @@ const eventTriggers = function() {
         document.addEventListener('keydown', e => {
             if (e.code === 'ArrowLeft') previous();
             if (e.code === 'ArrowRight') next();
+            if (e.code === 'Enter') createEvent();
         });
     });
 }

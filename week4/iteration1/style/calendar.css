@@ -235,8 +235,9 @@ html {
 
 /* Calender Events Section */
 .calendar-events-list--container {
-    height: 12rem;
+    height: 18rem;
     color: #fff;
+    border-top: 1px solid #fff;
 }
 
 .calendar-events-list--container p {
@@ -265,4 +266,28 @@ html {
     right: 0;
     font-size: 1.5rem;
     cursor: pointer;
+}
+
+/* Event List */
+.event-list-heading {
+    padding: 1rem 0;
+    font-weight: 700;
+}
+
+
+.event-list-item,
+.event-list-item-not-found {
+    font-size: 1.3rem;
+}
+
+.event-list-item:hover {
+    text-decoration: line-through;
+    opacity: 0.8;
+    cursor: pointer;
+    background-color: #d30a32;
+}
+
+.current-event-date {
+    color: var(--text-color);
+    margin-left: 1rem;
 }
