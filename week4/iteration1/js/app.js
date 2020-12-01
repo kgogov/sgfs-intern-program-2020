@@ -5,6 +5,8 @@ const MONTHS_FULL               = ['January', 'February', 'March', 'April', 'May
 const DAYS                      = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const daysAfterTheMonthStarted  = 32;
 const backSideLayoutYear        = 42;
+const yearSelectionStart        = 2010;
+const yearSelectionEnd          = 2045;
 
 const calendarMonthListNameList = document.querySelector('.calendar-months--layout');
 const calendarWeekDaysNameList  = document.querySelector('.calendar-week-days-names--layout');
@@ -19,6 +21,7 @@ const inputField                = document.querySelector('.add-event-day-field')
 const inputFieldButton          = document.querySelector('.add-event-day-field-btn--action');
 const currentEventDateInfo      = document.querySelector('.current-event-date');
 const eventList                 = document.querySelector('.current-events-list');
+const todayButton               = document.querySelector('.calendar-today-button--action');
 let calendarBackSideYears       = null; // has to be let in order to flip effect work
 
 
@@ -26,14 +29,14 @@ const init = () => {
     renderAll();
     eventTriggers();
     setInterval(getClock, 1000);
-    // getWeatherData();
+    getWeatherData();
 }
 
 const renderAll = () => {
-    renderDays(currentMonth, currentYear);
+    renderDays(getCurrentMonth(), getCurrentYear());
     renderMonthNames();
     renderWeekNames();
-    renderYearBackSelection(2010, 2045);
+    renderYearBackSelection(yearSelectionStart, yearSelectionEnd);
     renderEventsList(getTodayFormatted());
 }
 
@@ -234,7 +237,7 @@ const eventTriggers = function() {
                 currentYear     = +yearData;
     
                 calendarContainer.classList.toggle('flip');
-                renderDays(currentMonth, currentYear);
+                renderDays(getCurrentMonth(), getCurrentYear());
             });
         });
     });
@@ -253,6 +256,12 @@ const eventTriggers = function() {
     actionNext.addEventListener('click', next);
     actionPrevious.addEventListener('click', previous);
     inputFieldButton.addEventListener('click', createEvent);
+    // todayButton.addEventListener('click', () => {
+    //     const today          = new Date();
+    //     let currentMonth     = today.getMonth();
+    //     let currentYear      = today.getFullYear();
+    //     renderDays(currentMonth, currentYear);
+    // });
 }
 
 // Startup
