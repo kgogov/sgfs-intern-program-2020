@@ -70,6 +70,9 @@ html {
     background-color: var(--red);
     padding: 3rem;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .calendar--layout {
@@ -228,4 +231,38 @@ html {
 .calendar-back-side div:hover {
     background-color: var(--red);
     color: #dbedf3;
+}
+
+/* Calender Events Section */
+.calendar-events-list--container {
+    height: 12rem;
+    color: #fff;
+}
+
+.calendar-events-list--container p {
+    font-size: 1.5rem;
+}
+
+.add-event-day--layout {
+    border-bottom: 1px solid #fff;
+    position: relative;
+}
+
+.add-event-day-field {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    color: #fff;
+    height: 3rem;
+    font-size: 1.5rem;
+    padding-right: 4rem;
+}
+
+.add-event-day-field-btn--action {
+    position: absolute;
+    top: 3px;
+    right: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
 }

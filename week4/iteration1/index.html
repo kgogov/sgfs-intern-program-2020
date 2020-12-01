@@ -17,16 +17,29 @@
         <div id='calendar' class="calendar--container">
 
             <div class="calendar-weather--layout">
-                <div class="weather-location">
-                    <div class="weather-location-city"></div>
-                    <p class="weather-location-countryTag"></p>
+                <div class="weather-container">
+                    <div class="weather-location">
+                        <div class="weather-location-city"></div>
+                        <p class="weather-location-countryTag"></p>
+                    </div>
+                    <div class="weather-icon--container">
+                        <div class="weather-temperature-degree"></div>
+                    </div>
+                    <div class="weather-description">
+                        <div class="weather-description-full"></div>
+                        <div class="weather-description-feels-like"></div>
+                    </div>
                 </div>
-                <div class="weather-icon--container">
-                    <div class="weather-temperature-degree"></div>
-                </div>
-                <div class="weather-description">
-                    <div class="weather-description-full"></div>
-                    <div class="weather-description-feels-like"></div>
+
+                <div class="events-container">
+                    <div class="calendar-events-list--container">
+                        <p>Current events:</p>
+                        <ul class="current-events-list"></ul>
+                    </div>
+                    <div class="add-event-day--layout">
+                        <input type="text" class="add-event-day-field" placeholder="Create an Event">
+                        <span class="add-event-day-field-btn--action">➕</span>
+                    </div>
                 </div>
             </div>
             

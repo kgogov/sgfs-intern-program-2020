@@ -1,3 +1,5 @@
+const localStorageName = 'calendar-events';
+
 const calendarMonthListNameList = document.querySelector('.calendar-months--layout');
 const calendarWeekDaysNameList  = document.querySelector('.calendar-week-days-names--layout');
 const calendarWeekDaysBody      = document.querySelector('.calendar-month-days-list');
@@ -7,7 +9,10 @@ const actionPrevious            = document.querySelector('.action--previous');
 const actionNext                = document.querySelector('.action--next');
 const calendarBackSide          = document.querySelector('.calendar-back-side');
 const calendarContainer         = document.querySelector('.calendar--layout');
+const inputField                = document.querySelector('.add-event-day-field');
+const inputFieldButton          = document.querySelector('.add-event-day-field-btn--action');
 
+let eventList                   = document.querySelector('.current-events-list');
 let calendarBackSideYears       = null;
 
 const MONTHS         = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -19,7 +24,6 @@ let today           = new Date();
 let todayIndex      = today.getDate();
 let currentMonth    = today.getMonth();
 let currentYear     = today.getFullYear();
-
 
 
 const init = function() {
@@ -77,15 +81,50 @@ const fillBlankDays = function(count) {
     }
 }
 
+const getFormattedDate = (date) => {
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+}
+
+const getTodayFormatted = () => {
+    return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+}
+
+const createEvent = () => {
+    let eventDescription = inputField.value;
+    eventDate = inputField.getAttribute('data-event-info');
+
+    if (!eventDescription) return alert('Invalid input');
+
+    let events = localStorage.getItem(localStorageName);
+    let obj = [];
+
+    if (events) {
+        obj = JSON.parse(events);
+    }
+
+    let id = 1;
+    if (obj.length > 0) {
+        id = Math.max.apply('', obj.map(entry => parseFloat(entry.id))) + 1;
+    }
+
+    obj.push({
+        'id' : id,
+        'eventDate': eventDate,
+        'eventDescription': eventDescription
+    });
+
+    localStorage.setItem(localStorageName, JSON.stringify(obj));
+    inputField.value = '';
+}
+
+
 
 const renderDays = function(month, year) {
 
     let firstDayOfWeek = new Date(year, month).getDay();
-
     let totalDaysInMonth = daysInMonth(month, year);
 
     calendarWeekDaysBody.innerHTML = '';
-    // adding the blank boxes so that date start on correct day of the week
     fillBlankDays(firstDayOfWeek);
 
     for (let day = 1; day <= totalDaysInMonth; day++) {
@@ -94,6 +133,8 @@ const renderDays = function(month, year) {
 
         if (isToday(day)) {
             cell.classList.add('active');
+            // Set initial date to the add event action button
+            inputField.setAttribute('data-event-info', getTodayFormatted());
         }
         // Event data
         cell.setAttribute('data-day', day);
@@ -103,9 +144,17 @@ const renderDays = function(month, year) {
         cell.appendChild(cellText);
         calendarWeekDaysBody.appendChild(cell);
 
-        // cell.addEventListener('click', e => {
-            
-        // });
+        cell.addEventListener('click', e => {
+            const date = new Date(
+                +e.target.getAttribute('data-year'),
+                +e.target.getAttribute('data-month'),
+                +e.target.getAttribute('data-day')
+            );
+
+            console.log(getFormattedDate(date));
+
+            inputField.setAttribute('data-event-info', getFormattedDate(date));
+        });
 
         monthHeading.textContent = MONTHS_FULL[month];
         yearHeading.textContent = year;
@@ -148,7 +197,7 @@ const renderWeekNames = function() {
 // 42 years is suitable for layout
 const renderYearBackSelection = function(startYear, endYear) {
     if (endYear - startYear > 42) {
-        return console.warn('Please enter other value!');
+        return alert('Please enter other value!');
     }
 
     calendarBackSide.innerHTML = '';
@@ -173,6 +222,9 @@ const eventTriggers = function() {
     yearHeading.addEventListener('click', () => {
         calendarContainer.classList.toggle("flip");
     });
+
+    inputFieldButton.addEventListener('click', createEvent);
+
 
     document.addEventListener('keydown', (e) => {
         if (e.code === 'ArrowUp') {
