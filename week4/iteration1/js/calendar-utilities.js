@@ -19,10 +19,18 @@ const getCurrentYear = () => {
     return currentYear
 }
 
+const getFormattedDate = (date) => {
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+}
+
+const getTodayFormatted = () => {
+    return `${getToday().getDate()}/${getToday().getMonth() + 1}/${getToday().getFullYear()}`;
+}
+
 const isToday = function(day) {
-    return  todayIndex   === day                 && 
-            currentMonth === today.getMonth()    && 
-            currentYear  === today.getFullYear();
+    return  getTodayIndex()   === day                 && 
+            getCurrentMonth() === today.getMonth()    && 
+            getCurrentYear()  === today.getFullYear();
 }
 
 // day 0 here returns the last day of the PREVIOUS month
@@ -39,14 +47,6 @@ const fillBlankDays = function(count) {
         cell.appendChild(cellText);
         calendarWeekDaysBody.appendChild(cell);
     }
-}
-
-const getFormattedDate = (date) => {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-}
-
-const getTodayFormatted = () => {
-    return `${getToday().getDate()}/${getToday().getMonth() + 1}/${getToday().getFullYear()}`;
 }
 
 const addBlankEventInfo = (eventList) => {

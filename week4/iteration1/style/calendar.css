@@ -87,7 +87,7 @@ html {
 }
 
 
-.calenday-heading--layout {
+.calendar-heading--layout {
     display: flex;
     justify-content: center;
     gap: 2rem;
@@ -161,7 +161,7 @@ html {
 
 
 .calendar-month-days-list div:hover:not(.active):not(.empty-cell) {
-    background-color: #d5d5d5;
+    background-color: #e7e7e7;
     border: 1px solid red;
 }
 
@@ -194,7 +194,7 @@ html {
 
 .flipper {
     height: 100%;
-	transition: 0.6s;
+	transition: 400ms;
 	transform-style: preserve-3d;
 	position: relative;
 }
@@ -208,9 +208,7 @@ html {
 
 /* front pane, placed above back */
 .calendar-front-side {
-	z-index: 2;
-	/* for firefox 31 */
-	transform: rotateY(0deg);
+	z-index: 98;
 }
 
 /* back, initially hidden pane */
@@ -231,7 +229,7 @@ html {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 300ms ease;
+    transition: all 200ms ease;
 }
 
 .calendar-back-side div:hover {
@@ -281,10 +279,13 @@ html {
 
 /* Event List */
 .event-list-heading {
-    padding: 1rem 0;
+    padding: 2.5rem 0 .5rem 0;
     font-weight: 700;
 }
 
+.event-list-item {
+    padding: 0.2rem 0;
+}
 
 .event-list-item,
 .event-list-item-not-found {

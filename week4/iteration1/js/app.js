@@ -4,7 +4,7 @@ const MONTHS                    = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Ju
 const MONTHS_FULL               = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAYS                      = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const daysAfterTheMonthStarted  = 32;
-const backSideLayoutYear        = 42;
+const backSideYearCount         = 42;
 const yearSelectionStart        = 2010;
 const yearSelectionEnd          = 2045;
 
@@ -28,7 +28,7 @@ let calendarBackSideYears       = null; // has to be let in order to flip effect
 const init = () => {
     renderAll();
     eventTriggers();
-    setInterval(getClock, 1000);
+    getClock();
     getWeatherData();
 }
 
@@ -54,12 +54,23 @@ const previous = () => {
     renderMonthNames();
 }
 
-const jumpToMonth = (index) =>  {
+const jumpToMonth = (index, flagToday = false) =>  {
+    if (flagToday) {
+        return currentMonth = index;
+    }
+
     currentMonth  = index;
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
+const toggleCalendarSide = () => {
+    calendarContainer.classList.toggle('flip');
+}
+
+const emptyInnerHTML = (el) => {
+    el.innerHTML = '';
+}
 
 // Render Methods
 const renderDays = function(month, year) {
@@ -67,7 +78,7 @@ const renderDays = function(month, year) {
     let firstDayOfWeek = new Date(year, month).getDay();
     let totalDaysInMonth = daysInMonth(month, year);
 
-    calendarWeekDaysBody.innerHTML = '';
+    emptyInnerHTML(calendarWeekDaysBody);
     fillBlankDays(firstDayOfWeek);
 
     for (let day = 1; day <= totalDaysInMonth; day++) {
@@ -79,6 +90,7 @@ const renderDays = function(month, year) {
             // Set initial date to the add event action button
             currentEventDateInfo.textContent = getTodayFormatted();
             inputField.setAttribute('data-event-info', getTodayFormatted());
+            todayButton.setAttribute('data-event-info', getTodayFormatted())
         }
         // Event data
         cell.setAttribute('data-day', day);
@@ -107,7 +119,7 @@ const renderDays = function(month, year) {
 
 
 const renderMonthNames = function() {
-    calendarMonthListNameList.innerHTML = '';
+    emptyInnerHTML(calendarMonthListNameList);
 
     MONTHS.forEach((month, index) => {
 
@@ -138,11 +150,10 @@ const renderWeekNames = function() {
     });
 }
 
-// 42 years is suitable for layout
-const renderYearBackSelection = function(startYear, endYear) {
-    if (endYear - startYear > backSideLayoutYear) return alert('Please enter other value!');
 
-    calendarBackSide.innerHTML = '';
+const renderYearBackSelection = function(startYear, endYear) {
+    if (endYear - startYear > backSideYearCount ) return alert('Please enter other value!');
+
     for (let year = startYear; year <= endYear; year++) {
         let yearBoxTemplate = document.createElement('div');
         let yearBoxText     = document.createTextNode(year);
@@ -157,7 +168,7 @@ const renderYearBackSelection = function(startYear, endYear) {
 const renderEventsList = (eventDate) => {
 
     const storedEvents = localStorage.getItem(LOCAL_STORAGE_NAME)  ? 
-            JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) : [];
+              JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) : [];
 
     if (storedEvents) {
         const currentDayEvents = storedEvents.filter(eventsToday => eventsToday.eventDate === eventDate);
@@ -192,17 +203,15 @@ const renderEventsList = (eventDate) => {
 const createEvent = () => {
     const eventDescription  = inputField.value;
     const eventDate         = inputField.getAttribute('data-event-info');
-    const events    = localStorage.getItem(LOCAL_STORAGE_NAME);
-    let obj         = [];
-    let id          = 1;
+    const events            = localStorage.getItem(LOCAL_STORAGE_NAME);
+    let obj                 = [];
+    let id                  = 1;
 
     if (!eventDescription) return alert('Invalid input');
 
     if (events) obj = JSON.parse(events)
 
-    if (obj.length > 0) {
-        id = Math.max.apply('', obj.map(entry => parseFloat(entry.id))) + 1;
-    }
+    if (obj.length > 0) id = Math.max.apply('', obj.map(entry => parseFloat(entry.id))) + 1;
 
     obj.push({
         'id' : id,
@@ -222,7 +231,17 @@ const removeEvent = (id) => {
         storedEvents = storedEvents.filter(event => event.id != id ); 
         localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
     }
-}  
+}
+
+const getTodayLayout = () => {
+    const today             = new Date();
+    const currentMonth      = today.getMonth();
+    const currentYear       = today.getFullYear();
+
+    jumpToMonth(currentMonth, true);
+    renderDays(currentMonth, currentYear);
+    renderMonthNames();
+}
 
 
 // Service Method
@@ -236,32 +255,24 @@ const eventTriggers = function() {
                 const yearData  = e.target.getAttribute('data-year');
                 currentYear     = +yearData;
     
-                calendarContainer.classList.toggle('flip');
+                toggleCalendarSide();
                 renderDays(getCurrentMonth(), getCurrentYear());
             });
         });
     });
 
     document.addEventListener('keydown', e => {
-        if (e.code === 'ArrowLeft') previous();
-        if (e.code === 'ArrowRight') next();
-        if (e.code === 'Enter') createEvent();
-        if (e.code === 'ArrowUp') calendarContainer.classList.toggle('flip');
+        if (e.code === 'ArrowLeft')     previous();
+        if (e.code === 'ArrowRight')    next();
+        if (e.code === 'Enter')         createEvent();
+        if (e.code === 'ArrowUp')       toggleCalendarSide();
     });
 
-    yearHeading.addEventListener('click', () => {
-        calendarContainer.classList.toggle("flip");
-    });
-
+    yearHeading.addEventListener('click', toggleCalendarSide);
     actionNext.addEventListener('click', next);
     actionPrevious.addEventListener('click', previous);
     inputFieldButton.addEventListener('click', createEvent);
-    // todayButton.addEventListener('click', () => {
-    //     const today          = new Date();
-    //     let currentMonth     = today.getMonth();
-    //     let currentYear      = today.getFullYear();
-    //     renderDays(currentMonth, currentYear);
-    // });
+    todayButton.addEventListener('click', getTodayLayout);
 }
 
 // Startup
