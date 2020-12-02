@@ -79,14 +79,6 @@ const jumpToMonth = (index, flagToday = false) =>  {
     renderMonthNames();
 }
 
-const addDayNotification = (cell) => {
-    getDaysCollection().forEach(event => {
-        if (event === getDayInfo(cell)) {
-            cell.classList.toggle('event-day');
-        };
-    });
-}
-
 
 // Render Methods
 const renderDays = function(month, year) {
@@ -100,19 +92,16 @@ const renderDays = function(month, year) {
     for (let day = 1; day <= totalDaysInMonth; day++) {
         let cell     = document.createElement('div');
         let cellText = document.createTextNode(day);
-
-        if (isToday(day)) {
-            cell.classList.add('active');
-            // Set initial date to the add event action button
-            currentEventDateInfo.textContent = getTodayFormatted();
-            inputField.setAttribute('data-event-info', getTodayFormatted());
-        }
-
-        // Event data
+        // Set event data
         cell.setAttribute('data-day', day);
         cell.setAttribute('data-month', month);
         cell.setAttribute('data-year', year);
-
+        
+        if (isToday(day)) {
+            cell.classList.add('active');
+            inputField.setAttribute('data-event-info', getTodayFormatted());
+        }
+        
         cell.appendChild(cellText);
         calendarWeekDaysBody.appendChild(cell);
 
@@ -130,6 +119,7 @@ const renderDays = function(month, year) {
 
         addDayNotification(cell);
 
+        currentEventDateInfo.textContent = inputField.getAttribute('data-event-info');
         monthHeading.textContent = MONTHS_FULL[month];
         yearHeading.textContent  = year;
     }
@@ -165,7 +155,7 @@ const renderWeekNames = function() {
     });
 }
 
- 
+
 const renderYearBackSelection = function(startYear, endYear) {
     if (endYear - startYear > CALENDAR_BACK_SIDE_YEARS_CELLS ) {
         throw new Error('Please enter valid range of years: max count 42!');

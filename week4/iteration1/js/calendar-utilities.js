@@ -35,15 +35,15 @@ const getTodayFormatted = () => {
     return `${getToday().getDate()}/${getToday().getMonth() + 1}/${getToday().getFullYear()}`;
 }
 
+const getDayInfo = (cell) => {
+    return `${cell.getAttribute('data-day')}/${+cell.getAttribute('data-month') + 1}/${cell.getAttribute('data-year')}`;
+}
+
 const getDaysCollection = () => {
     const storage   =  JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) || [];
     return storage.map(event => event.eventDate);
 }
 
-
-const getDayInfo = (cell) => {
-    return `${cell.getAttribute('data-day')}/${+cell.getAttribute('data-month') + 1}/${cell.getAttribute('data-year')}`;
-}
 
 const isToday = function(day) {
     return  getTodayIndex()   === day                 && 
@@ -69,6 +69,14 @@ const fillBlankDays = function(count) {
         cell.appendChild(cellText);
         calendarWeekDaysBody.appendChild(cell);
     }
+}
+
+const addDayNotification = (cell) => {
+    getDaysCollection().forEach(event => {
+        if (event === getDayInfo(cell)) {
+            cell.classList.toggle('event-day');
+        };
+    });
 }
 
 const addBlankEventInfo = (eventList) => {
