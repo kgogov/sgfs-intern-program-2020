@@ -35,6 +35,16 @@ const getTodayFormatted = () => {
     return `${getToday().getDate()}/${getToday().getMonth() + 1}/${getToday().getFullYear()}`;
 }
 
+const getDaysCollection = () => {
+    const storage   =  JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) || [];
+    return storage.map(event => event.eventDate);
+}
+
+
+const getDayInfo = (cell) => {
+    return `${cell.getAttribute('data-day')}/${+cell.getAttribute('data-month') + 1}/${cell.getAttribute('data-year')}`;
+}
+
 const isToday = function(day) {
     return  getTodayIndex()   === day                 && 
             getCurrentMonth() === today.getMonth()    && 

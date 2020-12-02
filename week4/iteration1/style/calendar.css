@@ -16,12 +16,9 @@ html {
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
-    min-width: 300px;
+    min-width: 30rem;
     overflow: hidden;
-    /* text-shadow: 0 3px 5px rgba(0, 0,0, 0.1); */
 }
-
-
 
 /* Utilities */
 .mb {
@@ -86,7 +83,6 @@ html {
     flex: 1;
 }
 
-
 .calendar-heading--layout {
     display: flex;
     justify-content: center;
@@ -101,6 +97,12 @@ html {
     padding-bottom: 0.5rem;
     justify-content: space-between;
     font-size: 1.5rem;
+}
+
+/* super strange - height is set from somewhere to 50px */
+/* So i had to set it manually back to normal wow */
+.calendar-months--layout div {
+    height: initial; 
 }
 
 .calendar-months--layout div,
@@ -135,13 +137,11 @@ html {
     padding-top: 0.5rem;
 }
 
-
 .calendar-today-button--action:hover {
     background-color: var(--light-gray);
     border-color: var(--red);
     color: #404b69;
 }
-
 
 .calendar-month-days-list {
     display: grid;
@@ -157,6 +157,7 @@ html {
     height: 5rem;
     border: 1px solid transparent;
     transition: all 200ms ease;
+    position: relative;
 }
 
 .calendar-month-days-list div:hover:not(.active):not(.empty-cell) {
@@ -175,6 +176,16 @@ html {
     cursor: initial;
 }
 
+.calendar-month-days-list div.event-day::before {
+    content: ' ';
+    width: 0.5rem;
+    height: 0.5rem;
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    background: #1400c7;
+    border-radius: 50%;
+}
 
 /* Flip Magic */
 .flip-container {
@@ -281,8 +292,6 @@ html {
     cursor: pointer;
 }
 
-
-
 /* Event List */
 .event-list-heading {
     padding: 2.5rem 0 .5rem 0;
@@ -309,7 +318,6 @@ html {
     color: var(--text-color);
     margin-left: .4rem;
 }
-
 
 /* Today Button */
 .calendar-today-button--action {

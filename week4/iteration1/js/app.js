@@ -32,7 +32,7 @@ const init = () => {
     renderAll();
     eventTriggers();
     getClock();
-    // getWeatherData();
+    getWeatherData();
 }
 
 const renderAll = () => {
@@ -72,20 +72,27 @@ const previous = () => {
 }
 
 const jumpToMonth = (index, flagToday = false) =>  {
-    let currentMonth = getCurrentMonth();
-    if (flagToday) { return currentMonth }   
-    
-    currentMonth = index;
-    renderDays(currentMonth, currentYear);
+    if (flagToday) return getCurrentMonth();
+
+    setCurrentMonth(index);
+    renderDays(getCurrentMonth(), getCurrentYear());
     renderMonthNames();
+}
+
+const addDayNotification = (cell) => {
+    getDaysCollection().forEach(event => {
+        if (event === getDayInfo(cell)) {
+            cell.classList.toggle('event-day');
+        };
+    });
 }
 
 
 // Render Methods
 const renderDays = function(month, year) {
 
-    let firstDayOfWeek = new Date(year, month).getDay();
-    let totalDaysInMonth = daysInMonth(month, year);
+    let firstDayOfWeek      = new Date(year, month).getDay();
+    let totalDaysInMonth    = daysInMonth(month, year);
 
     emptyInnerHTML(calendarWeekDaysBody);
     fillBlankDays(firstDayOfWeek);
@@ -100,6 +107,7 @@ const renderDays = function(month, year) {
             currentEventDateInfo.textContent = getTodayFormatted();
             inputField.setAttribute('data-event-info', getTodayFormatted());
         }
+
         // Event data
         cell.setAttribute('data-day', day);
         cell.setAttribute('data-month', month);
@@ -119,6 +127,8 @@ const renderDays = function(month, year) {
             inputField.setAttribute('data-event-info', getFormattedDate(date));
             renderEventsList(getFormattedDate(date));
         });
+
+        addDayNotification(cell);
 
         monthHeading.textContent = MONTHS_FULL[month];
         yearHeading.textContent  = year;
@@ -238,6 +248,7 @@ const createEvent = () => {
     localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
     inputField.value = '';
     showAlert('event-success-creation');
+    renderDays(getCurrentMonth(), getCurrentYear());
     renderEventsList(eventDate);
 }
 
@@ -248,6 +259,7 @@ const removeEvent = (id) => {
         storedEvents = storedEvents.filter(event => event.id != id ); 
         localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
         showAlert('event-deletion');
+        renderDays(getCurrentMonth(), getCurrentYear());
     }
 }
 
@@ -259,6 +271,7 @@ const getTodayLayout = () => {
 
     jumpToMonth(getCurrentMonth(), true);
     renderDays(getCurrentMonth(), getCurrentYear());
+    renderEventsList(getTodayFormatted());
     renderMonthNames();
 }
 
