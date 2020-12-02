@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jgthms/minireset.css@master/minireset.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/notify.css">
     <link rel="stylesheet" href="style/clock.css">
     <link rel="stylesheet" href="style/forecast.css">
     <link rel="stylesheet" href="style/calendar.css">
 </head>
 <body>
     <div class="calendar-flex-wrapper">
+        <div class="notify"><span id="notifyType" class=""></span></div>
         <div id='calendar' class="calendar--container">
             <div class="calendar-weather--layout">
                 <div class="weather-container">
@@ -79,6 +81,7 @@
         </div>
     </div>
 
+    <script src="/js/notify.js"></script>
     <script src="./js/clock.js"></script>
     <script src="./js/forecast.js"></script>
     <script src="./js/calendar-utilities.js"></script>

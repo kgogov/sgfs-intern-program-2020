@@ -1,76 +1,85 @@
-const LOCAL_STORAGE_NAME        = 'calendar-events';
+const LOCAL_STORAGE_NAME                = 'calendar-events';
 
-const MONTHS                    = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_FULL               = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const DAYS                      = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const daysAfterTheMonthStarted  = 32;
-const backSideYearCount         = 42;
-const yearSelectionStart        = 2010;
-const yearSelectionEnd          = 2045;
+const CALENDAR_BACK_SIDE_START_VALUE    = 2010;
+const CALENDAR_BACK_SIDE_END_VALUE      = 2045;
+const CALENDAR_BACK_SIDE_YEARS_CELLS    = 42;
+const MONTH_COUNT                       = 12;
+const LAST_MONTH_INDEX                  = 11;
+const FIRST_MONTH_INDEX                 = 0;
 
-const calendarMonthListNameList = document.querySelector('.calendar-months--layout');
-const calendarWeekDaysNameList  = document.querySelector('.calendar-week-days-names--layout');
-const calendarWeekDaysBody      = document.querySelector('.calendar-month-days-list');
-const monthHeading              = document.querySelector('.calendar-month--text');
-const yearHeading               = document.querySelector('.calendar-year--text');
-const actionPrevious            = document.querySelector('.action--previous');
-const actionNext                = document.querySelector('.action--next');
-const calendarBackSide          = document.querySelector('.calendar-back-side');
-const calendarContainer         = document.querySelector('.calendar--layout');
-const inputField                = document.querySelector('.add-event-day-field');
-const inputFieldButton          = document.querySelector('.add-event-day-field-btn--action');
-const currentEventDateInfo      = document.querySelector('.current-event-date');
-const eventList                 = document.querySelector('.current-events-list');
-const todayButton               = document.querySelector('.calendar-today-button--action');
-let calendarBackSideYears       = null; // has to be let in order to flip effect work
+const MONTHS                            = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_FULL                       = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS                              = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+const calendarMonthListNameList         = document.querySelector('.calendar-months--layout');
+const calendarWeekDaysNameList          = document.querySelector('.calendar-week-days-names--layout');
+const calendarWeekDaysBody              = document.querySelector('.calendar-month-days-list');
+const monthHeading                      = document.querySelector('.calendar-month--text');
+const yearHeading                       = document.querySelector('.calendar-year--text');
+const actionPrevious                    = document.querySelector('.action--previous');
+const actionNext                        = document.querySelector('.action--next');
+const calendarBackSide                  = document.querySelector('.calendar-back-side');
+const calendarContainer                 = document.querySelector('.calendar--layout');
+const inputField                        = document.querySelector('.add-event-day-field');
+const inputFieldButton                  = document.querySelector('.add-event-day-field-btn--action');
+const currentEventDateInfo              = document.querySelector('.current-event-date');
+const eventList                         = document.querySelector('.current-events-list');
+const todayButton                       = document.querySelector('.calendar-today-button--action');
+let calendarBackSideYears               = null; // has to be let in order to flip effect work
 
 
 const init = () => {
     renderAll();
     eventTriggers();
     getClock();
-    getWeatherData();
+    // getWeatherData();
 }
 
 const renderAll = () => {
     renderDays(getCurrentMonth(), getCurrentYear());
     renderMonthNames();
     renderWeekNames();
-    renderYearBackSelection(yearSelectionStart, yearSelectionEnd);
+    renderYearBackSelection(CALENDAR_BACK_SIDE_START_VALUE, CALENDAR_BACK_SIDE_END_VALUE);  
     renderEventsList(getTodayFormatted());
 }
 
 const next = () => {
-	currentYear     = currentMonth === 11 ? currentYear + 1 : currentYear;
-	currentMonth    = (currentMonth + 1) % 12;
+    let currentYear     = getCurrentYear();
+    let currentMonth    = getCurrentMonth();
+
+    currentYear         = calcCurrentYear(currentYear, currentMonth, LAST_MONTH_INDEX, 1);
+    currentMonth        = calcNextMonth(currentMonth, MONTH_COUNT);
+
+    setCurrentMonth(currentMonth);
+    setCurrentYear(currentYear);
+    
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
 const previous = () => {
-	currentYear     = currentMonth === 0 ? currentYear - 1 : currentYear;
-	currentMonth    = currentMonth === 0 ? 11 : currentMonth - 1;
+    let currentYear     = getCurrentYear();
+    let currentMonth    = getCurrentMonth();
+
+    currentYear         = calcCurrentYear(currentYear, currentMonth, FIRST_MONTH_INDEX, -1);
+    currentMonth        = calcPrevMonth(currentMonth, FIRST_MONTH_INDEX, LAST_MONTH_INDEX);
+
+    setCurrentMonth(currentMonth);
+    setCurrentYear(currentYear);
+
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
 const jumpToMonth = (index, flagToday = false) =>  {
-    if (flagToday) {
-        return currentMonth = index;
-    }
-
-    currentMonth  = index;
+    let currentMonth = getCurrentMonth();
+    if (flagToday) { return currentMonth }   
+    
+    currentMonth = index;
     renderDays(currentMonth, currentYear);
     renderMonthNames();
 }
 
-const toggleCalendarSide = () => {
-    calendarContainer.classList.toggle('flip');
-}
-
-const emptyInnerHTML = (el) => {
-    el.innerHTML = '';
-}
 
 // Render Methods
 const renderDays = function(month, year) {
@@ -90,7 +99,6 @@ const renderDays = function(month, year) {
             // Set initial date to the add event action button
             currentEventDateInfo.textContent = getTodayFormatted();
             inputField.setAttribute('data-event-info', getTodayFormatted());
-            todayButton.setAttribute('data-event-info', getTodayFormatted())
         }
         // Event data
         cell.setAttribute('data-day', day);
@@ -122,15 +130,12 @@ const renderMonthNames = function() {
     emptyInnerHTML(calendarMonthListNameList);
 
     MONTHS.forEach((month, index) => {
-
         let monthsTemplate         = document.createElement('div');
         monthsTemplate.textContent = `${month}`;
 
         if (currentMonth === index) {
             monthsTemplate.classList.add('active');
         }
-
-        monthsTemplate.setAttribute('data-month', `${index}`);
 
         monthsTemplate.addEventListener('click', () => {
             jumpToMonth(index);
@@ -150,15 +155,25 @@ const renderWeekNames = function() {
     });
 }
 
-
+ 
 const renderYearBackSelection = function(startYear, endYear) {
-    if (endYear - startYear > backSideYearCount ) return alert('Please enter other value!');
+    if (endYear - startYear > CALENDAR_BACK_SIDE_YEARS_CELLS ) {
+        throw new Error('Please enter valid range of years: max count 42!');
+    }
 
     for (let year = startYear; year <= endYear; year++) {
         let yearBoxTemplate = document.createElement('div');
         let yearBoxText     = document.createTextNode(year);
 
         yearBoxTemplate.setAttribute('data-year', year);
+
+        yearBoxTemplate.addEventListener('click', (e) => {
+            const yearData  = e.target.getAttribute('data-year');
+            currentYear     = +yearData;
+
+            toggleCalendarSide();
+            renderDays(getCurrentMonth(), getCurrentYear());
+        });
 
         yearBoxTemplate.appendChild(yearBoxText);
         calendarBackSide.appendChild(yearBoxTemplate);
@@ -167,15 +182,16 @@ const renderYearBackSelection = function(startYear, endYear) {
 
 const renderEventsList = (eventDate) => {
 
-    const storedEvents = localStorage.getItem(LOCAL_STORAGE_NAME)  ? 
-              JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) : [];
+    const storedEvents = localStorage.getItem(LOCAL_STORAGE_NAME) 
+                            ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) 
+                            : [];
 
     if (storedEvents) {
         const currentDayEvents = storedEvents.filter(eventsToday => eventsToday.eventDate === eventDate);
 
         if (currentDayEvents.length > 0) {
+            emptyInnerHTML(eventList);
 
-            eventList.innerHTML = '';
             for (let i = 0; i < currentDayEvents.length; i++) {
 
                 let eventListItemTemplate = document.createElement('li');
@@ -207,7 +223,7 @@ const createEvent = () => {
     let obj                 = [];
     let id                  = 1;
 
-    if (!eventDescription) return alert('Invalid input');
+    if (!eventDescription) return showAlert('wrong-input');
 
     if (events) obj = JSON.parse(events)
 
@@ -221,6 +237,7 @@ const createEvent = () => {
 
     localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
     inputField.value = '';
+    showAlert('event-success-creation');
     renderEventsList(eventDate);
 }
 
@@ -230,37 +247,23 @@ const removeEvent = (id) => {
     if (storedEvents !== null) {
         storedEvents = storedEvents.filter(event => event.id != id ); 
         localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
+        showAlert('event-deletion');
     }
 }
 
 const getTodayLayout = () => {
-    const today             = new Date();
-    const currentMonth      = today.getMonth();
-    const currentYear       = today.getFullYear();
+    const today = new Date();
 
-    jumpToMonth(currentMonth, true);
-    renderDays(currentMonth, currentYear);
+    setCurrentMonth(today.getMonth());
+    setCurrentYear(today.getFullYear());
+
+    jumpToMonth(getCurrentMonth(), true);
+    renderDays(getCurrentMonth(), getCurrentYear());
     renderMonthNames();
 }
 
-
-// Service Method
+// Events
 const eventTriggers = function() {
-
-    document.addEventListener('DOMContentLoaded', () => {
-        calendarBackSideYears   = document.querySelectorAll('.calendar-back-side div');
-    
-        calendarBackSideYears.forEach(year => {
-            year.addEventListener('click', (e) => {
-                const yearData  = e.target.getAttribute('data-year');
-                currentYear     = +yearData;
-    
-                toggleCalendarSide();
-                renderDays(getCurrentMonth(), getCurrentYear());
-            });
-        });
-    });
-
     document.addEventListener('keydown', e => {
         if (e.code === 'ArrowLeft')     previous();
         if (e.code === 'ArrowRight')    next();

@@ -3,20 +3,28 @@ let todayIndex                  = today.getDate();
 let currentMonth                = today.getMonth();
 let currentYear                 = today.getFullYear();
 
-const getToday = () => {
-    return today;
-}
-
-const getTodayIndex = () => {
-    return todayIndex;
-}
-
-const getCurrentMonth = () => {
+const getCurrentMonth = function() {
     return currentMonth;
 }
 
-const getCurrentYear = () => {
-    return currentYear
+const setCurrentMonth = (month) => {
+    currentMonth = month;
+}
+
+const getCurrentYear = function() {
+    return currentYear;
+}
+
+const setCurrentYear = function(year) {
+    currentYear = year;
+}
+
+const getToday = function() {
+    return today;
+}
+
+const getTodayIndex = function() {
+    return todayIndex;
 }
 
 const getFormattedDate = (date) => {
@@ -31,6 +39,10 @@ const isToday = function(day) {
     return  getTodayIndex()   === day                 && 
             getCurrentMonth() === today.getMonth()    && 
             getCurrentYear()  === today.getFullYear();
+}
+
+const emptyInnerHTML = (el) => {
+    el.innerHTML = '';
 }
 
 // day 0 here returns the last day of the PREVIOUS month
@@ -56,3 +68,23 @@ const addBlankEventInfo = (eventList) => {
     eventList.classList.add('event-list-item-not-found');
     eventList.appendChild(eventListItemTemplate);
 } 
+
+const toggleCalendarSide = function() {
+    calendarContainer.classList.toggle('flip');
+}
+
+
+const calcCurrentYear = (year, month, index, prevOrNext) => {
+    if (prevOrNext === 1) {
+        return year = month === index ? year + 1 : year;
+    }
+    return year = month === index ? year - 1 : year;;
+}
+
+const calcNextMonth = (month, count) => {
+    return (month + 1) % count;
+}
+
+const calcPrevMonth = (month, firstIndex, lastIndex) => {
+    return month = month === firstIndex ? lastIndex : month - 1;
+}

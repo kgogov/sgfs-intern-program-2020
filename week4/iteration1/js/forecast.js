@@ -1,5 +1,8 @@
 const apiKey                    = 'aa176f47832a38856a3e010195dfc7b2';
 
+const weatherContainer          = document.querySelector('.weather-container');
+const calendarEventListContainer= document.querySelector('.calendar-events-list--container');
+
 const weatherIconContainer      = document.querySelector('.weather-icon--container');
 const weatherCity               = document.querySelector('.weather-location-city');
 const weatherCountry            = document.querySelector('.weather-location-countryTag');
@@ -11,12 +14,13 @@ const getWeatherData = () => {
     window.addEventListener('load', () => {
         let longitude;
         let latitude;
-        
-        // Handle error
+
         if (!navigator.geolocation) {
-            console.log('Info message');
+            if (weatherContainer.offsetHeight === 0) {
+                return calendarEventListContainer.classList.add('inactive-weather-layout');
+            }
         }
-    
+
         navigator.geolocation.getCurrentPosition(position => {
             longitude   = position.coords.longitude;
             latitude    = position.coords.latitude
@@ -54,11 +58,11 @@ const getWeatherData = () => {
                             weatherIconContainer.insertAdjacentElement('afterbegin', image);
                         })
                         .catch(err => {
-                            console.log(err);
+                            console.warn(err);
                         })
                 }) 
                 .catch(err => {
-                    console.log(err);
+                    console.warn(err);
                 });
                 
         });

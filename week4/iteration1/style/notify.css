@@ -1,0 +1,35 @@
+.notify{  
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;  
+    color: white;  
+    text-align: center;
+    background:rgba(0, 0, 0, .6);
+    overflow:hidden;
+    transition: height 200ms;
+    font-size: 1.6rem;
+}
+
+#notifyType:before{
+    display: block;
+    margin-top: 1rem;  
+}
+
+.active{  
+    height: 5rem;
+}
+
+/* Here you can add custom messages */
+.event-success-creation:before{
+    content: "Event added successfully!";
+}
+
+.event-deletion::before {
+    content: "Event deleted successfully!";
+}
+
+.wrong-input:before{
+    content: "Please enter correct values!";
+}
