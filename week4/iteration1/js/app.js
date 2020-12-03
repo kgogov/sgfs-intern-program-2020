@@ -11,20 +11,20 @@ const MONTHS                            = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'J
 const MONTHS_FULL                       = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAYS                              = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-const calendarMonthListNameList         = document.querySelector('.calendar-months--layout');
-const calendarWeekDaysNameList          = document.querySelector('.calendar-week-days-names--layout');
-const calendarWeekDaysBody              = document.querySelector('.calendar-month-days-list');
-const monthHeading                      = document.querySelector('.calendar-month--text');
-const yearHeading                       = document.querySelector('.calendar-year--text');
-const actionPrevious                    = document.querySelector('.action--previous');
-const actionNext                        = document.querySelector('.action--next');
-const calendarBackSide                  = document.querySelector('.calendar-back-side');
-const calendarContainer                 = document.querySelector('.calendar--layout');
-const inputField                        = document.querySelector('.add-event-day-field');
-const inputFieldButton                  = document.querySelector('.add-event-day-field-btn--action');
-const currentEventDateInfo              = document.querySelector('.current-event-date');
-const eventList                         = document.querySelector('.current-events-list');
-const todayButton                       = document.querySelector('.calendar-today-button--action');
+const calendarMonthListNameList         = KQ('.calendar-months--layout');
+const calendarWeekDaysNameList          = KQ('.calendar-week-days-names--layout');
+const calendarWeekDaysBody              = KQ('.calendar-month-days-list');
+const monthHeading                      = KQ('.calendar-month--text');
+const yearHeading                       = KQ('.calendar-year--text');
+const actionPrevious                    = KQ('.action--previous');
+const actionNext                        = KQ('.action--next');
+const calendarBackSide                  = KQ('.calendar-back-side');
+const calendarContainer                 = KQ('.calendar--layout');
+const inputField                        = KQ('.add-event-day-field');
+const inputFieldButton                  = KQ('.add-event-day-field-btn--action');
+const currentEventDateInfo              = KQ('.current-event-date');
+const eventList                         = KQ('.current-events-list');
+const todayButton                       = KQ('.calendar-today-button--action');
 let calendarBackSideYears               = null; // has to be let in order to flip effect work
 
 
@@ -86,73 +86,69 @@ const renderDays = function(month, year) {
     let firstDayOfWeek      = new Date(year, month).getDay();
     let totalDaysInMonth    = daysInMonth(month, year);
 
-    emptyInnerHTML(calendarWeekDaysBody);
+    calendarWeekDaysBody.empty();
     fillBlankDays(firstDayOfWeek);
 
     for (let day = 1; day <= totalDaysInMonth; day++) {
-        let cell     = document.createElement('div');
-        let cellText = document.createTextNode(day);
+        let cell = KQ('<div>');
+        let cellText = createText(day);
         // Set event data
-        cell.setAttribute('data-day', day);
-        cell.setAttribute('data-month', month);
-        cell.setAttribute('data-year', year);
+        cell.attr('data-day', day);
+        cell.attr('data-month', month);
+        cell.attr('data-year', year);
         
         if (isToday(day)) {
-            cell.classList.add('active');
-            inputField.setAttribute('data-event-info', getTodayFormatted());
+            cell.addClass('active');
+            inputField.attr('data-event-info', getTodayFormatted());
         }
         
-        cell.appendChild(cellText);
-        calendarWeekDaysBody.appendChild(cell);
+        cell.valueOf().append(cellText);
+        calendarWeekDaysBody.valueOf().append(cell.valueOf());
 
-        cell.addEventListener('click', e => {
+        cell.on('click', e => {
             const date = new Date(
                 +e.target.getAttribute('data-year'),
                 +e.target.getAttribute('data-month'),
                 +e.target.getAttribute('data-day')
             );
+            currentEventDateInfo.text(getFormattedDate(date));
 
-            currentEventDateInfo.textContent = getFormattedDate(date);
-            inputField.setAttribute('data-event-info', getFormattedDate(date));
+            inputField.attr('data-event-info', getFormattedDate(date));
             renderEventsList(getFormattedDate(date));
         });
 
-        // It has to be here in order to get info from data attr cells
         addDayNotification(cell);
 
-        currentEventDateInfo.textContent = inputField.getAttribute('data-event-info');
-        monthHeading.textContent = MONTHS_FULL[month];
-        yearHeading.textContent  = year;
+        currentEventDateInfo.text(inputField.attr('data-event-info'));
+        monthHeading.text(MONTHS_FULL[month]);
+        yearHeading.text(year);
     }
 }
 
 
 const renderMonthNames = function() {
-    emptyInnerHTML(calendarMonthListNameList);
+    calendarMonthListNameList.empty();
 
     MONTHS.forEach((month, index) => {
-        let monthsTemplate         = document.createElement('div');
-        monthsTemplate.textContent = `${month}`;
+        let monthsTemplate = KQ('<div>');
+        monthsTemplate.text(`${month}`); 
 
-        if (currentMonth === index) {
-            monthsTemplate.classList.add('active');
+        if (getCurrentMonth() === index) {
+            monthsTemplate.addClass('active');
         }
 
-        monthsTemplate.addEventListener('click', () => {
-            jumpToMonth(index);
-        });
-
-        calendarMonthListNameList.appendChild(monthsTemplate);
+        monthsTemplate.on('click', () => { jumpToMonth(index); });
+        calendarMonthListNameList.valueOf().append(monthsTemplate.valueOf());
     });
 }
 
 const renderWeekNames = function() {
     DAYS.forEach(day => {
-        let daysTemplate         = document.createElement('div');
-        daysTemplate.textContent = `${day}`;
-        daysTemplate.classList.add('noselect');
+        let daysTemplate = KQ('<div>');
+        daysTemplate.text(`${day}`); 
+        daysTemplate.addClass('noselect');
 
-        calendarWeekDaysNameList.appendChild(daysTemplate);
+        calendarWeekDaysNameList.valueOf().append(daysTemplate.valueOf());
     });
 }
 
@@ -163,21 +159,21 @@ const renderYearBackSelection = function(startYear, endYear) {
     }
 
     for (let year = startYear; year <= endYear; year++) {
-        let yearBoxTemplate = document.createElement('div');
-        let yearBoxText     = document.createTextNode(year);
+        let yearBoxTemplate = KQ('<div>');
+        let yearBoxText     = createText(year);
 
-        yearBoxTemplate.setAttribute('data-year', year);
+        yearBoxTemplate.attr('data-year', year);
 
-        yearBoxTemplate.addEventListener('click', (e) => {
-            const yearData  = e.target.getAttribute('data-year');
-            currentYear     = +yearData;
+        yearBoxTemplate.on('click', (e) => {
+            const yearData = e.target.getAttribute('data-year');
+            currentYear    = +yearData;
 
             toggleCalendarSide();
             renderDays(getCurrentMonth(), getCurrentYear());
         });
 
-        yearBoxTemplate.appendChild(yearBoxText);
-        calendarBackSide.appendChild(yearBoxTemplate);
+        yearBoxTemplate.valueOf().append(yearBoxText);
+        calendarBackSide.valueOf().append(yearBoxTemplate.valueOf());
     }
 }
 
@@ -191,25 +187,24 @@ const renderEventsList = (eventDate) => {
         const currentDayEvents = storedEvents.filter(eventsToday => eventsToday.eventDate === eventDate);
 
         if (currentDayEvents.length > 0) {
-            emptyInnerHTML(eventList);
+            eventList.empty();
 
             for (let i = 0; i < currentDayEvents.length; i++) {
 
-                let eventListItemTemplate = document.createElement('li');
+                let eventListItemTemplate = KQ('<li>');
         
-                eventListItemTemplate.textContent = currentDayEvents[i].eventDescription;
-                eventListItemTemplate.setAttribute('data-event-id', currentDayEvents[i].id);
-                eventListItemTemplate.classList.add('event-list-item');
+                eventListItemTemplate.text(currentDayEvents[i].eventDescription);
+                eventListItemTemplate.attr('data-event-id', currentDayEvents[i].id);
+                eventListItemTemplate.addClass('event-list-item');
         
-                eventListItemTemplate.addEventListener('click', e => {
+                eventListItemTemplate.on('click', e => {
                     const currentEventElement   = e.target;
                     const currentEventId        = currentEventElement.getAttribute('data-event-id');
-
                     removeEvent(currentEventId);
                     renderEventsList(eventDate);
                 });
         
-                eventList.appendChild(eventListItemTemplate);
+                eventList.valueOf().append(eventListItemTemplate.valueOf());
             }
             return; // In order to escape addBlankEventInfo() Otherwise it wont render the newer added events
         }
@@ -219,11 +214,11 @@ const renderEventsList = (eventDate) => {
 }
 
 const createEvent = () => {
-    const eventDescription  = inputField.value;
-    const eventDate         = inputField.getAttribute('data-event-info');
-    const events            = localStorage.getItem(LOCAL_STORAGE_NAME);
-    let obj                 = [];
-    let id                  = 1;
+    const eventDescription = inputField.valueOf().value;
+    const eventDate        = inputField.attr('data-event-info');
+    const events           = localStorage.getItem(LOCAL_STORAGE_NAME);
+    let obj                = [];
+    let id                 = 1;
 
     if (!eventDescription) return showAlert('wrong-input');
 
@@ -238,8 +233,7 @@ const createEvent = () => {
     });
 
     localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
-    inputField.value = '';
-
+    inputField.valueOf().value = '';
     showAlert('event-success-creation');
     renderDays(getCurrentMonth(), getCurrentYear());
     renderEventsList(eventDate);
@@ -251,7 +245,6 @@ const removeEvent = (id) => {
     if (storedEvents !== null) {
         storedEvents = storedEvents.filter(event => event.id != id ); 
         localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
-
         showAlert('event-deletion');
         renderDays(getCurrentMonth(), getCurrentYear());
     }
@@ -278,11 +271,11 @@ const eventTriggers = function() {
         if (e.code === 'ArrowUp')       toggleCalendarSide();
     });
 
-    yearHeading.addEventListener('click', toggleCalendarSide);
-    actionNext.addEventListener('click', next);
-    actionPrevious.addEventListener('click', previous);
-    inputFieldButton.addEventListener('click', createEvent);
-    todayButton.addEventListener('click', getTodayLayout);
+    yearHeading.on('click', toggleCalendarSide);
+    actionNext.on('click', next);
+    actionPrevious.on('click', previous);
+    inputFieldButton.on('click', createEvent);
+    todayButton.on('click', getTodayLayout);
 }
 
 // Startup

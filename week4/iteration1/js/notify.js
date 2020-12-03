@@ -1,12 +1,12 @@
-const notifyContainer = document.querySelector('.notify');
-const notifyType      = document.querySelector('#notifyType');
+const notifyContainer = KQ('.notify');
+const notifyType      = KQ('#notifyType');
 
 const showAlert = (className) => {
-    notifyContainer.classList.toggle('active');
-    notifyType.classList.toggle(className);
+    notifyContainer.toggleClass('active');
+    notifyType.toggleClass(className);
 
     setTimeout(() => {
-        notifyContainer.classList.toggle('active');
-        notifyType.classList.toggle(className);
+        notifyContainer.toggleClass('active');
+        notifyType.toggleClass(className);
     }, 2000);
 }

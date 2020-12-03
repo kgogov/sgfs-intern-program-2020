@@ -36,7 +36,7 @@ const getTodayFormatted = () => {
 }
 
 const getDayInfo = (cell) => {
-    return `${cell.getAttribute('data-day')}/${+cell.getAttribute('data-month') + 1}/${cell.getAttribute('data-year')}`;
+    return `${cell.attr('data-day')}/${+cell.attr('data-month') + 1}/${cell.attr('data-year')}`;
 }
 
 const getDaysCollection = () => {
@@ -51,8 +51,8 @@ const isToday = function(day) {
             getCurrentYear()  === today.getFullYear();
 }
 
-const emptyInnerHTML = (el) => {
-    el.innerHTML = '';
+const createText = function (value) {
+    return document.createTextNode(value);
 }
 
 // day 0 here returns the last day of the PREVIOUS month
@@ -62,33 +62,30 @@ const daysInMonth = function(month, year) {
 
 const fillBlankDays = function(count) {
     for (let space = 0; space < count; space++) {
-        let cell = document.createElement('div');
-        let cellText = document.createTextNode('');
 
-        cell.classList.add('empty-cell');
-        cell.appendChild(cellText);
-        calendarWeekDaysBody.appendChild(cell);
+        let cell = KQ('<div>');
+        cell.addClass('empty-cell');
+
+        calendarWeekDaysBody.valueOf().append(cell.valueOf());
     }
 }
 
 const addDayNotification = (cell) => {
     getDaysCollection().forEach(event => {
         if (event === getDayInfo(cell)) {
-            cell.classList.add('event-day');
+            cell.addClass('event-day');
         };
     });
 }
 
+//* REFLECTION
 const addBlankEventInfo = (eventList) => {
-    let eventListItemTemplate = document.createElement('li');
-
-    eventList.textContent = 'No events found 🤔';
-    eventList.classList.add('event-list-item-not-found');
-    eventList.appendChild(eventListItemTemplate);
+    eventList.text('No events found 🤔'); 
+    eventList.addClass('event-list-item-not-found');
 } 
 
 const toggleCalendarSide = function() {
-    calendarContainer.classList.toggle('flip');
+    calendarContainer.toggleClass('flip');
 }
 
 
