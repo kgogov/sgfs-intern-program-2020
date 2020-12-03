@@ -2,7 +2,6 @@ const apiKey                        = 'aa176f47832a38856a3e010195dfc7b2';
 
 const weatherContainer              = KQ('.weather-container');
 const calendarEventListContainer    = KQ('.calendar-events-list--container');
-
 const weatherIconContainer          = KQ('.weather-icon--container');
 const weatherCity                   = KQ('.weather-location-city');
 const weatherCountry                = KQ('.weather-location-countryTag');

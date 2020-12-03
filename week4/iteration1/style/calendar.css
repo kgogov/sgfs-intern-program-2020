@@ -102,7 +102,7 @@ html {
 /* super strange - height is set from somewhere to 50px */
 /* So i had to set it manually back to normal wow */
 .calendar-months--layout div {
-    height: initial; 
+    height: initial;
 }
 
 .calendar-months--layout div,
@@ -152,9 +152,10 @@ html {
 }
 
 .calendar-month-days-list div {
-    padding: 1.2rem 0;
-    width: 5rem;
-    height: 5rem;
+    padding: 0.8rem 0;
+    margin: 0.2rem 0;
+    width: 4.2rem;
+    height: 4.2rem;
     border: 1px solid transparent;
     transition: all 200ms ease;
     position: relative;
@@ -168,7 +169,7 @@ html {
 
 .calendar-month-days-list div.active {
     background-color: var(--red);
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--red);
     color: #fff;
 }
 
@@ -217,7 +218,7 @@ html {
 
 /* front pane, placed above back */
 .calendar-front-side {
-	z-index: 98;
+	z-index: 98; /* kgogov birthYear */
 }
 
 /* back, initially hidden pane */
@@ -253,7 +254,7 @@ html {
     border-top: 1px solid #fff;
 }
 
-/*! handle navigator decline */
+/*! handle navigator decline weather layout */
 .calendar-events-list--container.inactive-weather-layout {
     height: 41rem;
     border: none;
@@ -293,6 +294,10 @@ html {
 }
 
 /* Event List */
+.current-events-list {
+    font-size: 1.3rem;
+}
+
 .event-list-heading {
     padding: 2.5rem 0 .5rem 0;
     font-weight: 700;
@@ -300,12 +305,6 @@ html {
 
 .event-list-item {
     padding: 0.2rem 0;
-}
-
-/** REFLECTION  */
-.event-list-item,
-.event-list-item-not-found {
-    font-size: 1.3rem;
 }
 
 .event-list-item:hover {

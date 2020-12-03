@@ -155,6 +155,7 @@ const renderWeekNames = function() {
 
 const renderYearBackSelection = function(startYear, endYear) {
     if (endYear - startYear > CALENDAR_BACK_SIDE_YEARS_CELLS ) {
+        showAlert('wrong-input');
         throw new Error('Please enter valid range of years: max count 42!');
     }
 
@@ -165,8 +166,8 @@ const renderYearBackSelection = function(startYear, endYear) {
         yearBoxTemplate.attr('data-year', year);
 
         yearBoxTemplate.on('click', (e) => {
-            const yearData = e.target.getAttribute('data-year');
-            currentYear    = +yearData;
+            const yearData  = e.target.getAttribute('data-year');
+            currentYear     = +yearData;
 
             toggleCalendarSide();
             renderDays(getCurrentMonth(), getCurrentYear());
@@ -192,7 +193,7 @@ const renderEventsList = (eventDate) => {
             for (let i = 0; i < currentDayEvents.length; i++) {
 
                 let eventListItemTemplate = KQ('<li>');
-        
+                
                 eventListItemTemplate.text(currentDayEvents[i].eventDescription);
                 eventListItemTemplate.attr('data-event-id', currentDayEvents[i].id);
                 eventListItemTemplate.addClass('event-list-item');

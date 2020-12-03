@@ -1,19 +1,20 @@
 const secondHand    = KQ('.second-hand');
 const minHand       = KQ('.min-hand');
 const hourHand      = KQ('.hour-hand');
+const circleDegrees = 360;
 const rotateDegrees = 90;
 
 const setClock = () =>  {
     const now                   = new Date();
 
     const seconds               = now.getSeconds();
-    const secondsDegrees        = ((seconds / 60) * 360) + rotateDegrees;
+    const secondsDegrees        = ((seconds / 60) * circleDegrees) + rotateDegrees;
     
     const mins                  = now.getMinutes();
-    const minsDegrees           = ((mins / 60) * 360) + rotateDegrees;
+    const minsDegrees           = ((mins / 60) * circleDegrees) + rotateDegrees;
     
     const hour                  = now.getHours();
-    const hourDegrees           = ((hour / 12) * 360) + rotateDegrees;
+    const hourDegrees           = ((hour / 12) * circleDegrees) + rotateDegrees;
     
     secondHand.css('transform', `rotate(${secondsDegrees}deg)`);
     minHand.css('transform', `rotate(${minsDegrees}deg)`);

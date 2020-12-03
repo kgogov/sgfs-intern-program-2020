@@ -78,10 +78,8 @@ const addDayNotification = (cell) => {
     });
 }
 
-//* REFLECTION
 const addBlankEventInfo = (eventList) => {
     eventList.text('No events found 🤔'); 
-    eventList.addClass('event-list-item-not-found');
 } 
 
 const toggleCalendarSide = function() {
