@@ -33,3 +33,7 @@
 .wrong-input:before{
     content: "Please enter correct values!";
 }
+
+.geolocation-error:before {
+    content: 'Geolocation is not supported for your browser!';
+}

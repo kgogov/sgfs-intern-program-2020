@@ -74,7 +74,7 @@ const fillBlankDays = function(count) {
 const addDayNotification = (cell) => {
     getDaysCollection().forEach(event => {
         if (event === getDayInfo(cell)) {
-            cell.classList.toggle('event-day');
+            cell.classList.add('event-day');
         };
     });
 }

@@ -117,6 +117,7 @@ const renderDays = function(month, year) {
             renderEventsList(getFormattedDate(date));
         });
 
+        // It has to be here in order to get info from data attr cells
         addDayNotification(cell);
 
         currentEventDateInfo.textContent = inputField.getAttribute('data-event-info');
@@ -203,6 +204,7 @@ const renderEventsList = (eventDate) => {
                 eventListItemTemplate.addEventListener('click', e => {
                     const currentEventElement   = e.target;
                     const currentEventId        = currentEventElement.getAttribute('data-event-id');
+
                     removeEvent(currentEventId);
                     renderEventsList(eventDate);
                 });
@@ -237,6 +239,7 @@ const createEvent = () => {
 
     localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(obj));
     inputField.value = '';
+
     showAlert('event-success-creation');
     renderDays(getCurrentMonth(), getCurrentYear());
     renderEventsList(eventDate);
@@ -248,6 +251,7 @@ const removeEvent = (id) => {
     if (storedEvents !== null) {
         storedEvents = storedEvents.filter(event => event.id != id ); 
         localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(storedEvents));
+
         showAlert('event-deletion');
         renderDays(getCurrentMonth(), getCurrentYear());
     }
